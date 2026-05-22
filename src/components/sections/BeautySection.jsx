@@ -1,39 +1,44 @@
-import { ChevronRight } from "lucide-react";
 import { beautyBags } from "../../data";
 
-function BagCard({ label, color }) {
+function BagCard({ label, image }) {
   return (
-    <div className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer group">
-      <div
-        className="w-28 h-28 rounded-2xl flex items-center justify-center relative overflow-hidden transition-transform group-hover:scale-105"
-        style={{ backgroundColor: color }}
-      >
-        <div className="w-16 h-12 rounded-lg opacity-50 border-2 border-white/30" style={{ background: `${color}` }} />
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+    <div className="flex flex-col items-center gap-4 flex-shrink-0 cursor-pointer group">
+      <div className="w-48 h-48 rounded-3xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 relative">
+        <img src={image} alt={label} className="w-full h-full object-cover group-hover:scale-125 group-hover:rotate-3 transition-all duration-700" />
+        <div className="absolute inset-0 bg-gradient-to-t from-rose-600/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button className="bg-white text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-2xl hover:bg-rose-600 hover:text-white transition-all">
+            View
+          </button>
+        </div>
       </div>
-      <span className="text-[10px] text-gray-700 font-semibold tracking-wider">{label}</span>
+      <span className="text-base text-gray-900 font-black tracking-wide group-hover:text-rose-600 transition-colors">{label}</span>
     </div>
   );
 }
 
 export default function BeautySection() {
   return (
-    <section className="py-6 bg-white">
-      <div className="flex items-center justify-between px-4 mb-1">
-        <h2 className="text-base font-black text-gray-900 tracking-widest uppercase">BEAUTY</h2>
-        <button className="flex items-center gap-0.5 text-xs text-rose-500 font-semibold">
-          View All <ChevronRight size={13} />
-        </button>
+    <section className="bg-white py-12 px-8 rounded-[32px] mx-8 shadow-xl border border-gray-100">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-black text-gray-900 tracking-tight">BEAUTY</h2>
+          <p className="text-sm text-gray-500 font-medium mt-1">Elevate your style</p>
+        </div>
       </div>
-
-      {/* Bags sub-section */}
-      <div className="bg-[#e8ede8] mx-4 rounded-2xl p-4 mt-3">
-        <p className="text-[10px] text-gray-500 font-semibold tracking-widest text-center uppercase">BAGS TOO</p>
-        <h3 className="text-lg font-black text-gray-900 text-center tracking-wider mb-4">EVERY OCCASION</h3>
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-          {beautyBags.map((bag, i) => (
-            <BagCard key={i} {...bag} />
-          ))}
+      <div className="bg-gradient-to-br from-pink-100 via-purple-100 to-rose-100 rounded-[28px] p-10 mt-6 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-10 right-10 w-32 h-32 bg-white/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-40 h-40 bg-rose-300/20 rounded-full blur-3xl" />
+        
+        <div className="relative z-10">
+          <p className="text-xs text-rose-600 font-black text-center uppercase tracking-widest mb-2">BAGS TOO</p>
+          <h3 className="text-3xl font-black text-gray-900 text-center mb-10 tracking-tight">EVERY OCCASION</h3>
+          <div className="flex gap-8 overflow-x-auto scrollbar-hide pb-4">
+            {beautyBags.map((bag, i) => (
+              <BagCard key={i} {...bag} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

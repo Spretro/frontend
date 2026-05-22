@@ -1,28 +1,15 @@
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-import HeroBanner from "./components/sections/HeroBanner";
-import ShopByCategory from "./components/sections/ShopByCategory";
-import CuratedCollections from "./components/sections/CuratedCollections";
-import BeautySection from "./components/sections/BeautySection";
-import JewellerySection from "./components/sections/JewellerySection";
-import SectionDivider from "./components/ui/SectionDivider";
+import Home from "./pages/Home";
+import ScrollToTop from "./components/ui/ScrollToTop";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#faf8f5] font-sans">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main>
-        <HeroBanner />
-        <SectionDivider />
-        <ShopByCategory />
-        <SectionDivider />
-        <CuratedCollections />
-        <SectionDivider />
-        <BeautySection />
-        <SectionDivider />
-        <JewellerySection />
-      </main>
+      <Home />
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }

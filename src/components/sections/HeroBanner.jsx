@@ -1,73 +1,75 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { heroSlides } from "../../data";
-
-function HeroCard({ slide, size = "large" }) {
-  const isLarge = size === "large";
-  return (
-    <div
-      className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${slide.bg} flex flex-col justify-end ${
-        isLarge ? "h-72" : "h-[136px]"
-      }`}
-    >
-      {/* Decorative fashion silhouette */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <div className="w-24 h-40 bg-white/30 rounded-full blur-2xl" />
-      </div>
-      {/* Fashion figure placeholder */}
-      <div className="absolute top-0 right-4 bottom-0 flex items-end justify-center">
-        <div
-          className="w-20 rounded-t-full opacity-40"
-          style={{ height: "85%", background: `linear-gradient(to top, ${slide.accent}88, transparent)` }}
-        />
-      </div>
-      {slide.tag && (
-        <span className="absolute top-3 left-3 bg-white/20 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-full border border-white/30">
-          {slide.tag}
-        </span>
-      )}
-      <div className="relative p-4">
-        <h2 className={`font-black text-white leading-tight ${isLarge ? "text-2xl" : "text-base"}`}>
-          {slide.title}
-        </h2>
-        <p className="text-white/80 text-xs font-semibold mt-0.5">{slide.subtitle}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HeroBanner() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setActive((p) => (p + 1) % heroSlides.length), 4000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % heroSlides.length);
+    }, 4000);
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="px-4 py-4">
-      <div className="relative grid grid-cols-3 gap-3">
-        {/* Large center */}
-        <div className="col-span-1 relative group cursor-pointer" onClick={() => setActive((active - 1 + heroSlides.length) % heroSlides.length)}>
-          <HeroCard slide={heroSlides[(active + heroSlides.length - 1) % heroSlides.length]} />
-        </div>
-        <div className="col-span-1 cursor-pointer">
-          <HeroCard slide={heroSlides[active]} size="large" />
-        </div>
-        <div className="col-span-1 flex flex-col gap-3">
-          <HeroCard slide={heroSlides[(active + 1) % heroSlides.length]} size="small" />
-          <HeroCard slide={heroSlides[(active + 2) % heroSlides.length]} size="small" />
-        </div>
+    <section className="px-8 py-6">
+      <div className="relative rounded-[32px] overflow-hidden shadow-2xl" style={{ height: "600px" }}>
+        {/* Slides */}
+        {heroSlides.map((slide, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              idx === active ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {/* Background gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${slide.bg}`} />
+            
+            {/* Background image */}
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="absolute inset-0 w-full h-full object-cover opacity-40 scale-105"
+            />
+            
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+
+            {/* Decorative elements */}
+            <div className="absolute top-20 right-20 w-64 h-64 border-4 border-white/10 rounded-full animate-pulse" />
+            <div className="absolute bottom-32 left-32 w-40 h-40 border-4 border-white/10 rounded-full" />
+
+            {/* Tag */}
+            {slide.tag && (
+              <span className="absolute top-10 left-10 bg-white/95 backdrop-blur-md text-gray-900 text-sm font-black px-6 py-3 rounded-full shadow-2xl uppercase tracking-wider">
+                {slide.tag}
+              </span>
+            )}
+
+            {/* Content */}
+            <div className="absolute bottom-16 left-16 z-10 max-w-2xl">
+              <h2 className="text-8xl font-black text-white leading-none tracking-tighter mb-4 drop-shadow-2xl">
+                {slide.title}
+              </h2>
+              <p className="text-4xl text-white/95 font-bold tracking-wide drop-shadow-xl mb-8">
+                {slide.subtitle}
+              </p>
+              <button className="bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-rose-600 hover:text-white transition-all duration-300 shadow-2xl hover:scale-105">
+                Shop Now
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Dots */}
-      <div className="flex justify-center gap-1.5 mt-3">
-        {heroSlides.map((_, i) => (
+      <div className="flex justify-center gap-3 mt-8">
+        {heroSlides.map((_, idx) => (
           <button
-            key={i}
-            onClick={() => setActive(i)}
+            key={idx}
+            onClick={() => setActive(idx)}
             className={`rounded-full transition-all duration-300 ${
-              i === active ? "w-5 h-1.5 bg-gray-800" : "w-1.5 h-1.5 bg-gray-300"
+              idx === active ? "w-12 h-3 bg-rose-600" : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
             }`}
           />
         ))}
