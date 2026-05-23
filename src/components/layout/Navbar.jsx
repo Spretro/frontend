@@ -1,139 +1,566 @@
-import { navCategories } from "../../data";
 import { useState } from "react";
 
-const Icon = ({ name, size = 20 }) => {
-  const icons = {
-    search: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
-    heart: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
-    bag: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
-    user: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-    menu: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
-    close: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
-  };
-  return icons[name];
-};
+import {
+  Search,
+  Heart,
+  ShoppingBag,
+  Menu,
+  User,
+  Shirt,
+  Sparkles,
+  Footprints,
+  Gem,
+  Watch,
+  Crown,
+  Tag,
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+  BadgeCheck,
+  ChevronDown,
+} from "lucide-react";
+
+const tickerItems = [
+  "FREE SHIPPING ABOVE ₹2999",
+  "SUMMER DROP LIVE NOW",
+  "FLAT 40% OFF ON SELECTED BRANDS",
+  "EASY 7 DAY RETURNS",
+];
+
+const categories = [
+  {
+    icon: <Shirt size={20} strokeWidth={1.8} />,
+    label: "Topwear",
+  },
+  {
+    icon: <Footprints size={20} strokeWidth={1.8} />,
+    label: "Sneakers",
+  },
+  {
+    icon: <Sparkles size={20} strokeWidth={1.8} />,
+    label: "Beauty",
+  },
+  {
+    icon: <Gem size={20} strokeWidth={1.8} />,
+    label: "Jewellery",
+  },
+  {
+    icon: <Watch size={20} strokeWidth={1.8} />,
+    label: "Watches",
+  },
+  {
+    icon: <Crown size={20} strokeWidth={1.8} />,
+    label: "Luxury",
+  },
+  {
+    icon: <Tag size={20} strokeWidth={1.8} />,
+    label: "Offers",
+  },
+];
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("Women");
+  const [activeCat, setActiveCat] = useState("Topwear");
+
+  const navLinks = [
+    "Women",
+    "Men",
+    "New In",
+    "Brands",
+    "Sale",
+  ];
+
+  const doubled = [...tickerItems, ...tickerItems];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-lg">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 md:px-10 py-3 md:py-5 bg-white border-b border-gray-100">
-        {/* Logo */}
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="text-2xl md:text-4xl font-black bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent tracking-tighter">
-            SPETRO
-          </div>
-          <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-rose-600 rounded-full animate-pulse" />
-        </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
-        {/* Search - Hidden on mobile */}
-        <div className="hidden md:flex flex-1 max-w-2xl mx-8 lg:mx-16">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search for products, brands and more..."
-              className="w-full pl-12 lg:pl-14 pr-24 lg:pr-28 py-3 lg:py-4 bg-gray-50 rounded-2xl text-sm outline-none focus:bg-white focus:ring-2 focus:ring-rose-200 transition-all shadow-sm"
-            />
-            <div className="absolute left-4 lg:left-5 top-1/2 -translate-y-1/2 text-gray-400">
-              <Icon name="search" size={20} />
-            </div>
-            <button className="absolute right-2 lg:right-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-rose-600 to-pink-600 text-white px-4 lg:px-5 py-2 rounded-xl text-xs font-bold hover:shadow-lg transition-all">
-              Search
-            </button>
-          </div>
-        </div>
+        *{
+          box-sizing:border-box;
+        }
 
-        {/* Right actions */}
-        <div className="flex items-center gap-4 md:gap-6 lg:gap-10">
-          {/* Mobile menu button */}
-          <button 
-            className="md:hidden text-gray-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <Icon name={mobileMenuOpen ? "close" : "menu"} size={24} />
-          </button>
+        body{
+          margin:0;
+          background:#F5F5F7;
+          font-family:'Inter',sans-serif;
+        }
 
-          {/* Desktop icons */}
-          <button className="hidden md:flex flex-col items-center gap-1 lg:gap-1.5 text-gray-700 hover:text-rose-600 transition-colors group">
-            <div className="relative">
-              <Icon name="heart" size={20} />
-              <span className="absolute -top-1 -right-1 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-rose-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <span className="text-[10px] lg:text-xs font-bold">Wishlist</span>
-          </button>
-          <button className="relative flex flex-col items-center gap-1 lg:gap-1.5 text-gray-700 hover:text-rose-600 transition-colors group">
-            <div className="relative">
-              <Icon name="bag" size={20} />
-              <span className="absolute -top-2 -right-2 bg-gradient-to-r from-rose-600 to-pink-600 text-white text-[9px] lg:text-[10px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow-lg">
-                0
-              </span>
-            </div>
-            <span className="hidden md:block text-[10px] lg:text-xs font-bold">Cart</span>
-          </button>
-          <button className="hidden md:flex flex-col items-center gap-1 lg:gap-1.5 text-gray-700 hover:text-rose-600 transition-colors group">
-            <Icon name="user" size={20} />
-            <span className="text-[10px] lg:text-xs font-bold">Profile</span>
-          </button>
-        </div>
-      </div>
+        .spretro-navbar{
+          width:100%;
+          background:white;
+          position:sticky;
+          top:0;
+          z-index:999;
+          box-shadow:0 1px 0 rgba(0,0,0,0.05);
+        }
 
-      {/* Mobile search */}
-      <div className="md:hidden px-4 py-3 bg-gray-50 border-b border-gray-200">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl text-sm outline-none focus:ring-2 focus:ring-rose-200 transition-all shadow-sm"
-          />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <Icon name="search" size={18} />
-          </div>
-        </div>
-      </div>
+        /* TICKER */
 
-      {/* Category nav - Desktop */}
-      <nav className="hidden md:flex items-center gap-2 lg:gap-3 px-4 md:px-10 py-3 lg:py-4 overflow-x-auto scrollbar-hide bg-gradient-to-r from-gray-50 via-white to-gray-50">
-        {navCategories.map((cat, i) => (
-          <button
-            key={i}
-            className={`flex flex-col items-center gap-1.5 lg:gap-2 px-4 lg:px-6 py-2 lg:py-3 rounded-2xl transition-all hover:bg-white hover:shadow-lg whitespace-nowrap ${
-              i === 0 ? "bg-gradient-to-br from-rose-50 to-pink-50 shadow-md border border-rose-100" : ""
-            }`}
-          >
-            <span className="text-2xl lg:text-3xl">{cat.icon}</span>
-            <span className="text-[10px] lg:text-xs font-black text-gray-800">{cat.label}</span>
-          </button>
-        ))}
-      </nav>
+        .spretro-ticker{
+          height:34px;
+          background:#6A2CFF;
+          overflow:hidden;
+          display:flex;
+          align-items:center;
+        }
 
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-          <nav className="grid grid-cols-3 gap-3 p-4">
-            {navCategories.map((cat, i) => (
-              <button
-                key={i}
-                className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-gray-50 transition-all"
-              >
-                <span className="text-3xl">{cat.icon}</span>
-                <span className="text-xs font-bold text-gray-800">{cat.label}</span>
-              </button>
+        .spretro-ticker-track{
+          display:flex;
+          white-space:nowrap;
+          animation:ticker 25s linear infinite;
+        }
+
+        @keyframes ticker{
+          0%{
+            transform:translateX(0);
+          }
+          100%{
+            transform:translateX(-50%);
+          }
+        }
+
+        .spretro-ticker-item{
+          display:flex;
+          align-items:center;
+          gap:12px;
+          padding:0 40px;
+          color:white;
+          font-size:11px;
+          font-weight:600;
+          letter-spacing:1px;
+          white-space:nowrap;
+        }
+
+        .spretro-dot{
+          width:4px;
+          height:4px;
+          border-radius:50%;
+          background:white;
+          flex-shrink:0;
+        }
+
+        /* MAIN NAVBAR */
+
+        .spretro-mainbar{
+          height:78px;
+          padding:0 32px;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          border-bottom:1px solid #EEEEEE;
+          background:white;
+        }
+
+        .spretro-left{
+          display:flex;
+          align-items:center;
+          gap:48px;
+        }
+
+        .spretro-logo{
+          display:flex;
+          flex-direction:column;
+          cursor:pointer;
+        }
+
+        .spretro-logo-main{
+          font-size:32px;
+          font-weight:900;
+          letter-spacing:-1.5px;
+          color:#111;
+          line-height:1;
+        }
+
+        .spretro-logo-dot{
+          color:#6A2CFF;
+        }
+
+        .spretro-logo-sub{
+          font-size:10px;
+          font-weight:600;
+          letter-spacing:3px;
+          color:#888;
+          margin-top:2px;
+          text-transform:uppercase;
+        }
+
+        .spretro-links{
+          display:flex;
+          align-items:center;
+          gap:28px;
+        }
+
+        .spretro-link{
+          font-size:14px;
+          font-weight:600;
+          color:#555;
+          text-decoration:none;
+          position:relative;
+          padding-bottom:5px;
+          transition:0.2s ease;
+        }
+
+        .spretro-link:hover{
+          color:#111;
+        }
+
+        .spretro-link::after{
+          content:'';
+          position:absolute;
+          left:0;
+          bottom:0;
+          width:0;
+          height:2px;
+          background:#6A2CFF;
+          transition:0.25s ease;
+        }
+
+        .spretro-link:hover::after{
+          width:100%;
+        }
+
+        .spretro-link.active{
+          color:#111;
+        }
+
+        .spretro-link.active::after{
+          width:100%;
+        }
+
+        .spretro-right{
+          display:flex;
+          align-items:center;
+          gap:10px;
+        }
+
+        /* SEARCH */
+
+        .spretro-search{
+          width:340px;
+          height:46px;
+          background:#F5F5F7;
+          border-radius:14px;
+          display:flex;
+          align-items:center;
+          gap:12px;
+          padding:0 16px;
+          color:#777;
+          border:1px solid transparent;
+          transition:0.2s ease;
+          cursor:text;
+        }
+
+        .spretro-search:hover{
+          background:white;
+          border-color:#6A2CFF;
+        }
+
+        .spretro-search-text{
+          font-size:13px;
+          font-weight:500;
+        }
+
+        /* ICON BUTTONS */
+
+        .spretro-icon-btn{
+          width:44px;
+          height:44px;
+          border:none;
+          border-radius:14px;
+          background:transparent;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          cursor:pointer;
+          color:#444;
+          transition:0.2s ease;
+          position:relative;
+        }
+
+        .spretro-icon-btn:hover{
+          background:#F5F5F7;
+          color:#111;
+        }
+
+        .spretro-cart-dot{
+          position:absolute;
+          top:9px;
+          right:9px;
+          width:8px;
+          height:8px;
+          border-radius:50%;
+          background:#6A2CFF;
+        }
+
+        /* MENU BUTTON */
+
+        .spretro-menu-btn{
+          height:46px;
+          padding:0 18px;
+          border:none;
+          border-radius:14px;
+          background:#111;
+          color:white;
+          display:flex;
+          align-items:center;
+          gap:8px;
+          font-size:13px;
+          font-weight:600;
+          cursor:pointer;
+          transition:0.2s ease;
+        }
+
+        .spretro-menu-btn:hover{
+          background:#6A2CFF;
+        }
+
+        /* CATEGORY STRIP */
+
+        .spretro-category-strip{
+          height:96px;
+          display:flex;
+          align-items:center;
+          gap:8px;
+          overflow-x:auto;
+          padding:0 24px;
+          background:white;
+          border-bottom:1px solid #EEEEEE;
+        }
+
+        .spretro-category-strip::-webkit-scrollbar{
+          display:none;
+        }
+
+        .spretro-category{
+          min-width:110px;
+          height:72px;
+          border-radius:18px;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          gap:8px;
+          cursor:pointer;
+          transition:0.2s ease;
+          color:#666;
+          background:transparent;
+          border:1px solid transparent;
+          flex-shrink:0;
+        }
+
+        .spretro-category:hover{
+          background:#F8F8FA;
+          color:#111;
+        }
+
+        .spretro-category.active{
+          background:#F3EEFF;
+          color:#6A2CFF;
+          border-color:#E3D8FF;
+        }
+
+        .spretro-category-label{
+          font-size:12px;
+          font-weight:600;
+        }
+
+        /* SERVICE STRIP */
+
+        .spretro-services{
+          height:58px;
+          display:flex;
+          align-items:center;
+          justify-content:space-around;
+          padding:0 24px;
+          background:white;
+        }
+
+        .spretro-service-item{
+          display:flex;
+          align-items:center;
+          gap:8px;
+          color:#555;
+          font-size:13px;
+          font-weight:600;
+          white-space:nowrap;
+        }
+
+        .spretro-service-item:hover{
+          color:#111;
+        }
+
+      `}</style>
+
+      <nav className="spretro-navbar">
+
+        {/* TICKER */}
+
+        <div className="spretro-ticker">
+          <div className="spretro-ticker-track">
+
+            {doubled.map((item, i) => (
+              <div key={i} className="spretro-ticker-item">
+                <span>{item}</span>
+                <span className="spretro-dot" />
+              </div>
             ))}
-          </nav>
-          <div className="border-t border-gray-200 p-4 space-y-3">
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all">
-              <Icon name="heart" size={20} />
-              <span className="text-sm font-bold">Wishlist</span>
-            </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all">
-              <Icon name="user" size={20} />
-              <span className="text-sm font-bold">Profile</span>
-            </button>
+
           </div>
         </div>
-      )}
-    </header>
+
+        {/* MAIN NAVBAR */}
+
+        <div className="spretro-mainbar">
+
+          {/* LEFT */}
+
+          <div className="spretro-left">
+
+            {/* LOGO */}
+
+            <div className="spretro-logo">
+
+              <div className="spretro-logo-main">
+                SPRETRO<span className="spretro-logo-dot">.</span>
+              </div>
+
+              <div className="spretro-logo-sub">
+                Fashion Commerce
+              </div>
+
+            </div>
+
+            {/* LINKS */}
+
+            <div className="spretro-links">
+
+              {navLinks.map((link) => (
+                <a
+                  key={link}
+                  href="#"
+                  className={`spretro-link ${
+                    activeLink === link ? "active" : ""
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveLink(link);
+                  }}
+                >
+                  {link}
+                </a>
+              ))}
+
+            </div>
+
+          </div>
+
+          {/* RIGHT */}
+
+          <div className="spretro-right">
+
+            {/* SEARCH */}
+
+            <div className="spretro-search">
+
+              <Search size={17} strokeWidth={2} />
+
+              <span className="spretro-search-text">
+                Search sneakers, kurtas, watches...
+              </span>
+
+            </div>
+
+            {/* WISHLIST */}
+
+            <button className="spretro-icon-btn">
+              <Heart size={19} strokeWidth={1.9} />
+            </button>
+
+            {/* PROFILE */}
+
+            <button className="spretro-icon-btn">
+              <User size={19} strokeWidth={1.9} />
+            </button>
+
+            {/* CART */}
+
+            <button className="spretro-icon-btn">
+
+              <ShoppingBag size={19} strokeWidth={1.9} />
+
+              <span className="spretro-cart-dot" />
+
+            </button>
+
+            {/* MENU */}
+
+            <button className="spretro-menu-btn">
+
+              <Menu size={17} strokeWidth={2.2} />
+
+              Menu
+
+              <ChevronDown size={15} strokeWidth={2.2} />
+
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* CATEGORY STRIP */}
+
+        <div className="spretro-category-strip">
+
+          {categories.map((cat) => (
+            <div
+              key={cat.label}
+              className={`spretro-category ${
+                activeCat === cat.label ? "active" : ""
+              }`}
+              onClick={() => setActiveCat(cat.label)}
+            >
+
+              {cat.icon}
+
+              <span className="spretro-category-label">
+                {cat.label}
+              </span>
+
+            </div>
+          ))}
+
+        </div>
+
+        {/* SERVICE STRIP */}
+
+        <div className="spretro-services">
+
+          <div className="spretro-service-item">
+            <Truck size={16} strokeWidth={2} />
+            <span>60 min delivery</span>
+          </div>
+
+          <div className="spretro-service-item">
+            <RotateCcw size={16} strokeWidth={2} />
+            <span>Easy returns</span>
+          </div>
+
+          <div className="spretro-service-item">
+            <ShieldCheck size={16} strokeWidth={2} />
+            <span>Secure payments</span>
+          </div>
+
+          <div className="spretro-service-item">
+            <BadgeCheck size={16} strokeWidth={2} />
+            <span>Authentic brands</span>
+          </div>
+
+        </div>
+
+      </nav>
+    </>
   );
 }
