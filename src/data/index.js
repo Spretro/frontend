@@ -3,113 +3,38 @@ export const heroSlides = [
     title: "FASHION",
     subtitle: "FORWARD",
     tag: "NEW",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80",
-    bg: "from-rose-400 to-pink-600"
+    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=80",
   },
   {
     title: "STREET",
     subtitle: "STYLE",
     tag: "TRENDING",
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
-    bg: "from-gray-700 to-gray-900"
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&q=80",
   },
   {
     title: "ETHNIC",
     subtitle: "ELEGANCE",
     tag: "HOT",
-    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80",
-    bg: "from-purple-500 to-pink-500"
+    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1400&q=80",
   },
   {
     title: "SUMMER",
     subtitle: "VIBES",
     tag: "SALE",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80",
-    bg: "from-amber-400 to-orange-500"
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1400&q=80",
   },
   {
     title: "WINTER",
     subtitle: "COLLECTION",
     tag: "NEW",
-    image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&q=80",
-    bg: "from-blue-600 to-indigo-700"
+    image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=1400&q=80",
   },
   {
     title: "LUXURY",
     subtitle: "EDITION",
     tag: "EXCLUSIVE",
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
-    bg: "from-slate-800 to-black"
-  }
-];
-
-export const navCategories = [
-  { label: "For You", icon: "💝" },
-  { label: "Women", icon: "👗" },
-  { label: "Men", icon: "👔" },
-  { label: "Beauty", icon: "💄" },
-  { label: "Accessories", icon: "👜" },
-  { label: "Footwear", icon: "👟" },
-  { label: "Home", icon: "🏠" },
-  { label: "Jewellery", icon: "💍" },
-  { label: "Gifting", icon: "🎁" },
-];
-
-export const shopCategories = [
-  { label: "Dresses", image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200&q=80" },
-  { label: "Men's Topwear", image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=200&q=80" },
-  { label: "Women's Topwear", image: "https://images.unsplash.com/photo-1564257577-d18b7c1a4095?w=200&q=80" },
-  { label: "Women's Ethnic", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&q=80" },
-  { label: "Women's Bottomwear", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=200&q=80" },
-  { label: "Men's Bottomwear", image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=200&q=80" },
-  { label: "Handbags", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=200&q=80" },
-  { label: "Beauty", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=200&q=80" },
-  { label: "Footwear", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&q=80" },
-  { label: "Jewellery", image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&q=80" },
-  { label: "Travel", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=80" },
-  { label: "Home Decor", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=200&q=80" },
-  { label: "Watches", image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=200&q=80" },
-  { label: "Sunglasses", image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=200&q=80" },
-  { label: "Sportswear", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=200&q=80" },
-  { label: "Kids Fashion", image: "https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=200&q=80" },
-  { label: "Lingerie", image: "https://images.unsplash.com/photo-1583846112568-e5d6c1c5a3e1?w=200&q=80" },
-  { label: "Sleepwear", image: "https://images.unsplash.com/photo-1564584217132-2271feaeb3c5?w=200&q=80" },
-];
-
-export const curatedCollections = [
-  { label: "WOMEN'S TOPWEAR", tag: "TRENDING", image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=300&q=80" },
-  { label: "WOMEN'S BOTTOMWEAR", tag: "TRENDING", image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&q=80" },
-  { label: "KURTAS", tag: "PAHELI", image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=300&q=80" },
-  { label: "MEN'S TOPWEAR", tag: "TREND", image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300&q=80" },
-  { label: "BOTTOMWEAR", tag: "TREND", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&q=80" },
-  { label: "ETHNIC", tag: "", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80" },
-  { label: "WINTER WEAR", tag: "NEW", image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=300&q=80" },
-  { label: "PARTY WEAR", tag: "HOT", image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=300&q=80" },
-  { label: "CASUAL WEAR", tag: "BEST", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=300&q=80" },
-  { label: "FORMAL WEAR", tag: "PREMIUM", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&q=80" },
-];
-
-export const beautyBags = [
-  { label: "CLUTCH", image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=200&q=80" },
-  { label: "TOTES", image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=200&q=80" },
-  { label: "PARTY BAGS", image: "https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=200&q=80" },
-  { label: "TROLLEY", image: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=200&q=80" },
-  { label: "BACKPACKS", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=80" },
-  { label: "DUFFEL BAG", image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?w=200&q=80" },
-  { label: "SLING BAGS", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&q=80" },
-  { label: "LAPTOP BAGS", image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=200&q=80" },
-];
-
-export const jewelleryItems = [
-  { label: "SAREES", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=200&q=80" },
-  { label: "SAREES", image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=200&q=80" },
-  { label: "DRESS/KURTI", image: "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=200&q=80" },
-  { label: "FOOTWEAR", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&q=80" },
-  { label: "FOOTWEAR", image: "https://images.unsplash.com/photo-1560343090-f0409e92791a?w=200&q=80" },
-  { label: "FOOTWEAR", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&q=80" },
-  { label: "SNEAKERS", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80" },
-  { label: "HEELS", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&q=80" },
-  { label: "SANDALS", image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=200&q=80" },
+    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1400&q=80",
+  },
 ];
 
 export const footerLinks = {

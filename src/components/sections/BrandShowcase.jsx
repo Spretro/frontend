@@ -1,142 +1,75 @@
-import { useState, useEffect } from "react";
+const mensCategories = [
+  { label: "Shirts", image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80" },
+  { label: "T-Shirts", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80" },
+  { label: "Kurta", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=500&q=80" },
+  { label: "Bottoms", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=80" },
+  { label: "Fragrances", image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500&q=80" },
+  { label: "Footwear", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" },
+  { label: "Belts & Wallets", image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=500&q=80" },
+  { label: "Backpacks", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
+];
 
-const brands = [
-  {
-    id: 1,
-    name: "LUXURY COLLECTION",
-    tagline: "Elegance Redefined",
-    discount: "40% OFF",
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
-    bg: "from-gray-900 via-gray-800 to-black",
-    accent: "from-gold-400 to-yellow-500"
-  },
-  {
-    id: 2,
-    name: "STREET STYLE",
-    tagline: "Urban Fashion",
-    discount: "BUY 2 GET 1",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80",
-    bg: "from-indigo-600 via-purple-600 to-pink-600",
-    accent: "from-cyan-400 to-blue-500"
-  },
-  {
-    id: 3,
-    name: "SUMMER VIBES",
-    tagline: "Beach Ready",
-    discount: "50% OFF",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80",
-    bg: "from-cyan-400 via-blue-400 to-indigo-500",
-    accent: "from-orange-400 to-red-500"
-  },
-  {
-    id: 4,
-    name: "WINTER WARMTH",
-    tagline: "Cozy Collection",
-    discount: "30% OFF",
-    image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&q=80",
-    bg: "from-slate-700 via-slate-600 to-slate-800",
-    accent: "from-rose-400 to-pink-500"
-  }
+const headerImages = [
+  "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=300&q=80",
+  "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&q=80",
 ];
 
 export default function BrandShowcase() {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % brands.length);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
-    <section className="px-4 md:px-8 py-8 md:py-12">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          {/* Left side - Slider */}
-          <div className="relative h-[500px] md:h-[600px] rounded-[32px] overflow-hidden shadow-2xl">
-            {brands.map((brand, idx) => (
-              <div
-                key={brand.id}
-                className={`absolute inset-0 transition-all duration-1000 ${
-                  idx === active ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
-                }`}
-              >
-                <div className={`relative h-full bg-gradient-to-br ${brand.bg}`}>
-                  {/* Background image */}
-                  <img
-                    src={brand.image}
-                    alt={brand.name}
-                    className="absolute inset-0 w-full h-full object-cover opacity-30"
-                  />
-
-                  {/* Animated grid pattern */}
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-                    backgroundSize: "50px 50px"
-                  }} />
-
-                  {/* Floating elements */}
-                  <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full backdrop-blur-sm animate-bounce" style={{ animationDuration: "3s" }} />
-                  <div className="absolute bottom-20 left-10 w-16 h-16 bg-white/10 rounded-lg backdrop-blur-sm animate-pulse" />
-
-                  {/* Content */}
-                  <div className="relative h-full flex flex-col justify-end p-6 md:p-10">
-                    <div className={`inline-block bg-gradient-to-r ${brand.accent} text-white text-xs md:text-sm font-black px-4 md:px-6 py-2 md:py-3 rounded-full mb-4 md:mb-6 shadow-xl w-fit`}>
-                      {brand.discount}
-                    </div>
-                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 md:mb-4 tracking-tighter drop-shadow-2xl">
-                      {brand.name}
-                    </h3>
-                    <p className="text-xl md:text-2xl text-white/90 font-bold mb-6 md:mb-8 drop-shadow-lg">
-                      {brand.tagline}
-                    </p>
-                    <button className="bg-white text-gray-900 px-6 md:px-10 py-3 md:py-4 rounded-full font-black text-sm md:text-base hover:bg-gray-900 hover:text-white transition-all duration-300 shadow-2xl hover:scale-105 w-fit">
-                      EXPLORE COLLECTION
-                    </button>
-                  </div>
-                </div>
+    <section
+      className="py-12"
+      style={{ background: "linear-gradient(135deg, #EDF5FF 0%, #F5F0FF 100%)" }}
+    >
+      <div className="max-w-360 mx-auto px-4 md:px-8">
+        <div className="flex items-center justify-between mb-8 fade-in">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-1">The Curated</p>
+            <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+              Style For <em className="text-blue-500 not-italic">Him</em>
+            </h2>
+          </div>
+          <div className="hidden md:flex gap-3">
+            {headerImages.map((src, i) => (
+              <div key={i} className="w-20 h-28 rounded-2xl overflow-hidden shadow-lg ring-2 ring-white">
+                <img src={src} alt="style" className="w-full h-full object-cover" />
               </div>
             ))}
+          </div>
+        </div>
 
-            {/* Navigation dots */}
-            <div className="absolute bottom-6 left-6 flex gap-2 z-20">
-              {brands.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActive(idx)}
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
-                    idx === active ? "bg-white w-8 md:w-12" : "bg-white/50"
-                  }`}
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-3">
+          {mensCategories.map((cat, i) => (
+            <div
+              key={i}
+              className="shrink-0 cursor-pointer group fade-in-up"
+              style={{ animationDelay: `${i * 0.07}s` }}
+            >
+              <div
+                className="relative rounded-3xl overflow-hidden group-hover:-translate-y-2 transition-all duration-300"
+                style={{
+                  width: "clamp(170px, 17vw, 220px)",
+                  aspectRatio: "3/4",
+                  boxShadow: "0 4px 20px rgba(106,44,255,0.08)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.boxShadow = "0 12px 40px rgba(59,130,246,0.25)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.boxShadow = "0 4px 20px rgba(106,44,255,0.08)")
+                }
+              >
+                <img
+                  src={cat.image}
+                  alt={cat.label}
+                  className="w-full h-full object-cover group-hover:scale-107 transition-transform duration-600"
                 />
-              ))}
-            </div>
-          </div>
-
-          {/* Right side - Features grid */}
-          <div className="grid grid-cols-2 gap-4 md:gap-6">
-            {[
-              { icon: "🎁", title: "Free Gifts", desc: "On orders above $50", bg: "from-pink-100 to-rose-100" },
-              { icon: "🚚", title: "Fast Delivery", desc: "2-3 business days", bg: "from-blue-100 to-cyan-100" },
-              { icon: "💳", title: "Easy Returns", desc: "30 days guarantee", bg: "from-purple-100 to-pink-100" },
-              { icon: "⭐", title: "Premium Quality", desc: "Verified products", bg: "from-amber-100 to-yellow-100" }
-            ].map((feature, idx) => (
-              <div
-                key={idx}
-                className={`bg-gradient-to-br ${feature.bg} rounded-3xl p-6 md:p-8 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl cursor-pointer group`}
-              >
-                <div className="text-4xl md:text-5xl mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h4 className="text-lg md:text-xl font-black text-gray-900 mb-2 tracking-tight">
-                  {feature.title}
-                </h4>
-                <p className="text-xs md:text-sm text-gray-600 font-medium">
-                  {feature.desc}
-                </p>
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
+                <span className="absolute bottom-4 left-0 right-0 text-center text-white font-black text-sm uppercase tracking-wide drop-shadow-lg">
+                  {cat.label}
+                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

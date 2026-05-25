@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import {
   Search,
@@ -28,47 +28,32 @@ const tickerItems = [
 ];
 
 const categories = [
-  {
-    icon: <Shirt size={20} strokeWidth={1.8} />,
-    label: "Topwear",
-  },
-  {
-    icon: <Footprints size={20} strokeWidth={1.8} />,
-    label: "Sneakers",
-  },
-  {
-    icon: <Sparkles size={20} strokeWidth={1.8} />,
-    label: "Beauty",
-  },
-  {
-    icon: <Gem size={20} strokeWidth={1.8} />,
-    label: "Jewellery",
-  },
-  {
-    icon: <Watch size={20} strokeWidth={1.8} />,
-    label: "Watches",
-  },
-  {
-    icon: <Crown size={20} strokeWidth={1.8} />,
-    label: "Luxury",
-  },
-  {
-    icon: <Tag size={20} strokeWidth={1.8} />,
-    label: "Offers",
-  },
+  { icon: <Shirt size={20} strokeWidth={1.8} />, label: "Topwear", path: "/category/topwear" },
+  { icon: <Footprints size={20} strokeWidth={1.8} />, label: "Sneakers", path: "/category/sneakers" },
+  { icon: <Sparkles size={20} strokeWidth={1.8} />, label: "Beauty", path: "/category/beauty" },
+  { icon: <Gem size={20} strokeWidth={1.8} />, label: "Jewellery", path: "/category/jewellery" },
+  { icon: <Watch size={20} strokeWidth={1.8} />, label: "Watches", path: "/category/watches" },
+  { icon: <Crown size={20} strokeWidth={1.8} />, label: "Luxury", path: "/category/luxury" },
+  { icon: <Tag size={20} strokeWidth={1.8} />, label: "Offers", path: "/category/offers" },
 ];
 
-export default function Navbar() {
-  const [activeLink, setActiveLink] = useState("Women");
-  const [activeCat, setActiveCat] = useState("Topwear");
+const navLinks = [
+  { label: "Women", path: "/women" },
+  { label: "Men", path: "/men" },
+  { label: "New In", path: "/new-in" },
+  { label: "Brands", path: "/brands" },
+  { label: "Sale", path: "/sale" },
+];
 
-  const navLinks = [
-    "Women",
-    "Men",
-    "New In",
-    "Brands",
-    "Sale",
-  ];
+const PATH_TO_LINK = Object.fromEntries(navLinks.map((l) => [l.path, l.label]));
+const PATH_TO_CAT = Object.fromEntries(categories.map((c) => [c.path, c.label]));
+
+export default function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const activeLink = PATH_TO_LINK[location.pathname] || "";
+  const activeCat = PATH_TO_CAT[location.pathname] || "Topwear";
 
   const doubled = [...tickerItems, ...tickerItems];
 
@@ -391,6 +376,103 @@ export default function Navbar() {
           color:#111;
         }
 
+        /* ── TABLET (max 1023px) ── */
+        @media (max-width:1023px){
+          .spretro-mainbar{
+            padding:0 16px;
+          }
+          .spretro-left{
+            gap:20px;
+          }
+          .spretro-links{
+            gap:16px;
+          }
+          .spretro-search{
+            width:200px;
+          }
+          .spretro-logo-main{
+            font-size:26px;
+          }
+        }
+
+        /* ── MOBILE (max 767px) ── */
+        @media (max-width:767px){
+          .spretro-mainbar{
+            height:60px;
+            padding:0 14px;
+          }
+          .spretro-logo-main{
+            font-size:22px;
+            letter-spacing:-1px;
+          }
+          .spretro-logo-sub{
+            display:none;
+          }
+          .spretro-links{
+            display:none;
+          }
+          .spretro-search{
+            display:none;
+          }
+          .spretro-icon-btn{
+            width:36px;
+            height:36px;
+            border-radius:10px;
+          }
+          .spretro-menu-btn{
+            height:38px;
+            padding:0 12px;
+            font-size:12px;
+            border-radius:10px;
+            gap:5px;
+          }
+          .spretro-right{
+            gap:4px;
+          }
+          .spretro-category-strip{
+            height:76px;
+            padding:0 10px;
+            gap:4px;
+          }
+          .spretro-category{
+            min-width:72px;
+            height:60px;
+            border-radius:14px;
+            gap:5px;
+          }
+          .spretro-category-label{
+            font-size:10px;
+          }
+          .spretro-services{
+            height:40px;
+            padding:0 14px;
+            justify-content:flex-start;
+            gap:20px;
+            overflow-x:auto;
+          }
+          .spretro-services::-webkit-scrollbar{
+            display:none;
+          }
+          .spretro-service-item{
+            font-size:11px;
+            flex-shrink:0;
+          }
+          .spretro-ticker-item{
+            padding:0 20px;
+            font-size:10px;
+          }
+        }
+
+        /* ── SMALL MOBILE (max 479px) ── */
+        @media (max-width:479px){
+          .spretro-logo-main{
+            font-size:20px;
+          }
+          .spretro-menu-btn span:last-child{
+            display:none;
+          }
+        }
+
       `}</style>
 
       <nav className="spretro-navbar">
@@ -438,17 +520,17 @@ export default function Navbar() {
 
               {navLinks.map((link) => (
                 <a
-                  key={link}
-                  href="#"
+                  key={link.label}
+                  href={link.path}
                   className={`spretro-link ${
-                    activeLink === link ? "active" : ""
+                    activeLink === link.label ? "active" : ""
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveLink(link);
+                    navigate(link.path);
                   }}
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
 
@@ -520,7 +602,7 @@ export default function Navbar() {
               className={`spretro-category ${
                 activeCat === cat.label ? "active" : ""
               }`}
-              onClick={() => setActiveCat(cat.label)}
+              onClick={() => navigate(cat.path)}
             >
 
               {cat.icon}

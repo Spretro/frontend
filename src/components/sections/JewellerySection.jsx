@@ -1,44 +1,70 @@
-import { jewelleryItems } from "../../data";
-
-function JewelleryCard({ label, image }) {
-  return (
-    <div className="flex flex-col items-center gap-3 md:gap-4 flex-shrink-0 cursor-pointer group">
-      <div className="w-36 h-44 md:w-48 md:h-60 rounded-2xl md:rounded-3xl overflow-hidden relative shadow-xl group-hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-        <img src={image} alt={label} className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        
-        {/* Shine effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-        
-        <div className="absolute bottom-3 md:bottom-5 left-0 right-0 text-center">
-          <span className="text-sm md:text-base font-black drop-shadow-2xl tracking-wide text-white">{label}</span>
-          <div className="mt-1.5 md:mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button className="bg-white/90 backdrop-blur-sm text-gray-900 px-3 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold hover:bg-rose-600 hover:text-white transition-all">
-              Shop Now
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+const trendingStyles = [
+  { label: "Sarees", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80" },
+  { label: "Kurtas", image: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=500&q=80" },
+  { label: "Dress / Kurti", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80" },
+  { label: "Sneakers", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" },
+  { label: "Heels", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80" },
+  { label: "Sandals", image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&q=80" },
+  { label: "Sports Shoes", image: "https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500&q=80" },
+  { label: "Loafers", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&q=80" },
+];
 
 export default function JewellerySection() {
   return (
-    <section className="bg-gradient-to-br from-white via-purple-50 to-white py-8 md:py-12 px-4 md:px-8 rounded-[24px] md:rounded-[32px] mx-4 md:mx-8 shadow-xl border border-purple-100 mb-6 md:mb-10">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 gap-3">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">JEWELLERY</h2>
-          <p className="text-sm md:text-base text-gray-500 font-semibold mt-1 tracking-wide">WE LOVE FASHION & BEAUTY</p>
+    <section
+      className="py-14"
+      style={{ background: "linear-gradient(135deg, #FAFAFA 0%, #F5F0FF 100%)" }}
+    >
+      <div className="max-w-360 mx-auto px-4 md:px-8">
+        <div className="flex items-end justify-between mb-10 fade-in">
+          <div>
+            <span className="text-xs font-bold text-[#6A2CFF] uppercase tracking-widest">What's Hot</span>
+            <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mt-1 leading-none">
+              Trending <em className="text-[#6A2CFF] not-italic">Styles</em>
+            </h2>
+          </div>
+          <button className="text-sm font-bold text-[#6A2CFF] hover:underline flex items-center gap-1 mb-1">
+            View All
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
-        <button className="bg-gradient-to-r from-rose-600 to-pink-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-bold text-xs md:text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
-          View Collection
-        </button>
-      </div>
-      <div className="flex gap-4 md:gap-8 mt-6 md:mt-8 overflow-x-auto scrollbar-hide pb-4">
-        {jewelleryItems.map((item, i) => (
-          <JewelleryCard key={i} {...item} />
-        ))}
+
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-3">
+          {trendingStyles.map((item, i) => (
+            <div
+              key={i}
+              className="shrink-0 cursor-pointer group fade-in-up"
+              style={{ animationDelay: `${i * 0.07}s` }}
+            >
+              <div
+                className="relative rounded-3xl overflow-hidden group-hover:-translate-y-2 transition-all duration-300"
+                style={{
+                  width: "clamp(170px, 17vw, 220px)",
+                  aspectRatio: "3/4",
+                  boxShadow: "0 4px 20px rgba(106,44,255,0.08)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.boxShadow = "0 16px 48px rgba(106,44,255,0.22)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.boxShadow = "0 4px 20px rgba(106,44,255,0.08)")
+                }
+              >
+                <img
+                  src={item.image}
+                  alt={item.label}
+                  className="w-full h-full object-cover group-hover:scale-107 transition-transform duration-600"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
+                <span className="absolute bottom-4 left-0 right-0 text-center text-white font-black text-sm uppercase tracking-wide drop-shadow-lg">
+                  {item.label}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
