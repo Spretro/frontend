@@ -1,1 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Primary Brand Color */
+    --color-purple: #6A2CFF;
+    
+    /* Secondary Colors */
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-light-grey: #F5F5F7;
+    --color-mid-grey: #BDBDBD;
+    
+    /* Promotional Colors */
+    --color-orange: #FF6A00;
+    --color-red: #FF3B30;
+  }
+
+  body {
+    font-family: Inter, Roboto, system-ui, sans-serif;
+  }
+}

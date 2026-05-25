@@ -1,18 +1,270 @@
-# React + Vite
+# Spretro Frontend - Product Page
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React-based product page application built with Vite, Tailwind CSS, and React Router.
 
-Currently, two official plugins are available:
+## 📋 Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project is a fully functional e-commerce product page showcasing best practices in React development, responsive design, and user experience. The application displays detailed product information, images, pricing, reviews, and similar product recommendations.
 
-## React Compiler
+## 🎯 Key Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Responsive Design** - Mobile-first approach with breakpoints for all devices
+- **Product Gallery** - Interactive image carousel with thumbnail navigation
+- **Product Info** - Dynamic pricing, size/color selection, quantity control
+- **Reviews System** - Customer reviews display and review submission
+- **Similar Items** - Product carousel with pagination
+- **Trust Badges** - Security, genuine product, and return policy indicators
+- **Error Handling** - Comprehensive error boundaries and fallback UI
+- **Performance Optimized** - React.memo, useCallback, useMemo for optimization
+- **Accessibility** - ARIA labels, semantic HTML, keyboard navigation
 
-Note: This will impact Vite dev & build performances.
+## 🚀 Quick Start
 
-## Expanding the ESLint configuration
+### Prerequisites
+- Node.js 16+ 
+- npm or yarn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linter
+npm run lint
+```
+
+The application will start at `http://localhost:5173`
+
+## 📁 Project Structure
+
+```
+src/
+├── components/              # Reusable components
+│   ├── ErrorBoundary.jsx   # Error handling wrapper
+│   └── LoadingSkeletons.jsx # Loading states
+│
+├── pages/
+│   ├── Home.jsx            # Home page
+│   └── ProductPage/        # Product page directory
+│       ├── ProductPage.jsx # Main product page
+│       ├── mockData.json   # Mock product data
+│       ├── components/     # Product-specific components
+│       │   ├── ProductGallery.jsx
+│       │   ├── ProductInfo.jsx
+│       │   ├── ProductTabs.jsx
+│       │   ├── ProductReviews.jsx
+│       │   └── SimilarItems.jsx
+│       └── hooks/
+│           └── useProduct.js
+│
+├── utils/
+│   ├── constants.js        # App constants
+│   └── helpers.js          # Utility functions
+│
+├── App.jsx                 # Router configuration
+├── main.jsx                # Entry point
+└── index.css               # Global styles
+
+public/                     # Static assets
+```
+
+## 🔧 Technologies Used
+
+- **React 19.2** - UI library
+- **Vite 8** - Build tool and dev server
+- **React Router 7.15** - Client-side routing
+- **Tailwind CSS 4.3** - Utility-first CSS
+- **Lucide React** - Icon library
+- **ESLint** - Code linting
+- **Babel** - JavaScript compiler with React compiler
+
+## 📱 Responsive Breakpoints
+
+- **Mobile**: Default (< 640px)
+- **Tablet**: `sm:` (640px+)
+- **Desktop**: `md:` (768px+), `lg:` (1024px+)
+- **Large Desktop**: `xl:` (1280px+)
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary**: Purple (#6A2CFF)
+- **Secondary**: Black (#000000), White (#FFFFFF)
+- **Accent**: Orange (#FF6A00), Red (#FF3B30)
+- **Neutral**: Light Grey (#F5F5F7), Mid Grey (#BDBDBD)
+
+### Typography
+- **Font Family**: Inter, Roboto, system-ui, sans-serif
+- **Weights**: 400, 500, 600, 700, 800
+
+## 🧩 Main Components
+
+### ProductPage
+The main component that orchestrates all product-related sub-components.
+
+### ProductGallery
+- Image carousel with navigation
+- Thumbnail gallery with scroll
+- Error handling for missing images
+- Lazy loading support
+
+### ProductInfo
+- Product header and description
+- Pricing with discount percentage
+- Size and color selection
+- Quantity selector
+- Add to cart functionality
+
+### ProductReviews
+- Display customer reviews
+- Review submission form
+- Rating display with stars
+- Form validation
+
+### ProductTabs
+- Product specifications
+- Detailed description
+- Tab switching interface
+
+### SimilarItems
+- Product carousel
+- Navigation buttons
+- Wishlist functionality
+- "Try & Buy" badges
+
+## 🔗 Routing
+
+```
+/                    → Home page
+/product             → Product page (default product)
+/product/:productId  → Product page (specific product)
+```
+
+## 📊 Mock Data
+
+Mock product data is stored in `src/pages/ProductPage/mockData.json` and includes:
+- Product details (name, brand, price, images)
+- Size and color options
+- Customer reviews
+- Similar products
+- Special offers
+
+## ⚙️ Configuration Files
+
+### tailwind.config.js
+Tailwind CSS configuration with custom colors and theme extensions.
+
+### vite.config.js
+Vite configuration with React plugin, Babel support, and Tailwind CSS integration.
+
+### eslint.config.js
+ESLint rules for code quality including React hooks validation.
+
+## 🔐 Error Handling
+
+- **Error Boundary**: Catches React component errors
+- **Fallback UI**: Graceful error display with recovery options
+- **Image Error Handling**: Placeholder images for failed loads
+- **Validation**: Form and input validation with error messages
+
+## 🚨 Known TODOs
+
+- [ ] Replace mock data with actual API endpoints
+- [ ] Implement real cart functionality
+- [ ] Add user authentication
+- [ ] Implement wishlist persistence
+- [ ] Add image optimization
+- [ ] Setup production API calls
+- [ ] Add analytics tracking
+- [ ] Implement payment integration
+
+## 📚 Best Practices
+
+### Component Structure
+- Single responsibility per component
+- Props validation with clear defaults
+- Clear JSDoc comments for all functions
+- Consistent naming conventions
+
+### Performance
+- Use `useCallback` for event handlers passed to children
+- Use `useMemo` for expensive computations
+- Lazy load images with `loading="lazy"`
+- Avoid unnecessary re-renders
+
+### Accessibility
+- Use semantic HTML elements
+- Include ARIA labels for interactive elements
+- Support keyboard navigation
+- Maintain proper color contrast
+
+### Code Quality
+- ESLint rules enforced
+- Consistent formatting
+- No unused imports or variables
+- Clear error messages
+
+## 🤝 Contributing
+
+When adding new features:
+1. Follow the existing component structure
+2. Add JSDoc comments
+3. Use existing utility functions
+4. Test on multiple breakpoints
+5. Update this documentation
+
+## 📝 Development Guidelines
+
+### Adding a New Component
+1. Create in appropriate directory
+2. Add JSDoc comments
+3. Include prop defaults
+4. Handle error cases
+5. Test responsiveness
+
+### Adding Utility Functions
+1. Place in `utils/` directory
+2. Add JSDoc comments
+3. Export explicitly
+4. Add unit tests if complex
+
+### Styling
+- Use Tailwind classes for styling
+- Follow mobile-first approach
+- Test on all breakpoints
+- Use custom theme variables for colors
+
+## 🐛 Debugging
+
+Enable React development tools:
+- React Developer Tools browser extension
+- React Profiler for performance analysis
+- Console for error tracking
+
+## 📦 Building for Production
+
+```bash
+npm run build
+```
+
+Output will be in the `dist/` folder. Ready for deployment.
+
+## 📞 Support
+
+For questions or issues, please refer to the documentation files:
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Project structure
+- [SETUP.md](./SETUP.md) - Detailed setup guide
+- [COMPONENTS.md](./COMPONENTS.md) - Component documentation
+- [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Code guidelines
+
+---
+
+**Last Updated**: May 2026
+**Version**: 1.0.0
