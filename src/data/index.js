@@ -38,7 +38,7 @@ export const heroSlides = [
 ];
 
 export const footerLinks = {
-  help: ["About Us", "Careers", "FAQs", "Terms & Conditions", "Sitemap"],
+  help: ["Contact Us", "About Us", "Careers", "FAQs", "Terms & Conditions", "Sitemap"],
   quickLinks: ["Shop Us", "Stores"],
   topCategories: ["Beauty", "Women", "Jewellery", "Footwear", "Dresses", "Tops", "Kurtis", "Jeans"],
   aboutUs: ["Who We Are"],

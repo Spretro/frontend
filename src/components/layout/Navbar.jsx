@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -19,6 +19,12 @@ import {
   ShieldCheck,
   BadgeCheck,
   ChevronDown,
+  Package,
+  Settings,
+  HelpCircle,
+  Star,
+  Zap,
+  Gift,
 } from "lucide-react";
 
 const tickerItems = [
@@ -54,6 +60,9 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activePanel, setActivePanel] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const panelTimer = useRef(null);
 
   const activeLink = PATH_TO_LINK[location.pathname] || "";
   const activeCat = PATH_TO_CAT[location.pathname] || "Topwear";
@@ -64,6 +73,19 @@ export default function Navbar() {
       navigate(`/search?q=${encodeURIComponent(q)}`);
       setSearchQuery("");
     }
+  };
+
+  const openPanel = (name) => {
+    clearTimeout(panelTimer.current);
+    setActivePanel(name);
+  };
+
+  const closePanel = () => {
+    panelTimer.current = setTimeout(() => setActivePanel(null), 120);
+  };
+
+  const keepPanel = () => {
+    clearTimeout(panelTimer.current);
   };
 
   const doubled = [...tickerItems, ...tickerItems];
@@ -413,6 +435,377 @@ export default function Navbar() {
           color:#111;
         }
 
+        /* DROPDOWN PANELS */
+
+        .spretro-panel-wrap{
+          position:relative;
+        }
+
+        .spretro-mini-panel{
+          position:absolute;
+          top:calc(100% + 12px);
+          right:0;
+          background:white;
+          border-radius:20px;
+          box-shadow:0 16px 56px rgba(0,0,0,0.14), 0 4px 16px rgba(106,44,255,0.1);
+          border:1px solid #F0EAFF;
+          overflow:hidden;
+          z-index:1000;
+          animation:panelIn 0.18s ease;
+        }
+
+        @keyframes panelIn{
+          from{ opacity:0; transform:translateY(-8px) scale(0.97); }
+          to{ opacity:1; transform:translateY(0) scale(1); }
+        }
+
+        .spretro-panel-header{
+          padding:14px 18px 12px;
+          display:flex;
+          align-items:center;
+          gap:10px;
+        }
+
+        .spretro-panel-header-icon{
+          width:34px;
+          height:34px;
+          border-radius:10px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-shrink:0;
+        }
+
+        .spretro-panel-header-title{
+          font-size:14px;
+          font-weight:800;
+          color:#111;
+          line-height:1.1;
+        }
+
+        .spretro-panel-header-sub{
+          font-size:11px;
+          color:#888;
+          font-weight:500;
+          margin-top:1px;
+        }
+
+        .spretro-panel-divider{
+          height:1px;
+          background:#F3F3F6;
+          margin:0 18px;
+        }
+
+        .spretro-panel-body{
+          padding:12px 8px;
+        }
+
+        .spretro-panel-link{
+          display:flex;
+          align-items:center;
+          gap:10px;
+          padding:9px 12px;
+          border-radius:12px;
+          cursor:pointer;
+          transition:0.15s ease;
+          text-decoration:none;
+          color:#333;
+          font-size:13px;
+          font-weight:600;
+          border:none;
+          background:transparent;
+          width:100%;
+          text-align:left;
+        }
+
+        .spretro-panel-link:hover{
+          background:#F5F0FF;
+          color:#6A2CFF;
+        }
+
+        .spretro-panel-link-icon{
+          width:30px;
+          height:30px;
+          border-radius:9px;
+          background:#F5F5F7;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-shrink:0;
+          transition:0.15s ease;
+          color:#555;
+        }
+
+        .spretro-panel-link:hover .spretro-panel-link-icon{
+          background:#EDE4FF;
+          color:#6A2CFF;
+        }
+
+        .spretro-panel-empty{
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          padding:20px 18px 16px;
+          gap:8px;
+        }
+
+        .spretro-panel-empty-icon{
+          width:48px;
+          height:48px;
+          border-radius:16px;
+          background:#F5F0FF;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#6A2CFF;
+        }
+
+        .spretro-panel-empty-text{
+          font-size:13px;
+          font-weight:700;
+          color:#111;
+        }
+
+        .spretro-panel-empty-sub{
+          font-size:11px;
+          color:#aaa;
+          font-weight:500;
+          text-align:center;
+          line-height:1.4;
+        }
+
+        .spretro-panel-cta{
+          display:block;
+          width:calc(100% - 36px);
+          margin:0 18px 14px;
+          padding:10px;
+          border-radius:12px;
+          background:#6A2CFF;
+          color:white;
+          font-size:12px;
+          font-weight:700;
+          text-align:center;
+          border:none;
+          cursor:pointer;
+          transition:0.2s ease;
+        }
+
+        .spretro-panel-cta:hover{
+          background:#5A1EEF;
+        }
+
+        .spretro-panel-cta-outline{
+          background:transparent;
+          border:1.5px solid #6A2CFF;
+          color:#6A2CFF;
+        }
+
+        .spretro-panel-cta-outline:hover{
+          background:#F3EEFF;
+        }
+
+        /* MEGA MENU */
+
+        .spretro-mega-wrap{
+          position:relative;
+        }
+
+        .spretro-mega-panel{
+          position:absolute;
+          top:calc(100% + 12px);
+          right:0;
+          width:540px;
+          background:white;
+          border-radius:22px;
+          box-shadow:0 20px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(106,44,255,0.1);
+          border:1px solid #F0EAFF;
+          overflow:hidden;
+          z-index:1000;
+          animation:panelIn 0.18s ease;
+        }
+
+        .spretro-mega-top{
+          padding:18px 20px 14px;
+          background:linear-gradient(135deg,#6A2CFF 0%,#9B6DFF 100%);
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+        }
+
+        .spretro-mega-title{
+          font-size:16px;
+          font-weight:900;
+          color:white;
+          letter-spacing:-0.3px;
+        }
+
+        .spretro-mega-sub{
+          font-size:11px;
+          color:rgba(255,255,255,0.65);
+          font-weight:500;
+          margin-top:2px;
+        }
+
+        .spretro-mega-close{
+          width:28px;
+          height:28px;
+          border-radius:8px;
+          background:rgba(255,255,255,0.2);
+          border:none;
+          color:white;
+          font-size:16px;
+          font-weight:700;
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          transition:0.15s ease;
+          line-height:1;
+        }
+
+        .spretro-mega-close:hover{
+          background:rgba(255,255,255,0.35);
+        }
+
+        .spretro-mega-body{
+          padding:16px 20px 20px;
+        }
+
+        .spretro-mega-section-title{
+          font-size:10px;
+          font-weight:800;
+          letter-spacing:0.12em;
+          text-transform:uppercase;
+          color:#bbb;
+          margin-bottom:10px;
+        }
+
+        .spretro-mega-pills{
+          display:flex;
+          flex-wrap:wrap;
+          gap:6px;
+          margin-bottom:18px;
+        }
+
+        .spretro-mega-pill{
+          padding:6px 14px;
+          border-radius:100px;
+          background:#F5F5F7;
+          color:#444;
+          font-size:12px;
+          font-weight:700;
+          border:none;
+          cursor:pointer;
+          transition:0.15s ease;
+        }
+
+        .spretro-mega-pill:hover{
+          background:#6A2CFF;
+          color:white;
+        }
+
+        .spretro-mega-grid{
+          display:grid;
+          grid-template-columns:repeat(4,1fr);
+          gap:6px;
+          margin-bottom:18px;
+        }
+
+        .spretro-mega-cat{
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          gap:6px;
+          padding:10px 6px;
+          border-radius:14px;
+          cursor:pointer;
+          transition:0.15s ease;
+          border:1px solid transparent;
+          background:transparent;
+        }
+
+        .spretro-mega-cat:hover{
+          background:#F3EEFF;
+          border-color:#E3D8FF;
+        }
+
+        .spretro-mega-cat-icon{
+          width:36px;
+          height:36px;
+          border-radius:10px;
+          background:#F5F5F7;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#555;
+          transition:0.15s ease;
+        }
+
+        .spretro-mega-cat:hover .spretro-mega-cat-icon{
+          background:#EDE4FF;
+          color:#6A2CFF;
+        }
+
+        .spretro-mega-cat-label{
+          font-size:11px;
+          font-weight:700;
+          color:#333;
+          text-align:center;
+          line-height:1.2;
+        }
+
+        .spretro-mega-divider{
+          height:1px;
+          background:#F3F3F6;
+          margin-bottom:16px;
+        }
+
+        .spretro-mega-acc-grid{
+          display:grid;
+          grid-template-columns:repeat(2,1fr);
+          gap:6px;
+        }
+
+        .spretro-mega-acc-item{
+          display:flex;
+          align-items:center;
+          gap:9px;
+          padding:10px 12px;
+          border-radius:12px;
+          cursor:pointer;
+          transition:0.15s ease;
+          border:none;
+          background:transparent;
+          text-align:left;
+        }
+
+        .spretro-mega-acc-item:hover{
+          background:#F5F0FF;
+        }
+
+        .spretro-mega-acc-icon{
+          width:32px;
+          height:32px;
+          border-radius:9px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-shrink:0;
+        }
+
+        .spretro-mega-acc-label{
+          font-size:12px;
+          font-weight:700;
+          color:#222;
+        }
+
+        .spretro-mega-acc-sub{
+          font-size:10px;
+          color:#aaa;
+          font-weight:500;
+          margin-top:1px;
+        }
+
         /* ── TABLET (max 1023px) ── */
         @media (max-width:1023px){
           .spretro-mainbar{
@@ -497,6 +890,10 @@ export default function Navbar() {
           .spretro-ticker-item{
             padding:0 20px;
             font-size:10px;
+          }
+          .spretro-mini-panel,
+          .spretro-mega-panel{
+            display:none;
           }
         }
 
@@ -602,37 +999,314 @@ export default function Navbar() {
 
             {/* WISHLIST */}
 
-            <button className="spretro-icon-btn">
-              <Heart size={19} strokeWidth={1.9} />
-            </button>
+            <div
+              className="spretro-panel-wrap"
+              onMouseEnter={() => openPanel("wishlist")}
+              onMouseLeave={closePanel}
+            >
+              <button className="spretro-icon-btn">
+                <Heart size={19} strokeWidth={1.9} />
+              </button>
+
+              {activePanel === "wishlist" && (
+                <div
+                  className="spretro-mini-panel"
+                  style={{ width: 240 }}
+                  onMouseEnter={keepPanel}
+                  onMouseLeave={closePanel}
+                >
+                  <div className="spretro-panel-header">
+                    <div
+                      className="spretro-panel-header-icon"
+                      style={{ background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" }}
+                    >
+                      <Heart size={16} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="spretro-panel-header-title">Wishlist</div>
+                      <div className="spretro-panel-header-sub">0 saved items</div>
+                    </div>
+                  </div>
+                  <div className="spretro-panel-divider" />
+                  <div className="spretro-panel-empty">
+                    <div className="spretro-panel-empty-icon">
+                      <Heart size={22} strokeWidth={1.8} />
+                    </div>
+                    <div className="spretro-panel-empty-text">Nothing saved yet</div>
+                    <div className="spretro-panel-empty-sub">
+                      Tap the heart on any product<br />to save it here
+                    </div>
+                  </div>
+                  <button
+                    className="spretro-panel-cta"
+                    onClick={() => { navigate("/women"); setActivePanel(null); }}
+                  >
+                    Browse & Save
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* PROFILE */}
 
-            <button className="spretro-icon-btn">
-              <User size={19} strokeWidth={1.9} />
-            </button>
+            <div
+              className="spretro-panel-wrap"
+              onMouseEnter={() => openPanel("user")}
+              onMouseLeave={closePanel}
+            >
+              <button className="spretro-icon-btn">
+                <User size={19} strokeWidth={1.9} />
+              </button>
+
+              {activePanel === "user" && (
+                <div
+                  className="spretro-mini-panel"
+                  style={{ width: 260 }}
+                  onMouseEnter={keepPanel}
+                  onMouseLeave={closePanel}
+                >
+                  <div
+                    className="spretro-panel-header"
+                    style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14 }}
+                  >
+                    <div
+                      className="spretro-panel-header-icon"
+                      style={{ background: "rgba(106,44,255,0.4)" }}
+                    >
+                      <User size={16} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="spretro-panel-header-title" style={{ color: "white" }}>
+                        My Account
+                      </div>
+                      <div className="spretro-panel-header-sub" style={{ color: "rgba(255,255,255,0.5)" }}>
+                        Sign in to continue
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ padding: "10px 8px 4px", display: "flex", gap: 6 }}>
+                    <button className="spretro-panel-cta" style={{ width: "50%", margin: 0 }}>
+                      Sign In
+                    </button>
+                    <button className="spretro-panel-cta spretro-panel-cta-outline" style={{ width: "50%", margin: 0 }}>
+                      Register
+                    </button>
+                  </div>
+                  <div className="spretro-panel-body">
+                    {[
+                      { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage" },
+                      { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items" },
+                      { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers" },
+                      { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences" },
+                      { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact" },
+                    ].map((item) => (
+                      <button key={item.label} className="spretro-panel-link">
+                        <span className="spretro-panel-link-icon">{item.icon}</span>
+                        <span>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#222" }}>{item.label}</div>
+                          <div style={{ fontSize: 11, color: "#aaa", fontWeight: 500, marginTop: 1 }}>{item.sub}</div>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* CART */}
 
-            <button className="spretro-icon-btn">
+            <div
+              className="spretro-panel-wrap"
+              onMouseEnter={() => openPanel("cart")}
+              onMouseLeave={closePanel}
+            >
+              <button className="spretro-icon-btn">
+                <ShoppingBag size={19} strokeWidth={1.9} />
+                <span className="spretro-cart-dot" />
+              </button>
 
-              <ShoppingBag size={19} strokeWidth={1.9} />
+              {activePanel === "cart" && (
+                <div
+                  className="spretro-mini-panel"
+                  style={{ width: 260 }}
+                  onMouseEnter={keepPanel}
+                  onMouseLeave={closePanel}
+                >
+                  <div className="spretro-panel-header">
+                    <div
+                      className="spretro-panel-header-icon"
+                      style={{ background: "linear-gradient(135deg,#6A2CFF,#9B6DFF)" }}
+                    >
+                      <ShoppingBag size={16} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="spretro-panel-header-title">My Cart</div>
+                      <div className="spretro-panel-header-sub">0 items · ₹0</div>
+                    </div>
+                  </div>
+                  <div className="spretro-panel-divider" />
+                  <div className="spretro-panel-empty">
+                    <div className="spretro-panel-empty-icon">
+                      <ShoppingBag size={22} strokeWidth={1.8} />
+                    </div>
+                    <div className="spretro-panel-empty-text">Your cart is empty</div>
+                    <div className="spretro-panel-empty-sub">
+                      Add products to your cart<br />and they'll show up here
+                    </div>
+                  </div>
+                  <button
+                    className="spretro-panel-cta"
+                    onClick={() => { navigate("/women"); setActivePanel(null); }}
+                  >
+                    Start Shopping
+                  </button>
+                </div>
+              )}
+            </div>
 
-              <span className="spretro-cart-dot" />
+            {/* MENU — MEGA PANEL */}
 
-            </button>
+            <div className="spretro-mega-wrap">
+              <button
+                className="spretro-menu-btn"
+                onClick={() => setMenuOpen((o) => !o)}
+              >
+                <Menu size={17} strokeWidth={2.2} />
+                <span>Menu</span>
+                <ChevronDown
+                  size={15}
+                  strokeWidth={2.2}
+                  style={{ transition: "0.2s", transform: menuOpen ? "rotate(180deg)" : "none" }}
+                />
+              </button>
 
-            {/* MENU */}
+              {menuOpen && (
+                <div
+                  className="spretro-mega-panel"
+                  onMouseLeave={() => setMenuOpen(false)}
+                >
 
-            <button className="spretro-menu-btn">
+                  {/* Header */}
+                  <div className="spretro-mega-top">
+                    <div>
+                      <div className="spretro-mega-title">Explore SPRETRO.</div>
+                      <div className="spretro-mega-sub">Everything fashion, in one place</div>
+                    </div>
+                    <button
+                      className="spretro-mega-close"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
 
-              <Menu size={17} strokeWidth={2.2} />
+                  <div className="spretro-mega-body">
 
-              Menu
+                    {/* Quick shop */}
+                    <div className="spretro-mega-section-title">Quick Shop</div>
+                    <div className="spretro-mega-pills">
+                      {navLinks.map((l) => (
+                        <button
+                          key={l.label}
+                          className="spretro-mega-pill"
+                          onClick={() => { navigate(l.path); setMenuOpen(false); }}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                      <button
+                        className="spretro-mega-pill"
+                        onClick={() => { navigate("/new-in"); setMenuOpen(false); }}
+                        style={{ background: "#FFF0F3", color: "#E83E6C" }}
+                      >
+                        🔥 Hot Deals
+                      </button>
+                    </div>
 
-              <ChevronDown size={15} strokeWidth={2.2} />
+                    {/* Categories */}
+                    <div className="spretro-mega-section-title">Categories</div>
+                    <div className="spretro-mega-grid">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat.label}
+                          className="spretro-mega-cat"
+                          onClick={() => { navigate(cat.path); setMenuOpen(false); }}
+                        >
+                          <div className="spretro-mega-cat-icon">{cat.icon}</div>
+                          <div className="spretro-mega-cat-label">{cat.label}</div>
+                        </button>
+                      ))}
+                      <button
+                        className="spretro-mega-cat"
+                        onClick={() => { navigate("/new-in"); setMenuOpen(false); }}
+                      >
+                        <div className="spretro-mega-cat-icon">
+                          <Zap size={18} strokeWidth={2} />
+                        </div>
+                        <div className="spretro-mega-cat-label">New In</div>
+                      </button>
+                    </div>
 
-            </button>
+                    <div className="spretro-mega-divider" />
+
+                    {/* My Account */}
+                    <div className="spretro-mega-section-title">My Account</div>
+                    <div className="spretro-mega-acc-grid">
+                      {[
+                        { icon: <Package size={16} strokeWidth={2} />, label: "My Orders", sub: "Track deliveries", bg: "#EEF2FF", color: "#4F67E4", path: null },
+                        { icon: <Heart size={16} strokeWidth={2} />, label: "Wishlist", sub: "Saved items", bg: "#FFF0F5", color: "#E83E6C", path: null },
+                        { icon: <Gift size={16} strokeWidth={2} />, label: "Offers & Gifts", sub: "Exclusive deals", bg: "#FFF7ED", color: "#F97316", path: "/sale" },
+                        { icon: <Star size={16} strokeWidth={2} />, label: "Rewards", sub: "Points balance", bg: "#FFFBEB", color: "#D97706", path: null },
+                        { icon: <Settings size={16} strokeWidth={2} />, label: "Settings", sub: "Profile & prefs", bg: "#F1F5F9", color: "#475569", path: null },
+                        { icon: <HelpCircle size={16} strokeWidth={2} />, label: "Help", sub: "FAQs & support", bg: "#F0FDF4", color: "#16A34A", path: "/faqs" },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          className="spretro-mega-acc-item"
+                          onClick={() => { if (item.path) { navigate(item.path); setMenuOpen(false); } }}
+                        >
+                          <div
+                            className="spretro-mega-acc-icon"
+                            style={{ background: item.bg, color: item.color }}
+                          >
+                            {item.icon}
+                          </div>
+                          <div>
+                            <div className="spretro-mega-acc-label">{item.label}</div>
+                            <div className="spretro-mega-acc-sub">{item.sub}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="spretro-mega-divider" style={{ marginTop: 16 }} />
+
+                    {/* Help & Legal */}
+                    <div className="spretro-mega-section-title">Help & Legal</div>
+                    <div className="spretro-mega-pills">
+                      {[
+                        { label: "About Us", path: "/about-us" },
+                        { label: "FAQs", path: "/faqs" },
+                        { label: "Contact Us", path: "/contact-us" },
+                        { label: "Careers", path: "/careers" },
+                        { label: "Terms & Conditions", path: "/terms-and-conditions" },
+                        { label: "Sitemap", path: "/sitemap" },
+                      ].map((l) => (
+                        <button
+                          key={l.label}
+                          className="spretro-mega-pill"
+                          style={{ background: "#F0FDF4", color: "#16A34A" }}
+                          onClick={() => { navigate(l.path); setMenuOpen(false); }}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
 
           </div>
 

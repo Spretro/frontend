@@ -56,12 +56,12 @@ const NAV_COLUMNS = [
   {
     title: "Help",
     links: [
-      { label: "About Us", path: "/" },
-      { label: "Careers", path: "/" },
-      { label: "FAQs", path: "/" },
-      { label: "Terms & Conditions", path: "/" },
-      { label: "Privacy Policy", path: "/" },
-      { label: "Return Policy", path: "/" },
+      { label: "About Us", path: "/about-us" },
+      { label: "Careers", path: "/careers" },
+      { label: "FAQs", path: "/faqs" },
+      { label: "Terms & Conditions", path: "/terms-and-conditions" },
+      { label: "Contact Us", path: "/contact-us" },
+      { label: "Sitemap", path: "/sitemap" },
     ],
   },
 ];
