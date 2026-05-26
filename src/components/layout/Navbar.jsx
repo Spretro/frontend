@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -51,9 +52,18 @@ const PATH_TO_CAT = Object.fromEntries(categories.map((c) => [c.path, c.label]))
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const activeLink = PATH_TO_LINK[location.pathname] || "";
   const activeCat = PATH_TO_CAT[location.pathname] || "Topwear";
+
+  const handleSearch = () => {
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/search?q=${encodeURIComponent(q)}`);
+      setSearchQuery("");
+    }
+  };
 
   const doubled = [...tickerItems, ...tickerItems];
 
@@ -240,6 +250,32 @@ export default function Navbar() {
         .spretro-search:hover{
           background:white;
           border-color:#6A2CFF;
+        }
+
+        .spretro-search-input{
+          background:transparent;
+          border:none;
+          outline:none;
+          flex:1;
+          min-width:0;
+          font-family:'Inter',sans-serif;
+          font-size:13px;
+          font-weight:500;
+          color:#333;
+        }
+
+        .spretro-search-input::placeholder{
+          color:#888;
+        }
+
+        .spretro-search-icon{
+          cursor:pointer;
+          transition:0.2s ease;
+          color:#777;
+        }
+
+        .spretro-search-icon:hover{
+          color:#6A2CFF;
         }
 
         .spretro-search-text{
@@ -546,11 +582,20 @@ export default function Navbar() {
 
             <div className="spretro-search">
 
-              <Search size={17} strokeWidth={2} />
+              <Search
+                size={17}
+                strokeWidth={2}
+                className="spretro-search-icon"
+                onClick={handleSearch}
+              />
 
-              <span className="spretro-search-text">
-                Search sneakers, kurtas, watches...
-              </span>
+              <input
+                className="spretro-search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="Search sneakers, kurtas, watches..."
+              />
 
             </div>
 

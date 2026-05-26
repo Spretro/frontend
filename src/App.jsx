@@ -9,6 +9,7 @@ import NewIn from "./pages/NewIn";
 import Brands from "./pages/Brands";
 import Sale from "./pages/Sale";
 import CategoryPage from "./pages/Category";
+import SearchPage from "./pages/Search";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/brands" element={<Brands />} />
           <Route path="/sale" element={<Sale />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="/search" element={<SearchPage />} />
         </Routes>
         <Footer />
         <ScrollToTop />
