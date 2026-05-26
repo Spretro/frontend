@@ -17,17 +17,17 @@ export default function ProductCard({ product, badge }) {
 
   return (
     <div
-      className="group relative rounded-3xl overflow-hidden bg-white cursor-pointer transition-all duration-300 hover:-translate-y-1.5 flex flex-col"
+      className="group relative rounded-3xl overflow-hidden bg-white cursor-pointer transition-all duration-300 hover:-translate-y-1.5 flex flex-col h-full"
       style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.07)" }}
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 40px rgba(106,44,255,0.18)")}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 16px rgba(106,44,255,0.07)")}
     >
       {/* Image */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
+      <div className="relative overflow-hidden bg-gray-50" style={{ aspectRatio: "3/4" }}>
         <img
           src={product.thumbnail}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

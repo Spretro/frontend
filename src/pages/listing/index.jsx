@@ -263,7 +263,7 @@ export default function ListingPage({ config }) {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
               {visible.map((p) => (
-                <div key={p.id} className="fade-in-up" style={{ animationDelay: `${(visible.indexOf(p) % 10) * 0.04}s` }}>
+                <div key={p.id} className="fade-in-up h-full" style={{ animationDelay: `${(visible.indexOf(p) % 10) * 0.04}s` }}>
                   <ProductCard product={p} badge={config.badge} />
                 </div>
               ))}

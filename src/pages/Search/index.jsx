@@ -361,7 +361,7 @@ function SearchInner({ query }) {
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
                 {visible.map((p, idx) => (
-                  <div key={p.id} className="fade-in-up" style={{ animationDelay: `${(idx % 8) * 0.04}s` }}>
+                  <div key={p.id} className="fade-in-up h-full" style={{ animationDelay: `${(idx % 8) * 0.04}s` }}>
                     <ProductCard product={p} />
                   </div>
                 ))}
