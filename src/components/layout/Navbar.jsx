@@ -47,6 +47,13 @@ const navLinks = [
   { label: "Sale", path: "/sale" },
 ];
 
+const menuLinks = [
+  { label: "FAQs", path: "/faqs" },
+  { label: "Terms And Conditions", path: "/terms-and-conditions" },
+  { label: "Sitemap", path: "/sitemap" },
+  { label: "Careers", path: "/careers" },
+];
+
 const PATH_TO_LINK = Object.fromEntries(navLinks.map((l) => [l.path, l.label]));
 const PATH_TO_CAT = Object.fromEntries(categories.map((c) => [c.path, c.label]));
 
@@ -54,9 +61,12 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const activeLink = PATH_TO_LINK[location.pathname] || "";
   const activeCat = PATH_TO_CAT[location.pathname] || "Topwear";
+  const compact = location.pathname !== "/";
 
   const handleSearch = () => {
     const q = searchQuery.trim();
@@ -64,6 +74,12 @@ export default function Navbar() {
       navigate(`/search?q=${encodeURIComponent(q)}`);
       setSearchQuery("");
     }
+  };
+
+  const goTo = (path) => {
+    setMenuOpen(false);
+    setMoreOpen(false);
+    navigate(path);
   };
 
   const doubled = [...tickerItems, ...tickerItems];
@@ -185,10 +201,15 @@ export default function Navbar() {
         .spretro-links{
           display:flex;
           align-items:center;
-          gap:28px;
+          gap:22px;
         }
 
-        .spretro-link{
+        .spretro-more{
+          position:relative;
+        }
+
+        .spretro-link,
+        .spretro-more-btn{
           font-size:14px;
           font-weight:600;
           color:#555;
@@ -198,11 +219,23 @@ export default function Navbar() {
           transition:0.2s ease;
         }
 
-        .spretro-link:hover{
+        .spretro-more-btn{
+          border:none;
+          background:transparent;
+          display:flex;
+          align-items:center;
+          gap:4px;
+          cursor:pointer;
+          font-family:'Inter',sans-serif;
+        }
+
+        .spretro-link:hover,
+        .spretro-more-btn:hover{
           color:#111;
         }
 
-        .spretro-link::after{
+        .spretro-link::after,
+        .spretro-more-btn::after{
           content:'';
           position:absolute;
           left:0;
@@ -213,22 +246,59 @@ export default function Navbar() {
           transition:0.25s ease;
         }
 
-        .spretro-link:hover::after{
+        .spretro-link:hover::after,
+        .spretro-more-btn:hover::after{
           width:100%;
         }
 
-        .spretro-link.active{
+        .spretro-link.active,
+        .spretro-more-btn.active{
           color:#111;
         }
 
-        .spretro-link.active::after{
+        .spretro-link.active::after,
+        .spretro-more-btn.active::after{
           width:100%;
+        }
+
+        .spretro-more-menu{
+          position:absolute;
+          top:28px;
+          left:0;
+          width:230px;
+          border:1px solid #EEEEEE;
+          border-radius:14px;
+          background:white;
+          box-shadow:0 18px 50px rgba(17,17,17,0.12);
+          padding:8px;
+          display:grid;
+          gap:2px;
+          z-index:1002;
+        }
+
+        .spretro-more-menu a{
+          min-height:40px;
+          display:flex;
+          align-items:center;
+          border-radius:10px;
+          padding:0 12px;
+          color:#444;
+          font-size:13px;
+          font-weight:700;
+          text-decoration:none;
+          transition:0.2s ease;
+        }
+
+        .spretro-more-menu a:hover{
+          background:#F3EEFF;
+          color:#6A2CFF;
         }
 
         .spretro-right{
           display:flex;
           align-items:center;
           gap:10px;
+          position:relative;
         }
 
         /* SEARCH */
@@ -338,6 +408,38 @@ export default function Navbar() {
           background:#6A2CFF;
         }
 
+        .spretro-menu-dropdown{
+          position:absolute;
+          top:54px;
+          right:0;
+          width:240px;
+          border:1px solid #EEEEEE;
+          border-radius:14px;
+          background:white;
+          box-shadow:0 18px 50px rgba(17,17,17,0.12);
+          padding:8px;
+          display:grid;
+          gap:2px;
+        }
+
+        .spretro-menu-dropdown a{
+          min-height:42px;
+          display:flex;
+          align-items:center;
+          border-radius:10px;
+          padding:0 12px;
+          color:#444;
+          font-size:13px;
+          font-weight:700;
+          text-decoration:none;
+          transition:0.2s ease;
+        }
+
+        .spretro-menu-dropdown a:hover{
+          background:#F3EEFF;
+          color:#6A2CFF;
+        }
+
         /* CATEGORY STRIP */
 
         .spretro-category-strip{
@@ -413,6 +515,39 @@ export default function Navbar() {
           color:#111;
         }
 
+        .spretro-navbar.compact .spretro-mainbar{
+          height:64px;
+        }
+
+        .spretro-navbar.compact .spretro-logo-main{
+          font-size:25px;
+        }
+
+        .spretro-navbar.compact .spretro-logo-sub{
+          display:none;
+        }
+
+        .spretro-navbar.compact .spretro-search{
+          height:40px;
+          width:260px;
+          border-radius:10px;
+        }
+
+        .spretro-navbar.compact .spretro-icon-btn{
+          width:40px;
+          height:40px;
+          border-radius:10px;
+        }
+
+        .spretro-navbar.compact .spretro-menu-btn{
+          height:40px;
+          border-radius:10px;
+        }
+
+        .spretro-navbar.compact .spretro-menu-dropdown{
+          top:48px;
+        }
+
         /* ── TABLET (max 1023px) ── */
         @media (max-width:1023px){
           .spretro-mainbar{
@@ -422,7 +557,7 @@ export default function Navbar() {
             gap:20px;
           }
           .spretro-links{
-            gap:16px;
+            gap:12px;
           }
           .spretro-search{
             width:200px;
@@ -512,11 +647,11 @@ export default function Navbar() {
 
       `}</style>
 
-      <nav className="spretro-navbar">
+      <nav className={`spretro-navbar ${compact ? "compact" : ""}`}>
 
         {/* TICKER */}
 
-        <div className="spretro-ticker">
+        {!compact && <div className="spretro-ticker">
           <div className="spretro-ticker-track">
 
             {doubled.map((item, i) => (
@@ -527,7 +662,7 @@ export default function Navbar() {
             ))}
 
           </div>
-        </div>
+        </div>}
 
         {/* MAIN NAVBAR */}
 
@@ -539,7 +674,7 @@ export default function Navbar() {
 
             {/* LOGO */}
 
-            <div className="spretro-logo">
+            <div className="spretro-logo" onClick={() => navigate("/")}>
 
               <div className="spretro-logo-main">
                 SPRETRO<span className="spretro-logo-dot">.</span>
@@ -570,6 +705,36 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
+
+              <div className="spretro-more">
+                <button
+                  className={`spretro-more-btn ${
+                    menuLinks.some((link) => link.path === location.pathname) ? "active" : ""
+                  }`}
+                  type="button"
+                  onClick={() => setMoreOpen((open) => !open)}
+                >
+                  More
+                  <ChevronDown size={14} strokeWidth={2.2} />
+                </button>
+
+                {moreOpen && (
+                  <div className="spretro-more-menu">
+                    {menuLinks.map((link) => (
+                      <a
+                        key={link.path}
+                        href={link.path}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          goTo(link.path);
+                        }}
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
 
             </div>
 
@@ -624,7 +789,11 @@ export default function Navbar() {
 
             {/* MENU */}
 
-            <button className="spretro-menu-btn">
+            <button
+              className="spretro-menu-btn"
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
 
               <Menu size={17} strokeWidth={2.2} />
 
@@ -634,13 +803,30 @@ export default function Navbar() {
 
             </button>
 
+            {menuOpen && (
+              <div className="spretro-menu-dropdown">
+                {menuLinks.map((link) => (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goTo(link.path);
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
           </div>
 
         </div>
 
         {/* CATEGORY STRIP */}
 
-        <div className="spretro-category-strip">
+        {!compact && <div className="spretro-category-strip">
 
           {categories.map((cat) => (
             <div
@@ -660,11 +846,11 @@ export default function Navbar() {
             </div>
           ))}
 
-        </div>
+        </div>}
 
         {/* SERVICE STRIP */}
 
-        <div className="spretro-services">
+        {!compact && <div className="spretro-services">
 
           <div className="spretro-service-item">
             <Truck size={16} strokeWidth={2} />
@@ -686,7 +872,7 @@ export default function Navbar() {
             <span>Authentic brands</span>
           </div>
 
-        </div>
+        </div>}
 
       </nav>
     </>

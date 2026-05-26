@@ -12,6 +12,12 @@ import Brands from "./pages/Brands";
 import Sale from "./pages/Sale";
 import CategoryPage from "./pages/Category";
 import SearchPage from "./pages/Search";
+import ContactUs from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
+import Faqs from "./pages/Faqs";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import Sitemap from "./pages/Sitemap";
+import Careers from "./pages/Careers";
 
 function Layout() {
   const location = useLocation();
@@ -30,6 +36,21 @@ function Layout() {
         <Route path="/sale" element={<Sale />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/pages/ContactUs" element={<ContactUs />} />
+        <Route path="/pages/contact-us" element={<ContactUs />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/pages/about-us" element={<AboutUs />} />
+        <Route path="/faqs" element={<Faqs />} />
+        <Route path="/pages/faqs" element={<Faqs />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/pages/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/sitemap" element={<Sitemap />} />
+        <Route path="/pages/sitemap" element={<Sitemap />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/pages/careers" element={<Careers />} />
       </Routes>
       <Footer />
       <ScrollToTop />
