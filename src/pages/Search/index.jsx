@@ -228,7 +228,7 @@ function SearchInner({ query }) {
       <FilterSection title="Customer Rating" defaultOpen={false}>
         <div className="space-y-1">
           {[0, 4, 3, 2].map((r) => (
-            <label key={r} className="flex items-center gap-2.5 cursor-pointer group py-1" onClick={() => setMinRating(r)}>
+            <label key={r} className="flex items-center gap-2.5 cursor-pointer group py-1 select-none" onClick={() => setMinRating(r)}>
               <div className={`size-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${minRating === r ? "bg-[#6A2CFF] border-[#6A2CFF]" : "border-gray-300 group-hover:border-[#6A2CFF]"}`}>
                 {minRating === r && <Check size={9} strokeWidth={3.5} className="text-white" />}
               </div>

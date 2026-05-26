@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 
 export default function CheckItem({ label, count, checked, onToggle }) {
   return (
-    <label className="flex items-center gap-2.5 cursor-pointer group py-1">
+    <label className="flex items-center gap-2.5 cursor-pointer group py-1 select-none">
       <div
         className={`size-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
           checked ? "bg-[#6A2CFF] border-[#6A2CFF]" : "border-gray-300 group-hover:border-[#6A2CFF]"

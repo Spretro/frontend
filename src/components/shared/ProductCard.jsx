@@ -17,7 +17,7 @@ export default function ProductCard({ product, badge }) {
 
   return (
     <div
-      className="group relative rounded-3xl overflow-hidden bg-white cursor-pointer transition-all duration-300 hover:-translate-y-1.5"
+      className="group relative rounded-3xl overflow-hidden bg-white cursor-pointer transition-all duration-300 hover:-translate-y-1.5 flex flex-col"
       style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.07)" }}
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 40px rgba(106,44,255,0.18)")}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 16px rgba(106,44,255,0.07)")}
@@ -51,7 +51,7 @@ export default function ProductCard({ product, badge }) {
       </div>
 
       {/* Info */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <p className="text-[10px] font-bold uppercase tracking-widest text-[#6A2CFF] mb-0.5 truncate">
           {product.brand || "SPRETRO"}
         </p>
@@ -75,7 +75,7 @@ export default function ProductCard({ product, badge }) {
         </div>
 
         {/* Price */}
-        <div className="flex items-baseline gap-1.5 mb-3">
+        <div className="flex items-baseline gap-1.5 mb-3 mt-auto">
           <span className="text-base font-black text-gray-900">₹{finalPrice.toLocaleString("en-IN")}</span>
           {disc > 0 && (
             <>

@@ -6,7 +6,7 @@ export default function FilterSection({ title, children, defaultOpen = true }) {
   return (
     <div className="border-b border-gray-100 py-4 px-5">
       <button
-        className="flex items-center justify-between w-full text-left group"
+        className="flex items-center justify-between w-full text-left group select-none"
         onClick={() => setOpen((o) => !o)}
       >
         <span className="text-xs font-black uppercase tracking-widest text-gray-800 group-hover:text-[#6A2CFF] transition-colors">
