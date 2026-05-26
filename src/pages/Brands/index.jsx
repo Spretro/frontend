@@ -39,7 +39,7 @@ export default function Brands() {
 
   useEffect(() => {
     fetch(
-      "https://dummyjson.com/products?limit=200&select=id,title,price,discountPercentage,thumbnail,brand,rating,category"
+      "https://dummyjson.com/products?limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category"
     )
       .then((r) => r.json())
       .then((d) => {

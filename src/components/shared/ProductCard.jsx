@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
-
-const toINR = (usd) => Math.round(usd * 83);
+import { toINR } from "../../utils/currency";
 
 export default function ProductCard({ product, badge }) {
   const [liked, setLiked] = useState(false);

@@ -1,14 +1,55 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
-  SlidersHorizontal, ChevronDown, X, Search as SearchIcon,
+  SlidersHorizontal, X, Search as SearchIcon,
   Check, Star, ShoppingBag, ArrowUpDown,
 } from "lucide-react";
 import ProductCard from "../../components/shared/ProductCard";
+import FilterSection from "../../components/sections/search/FilterSection";
+import CheckItem from "../../components/sections/search/CheckItem";
+import DualRangeSlider from "../../components/sections/search/DualRangeSlider";
+import SkeletonCard from "../../components/sections/search/SkeletonCard";
+import { toINR } from "../../utils/currency";
 
 /* ── constants ─────────────────────────────────────────────── */
 const MAX_INR = 50000;
-const toINR = (usd) => Math.round(usd * 83);
+
+const MENS_CATS = new Set([
+  "mens-shirts", "mens-shoes", "mens-watches", "mens-bags", "mens-jewellery",
+  "motorcycle", "vehicle",
+]);
+const WOMENS_CATS = new Set([
+  "womens-dresses", "womens-tops", "womens-bags", "womens-shoes",
+  "womens-jewellery", "womens-watches",
+]);
+const MEN_WORDS = new Set(["men", "man", "male", "mens", "gents", "boys", "boy", "him", "his"]);
+const WOMEN_WORDS = new Set(["women", "woman", "female", "womens", "ladies", "girls", "girl", "her", "she"]);
+
+function applyGenderRelevance(products, query) {
+  if (!query) return products;
+  const words = query.toLowerCase().split(/[\s,]+/).filter(Boolean);
+  const wantsMen = words.some((w) => MEN_WORDS.has(w));
+  const wantsWomen = words.some((w) => WOMEN_WORDS.has(w));
+
+  let items = products;
+  if (wantsMen && !wantsWomen) {
+    items = items.filter((p) => !WOMENS_CATS.has(p.category));
+  } else if (wantsWomen && !wantsMen) {
+    items = items.filter((p) => !MENS_CATS.has(p.category));
+  }
+
+  // Score by how many query words match title/brand/category
+  const scored = items.map((p) => {
+    const text = `${p.title} ${p.brand || ""} ${p.category}`.toLowerCase();
+    const score = words.reduce((acc, w) => acc + (text.includes(w) ? 1 : 0), 0);
+    return { product: p, score };
+  });
+
+  // Drop zero-score items if anything matches; sort by score
+  const relevant = scored.filter((s) => s.score > 0);
+  const sorted = (relevant.length > 0 ? relevant : scored).sort((a, b) => b.score - a.score);
+  return sorted.map((s) => s.product);
+}
 
 const SORT_OPTIONS = [
   { label: "Relevance", value: "relevance" },
@@ -25,92 +66,6 @@ const DISCOUNT_OPTIONS = [
   { label: "50% and above", min: 50 },
 ];
 
-/* ── reusable filter sub-components (defined at module level) ─ */
-function FilterSection({ title, children, defaultOpen = true }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="border-b border-gray-100 py-4 px-5">
-      <button
-        className="flex items-center justify-between w-full text-left group"
-        onClick={() => setOpen((o) => !o)}
-      >
-        <span className="text-xs font-black uppercase tracking-widest text-gray-800 group-hover:text-[#6A2CFF] transition-colors">
-          {title}
-        </span>
-        <ChevronDown size={15} strokeWidth={2.5} className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && <div className="mt-3">{children}</div>}
-    </div>
-  );
-}
-
-function CheckItem({ label, count, checked, onToggle }) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer group py-1">
-      <div
-        className={`size-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
-          checked ? "bg-[#6A2CFF] border-[#6A2CFF]" : "border-gray-300 group-hover:border-[#6A2CFF]"
-        }`}
-        onClick={onToggle}
-      >
-        {checked && <Check size={9} strokeWidth={3.5} className="text-white" />}
-      </div>
-      <span className="text-sm text-gray-700 flex-1 leading-tight capitalize group-hover:text-gray-900 transition-colors" onClick={onToggle}>
-        {label.replace(/-/g, " ")}
-      </span>
-      {count != null && <span className="text-[11px] text-gray-400 font-medium shrink-0">({count})</span>}
-    </label>
-  );
-}
-
-function DualRangeSlider({ min, max, setMin, setMax }) {
-  const minPct = (min / MAX_INR) * 100;
-  const maxPct = (max / MAX_INR) * 100;
-  return (
-    <div>
-      <div className="relative h-5 flex items-center mb-3">
-        <div className="absolute w-full h-1 bg-gray-200 rounded-full" />
-        <div className="absolute h-1 bg-[#6A2CFF] rounded-full" style={{ left: `${minPct}%`, right: `${100 - maxPct}%` }} />
-        <input type="range" min={0} max={MAX_INR} step={500} value={min}
-          onChange={(e) => setMin(Math.min(+e.target.value, max - 500))}
-          className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer"
-          style={{ zIndex: min > MAX_INR - 1000 ? 5 : 3 }}
-        />
-        <input type="range" min={0} max={MAX_INR} step={500} value={max}
-          onChange={(e) => setMax(Math.max(+e.target.value, min + 500))}
-          className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer"
-          style={{ zIndex: 4 }}
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-2 text-center">
-          <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">Min</p>
-          <p className="text-sm font-black text-gray-900">₹{min.toLocaleString("en-IN")}</p>
-        </div>
-        <div className="w-4 h-px bg-gray-300" />
-        <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-2 text-center">
-          <p className="text-[9px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5">Max</p>
-          <p className="text-sm font-black text-gray-900">₹{max.toLocaleString("en-IN")}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="rounded-2xl overflow-hidden bg-white animate-pulse">
-      <div className="bg-gray-100" style={{ aspectRatio: "3/4" }} />
-      <div className="p-3.5 space-y-2">
-        <div className="h-2 bg-gray-100 rounded-full w-1/3" />
-        <div className="h-3.5 bg-gray-100 rounded-full w-3/4" />
-        <div className="h-3 bg-gray-100 rounded-full w-1/2" />
-        <div className="h-9 bg-gray-100 rounded-xl mt-2" />
-      </div>
-    </div>
-  );
-}
-
 /* ── route-level wrapper (key = query → fresh remount per search) */
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -120,8 +75,6 @@ export default function SearchPage() {
 
 /* ── actual page with all state ─────────────────────────────── */
 function SearchInner({ query }) {
-  const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState("relevance");
@@ -136,16 +89,15 @@ function SearchInner({ query }) {
   const [brandSearch, setBrandSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(24);
-  const [inlineSearch, setInlineSearch] = useState(query);
 
   /* fetch — component remounts on query change so no sync setState needed */
   useEffect(() => {
     const url = query
-      ? `https://dummyjson.com/products/search?q=${encodeURIComponent(query)}&limit=100&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`
-      : `https://dummyjson.com/products?limit=100&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`;
+      ? `https://dummyjson.com/products/search?q=${encodeURIComponent(query)}&limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`
+      : `https://dummyjson.com/products?limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`;
     fetch(url)
       .then((r) => r.json())
-      .then((d) => { setProducts(d.products || []); setLoading(false); })
+      .then((d) => { setProducts(applyGenderRelevance(d.products || [], query)); setLoading(false); })
       .catch(() => setLoading(false));
   }, [query]);
 
@@ -203,19 +155,9 @@ function SearchInner({ query }) {
     ...(minRating > 0 ? [{ label: `${minRating}★ & above`, remove: () => setMinRating(0) }] : []),
   ];
 
-  const handleInlineSearch = () => {
-    const q = inlineSearch.trim();
-    navigate(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
-  };
-
   /* sidebar JSX stored as variable (avoids "component during render" error) */
   const sidebarJSX = (
     <>
-      <style>{`
-        input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#6A2CFF;cursor:pointer;border:2px solid white;box-shadow:0 2px 8px rgba(106,44,255,0.4);}
-        input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#6A2CFF;cursor:pointer;border:2px solid white;}
-      `}</style>
-
       {/* Sidebar header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-2">
@@ -311,35 +253,22 @@ function SearchInner({ query }) {
   return (
     <main style={{ background: "#F9F8FF", minHeight: "100vh" }}>
 
-      {/* Search header */}
-      <div className="bg-white border-b border-gray-100" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-        <div className="max-w-360 mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-          <div className="flex-1 min-w-0">
-            <nav className="flex items-center gap-1.5 text-xs text-gray-400 font-medium mb-1">
-              <a href="/" className="hover:text-[#6A2CFF] transition-colors">Home</a>
-              <span>/</span>
-              <span className="text-gray-600">Search</span>
-              {query && <><span>/</span><span className="text-[#6A2CFF] font-bold truncate max-w-32">"{query}"</span></>}
-            </nav>
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <h1 className="text-xl md:text-2xl font-black text-gray-900">
-                {query ? <>Results for <em className="not-italic text-[#6A2CFF]">"{query}"</em></> : "All Products"}
-              </h1>
-              {!loading && (
-                <span className="text-sm text-gray-400 font-semibold">{filtered.length.toLocaleString()} items</span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 hover:border-[#6A2CFF] hover:bg-white transition-all md:w-80">
-            <SearchIcon size={17} strokeWidth={2} className="text-gray-400 shrink-0 cursor-pointer hover:text-[#6A2CFF] transition-colors" onClick={handleInlineSearch} />
-            <input
-              value={inlineSearch}
-              onChange={(e) => setInlineSearch(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleInlineSearch()}
-              placeholder="Search products, brands..."
-              className="flex-1 min-w-0 text-sm font-medium bg-transparent outline-none text-gray-800 placeholder-gray-400"
-            />
-            {inlineSearch && <button onClick={() => setInlineSearch("")}><X size={14} strokeWidth={2.5} className="text-gray-400 hover:text-gray-600" /></button>}
+      {/* Breadcrumb + result count bar */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-360 mx-auto px-4 md:px-8 py-4">
+          <nav className="flex items-center gap-1.5 text-xs text-gray-400 font-medium mb-1">
+            <a href="/" className="hover:text-[#6A2CFF] transition-colors">Home</a>
+            <span>/</span>
+            <span className="text-gray-600">Search</span>
+            {query && <><span>/</span><span className="text-[#6A2CFF] font-bold">"{query}"</span></>}
+          </nav>
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-lg md:text-xl font-black text-gray-900">
+              {query ? <>Results for <em className="not-italic text-[#6A2CFF]">"{query}"</em></> : "All Products"}
+            </h1>
+            {!loading && (
+              <span className="text-sm text-gray-400 font-semibold">{filtered.length.toLocaleString()} items</span>
+            )}
           </div>
         </div>
       </div>
@@ -347,7 +276,7 @@ function SearchInner({ query }) {
       <div className="max-w-360 mx-auto px-4 md:px-8 py-6 flex gap-5 items-start">
 
         {/* Desktop sidebar */}
-        <aside className="hidden lg:block w-64 shrink-0 sticky top-[200px] bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 20px rgba(0,0,0,0.06)" }}>
+        <aside className="hidden lg:block w-64 shrink-0 sticky top-32.5 bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 20px rgba(0,0,0,0.06)" }}>
           {sidebarJSX}
         </aside>
 

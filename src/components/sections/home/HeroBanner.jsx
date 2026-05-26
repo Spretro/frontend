@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { heroSlides } from "../../data";
+import { heroSlides } from "../../../data";
 
 const stats = [
   {

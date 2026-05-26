@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { SlidersHorizontal, ChevronDown, Search, X } from "lucide-react";
 import ProductCard from "../../components/shared/ProductCard";
+import SkeletonCard from "../../components/sections/listing/SkeletonCard";
+import { toINR } from "../../utils/currency";
 
 const SORT_OPTIONS = [
   { label: "Relevance", value: "relevance" },
@@ -17,22 +19,6 @@ const PRICE_FILTERS = [
   { label: "₹5K – ₹15K", min: 5000, max: 15000 },
   { label: "₹15K+", min: 15000, max: Infinity },
 ];
-
-const toINR = (usd) => Math.round(usd * 83);
-
-function SkeletonCard() {
-  return (
-    <div className="rounded-3xl overflow-hidden bg-white animate-pulse" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-      <div className="bg-gray-200" style={{ aspectRatio: "3/4" }} />
-      <div className="p-4 space-y-2.5">
-        <div className="h-2.5 bg-gray-200 rounded-full w-1/3" />
-        <div className="h-4 bg-gray-200 rounded-full w-3/4" />
-        <div className="h-3.5 bg-gray-200 rounded-full w-1/2" />
-        <div className="h-10 bg-gray-200 rounded-2xl mt-1" />
-      </div>
-    </div>
-  );
-}
 
 export default function ListingPage({ config }) {
   const [products, setProducts] = useState([]);
@@ -52,7 +38,7 @@ export default function ListingPage({ config }) {
         const results = await Promise.all(
           config.categories.map((cat) =>
             fetch(
-              `https://dummyjson.com/products/category/${cat}?limit=100&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`
+              `https://dummyjson.com/products/category/${cat}?limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`
             )
               .then((r) => r.json())
               .then((d) => d.products || [])

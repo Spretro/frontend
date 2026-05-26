@@ -41,6 +41,7 @@ const categories = [
 const navLinks = [
   { label: "Women", path: "/women" },
   { label: "Men", path: "/men" },
+  { label: "Kids", path: "/kids" },
   { label: "New In", path: "/new-in" },
   { label: "Brands", path: "/brands" },
   { label: "Sale", path: "/sale" },

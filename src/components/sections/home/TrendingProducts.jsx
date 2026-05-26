@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toINR, toOriginalINR, fmtINR } from "../../../utils/currency";
 
 const tagMap = {
   "womens-dresses": { label: "TRENDING", color: "#6A2CFF" },
@@ -43,11 +44,6 @@ export default function TrendingProducts() {
       .catch(() => setLoading(false));
   }, []);
 
-  const toINR = (usd) =>
-    `₹${Math.round(usd * 83).toLocaleString("en-IN")}`;
-
-  const originalINR = (price, discount) =>
-    `₹${Math.round((price / (1 - discount / 100)) * 83).toLocaleString("en-IN")}`;
 
   return (
     <section className="py-12" style={{ background: "linear-gradient(180deg, #F9F8FF 0%, #FFFFFF 100%)" }}>
@@ -152,9 +148,9 @@ export default function TrendingProducts() {
                         <span className="text-[9px] text-gray-400 ml-1 font-medium">({p.rating.toFixed(1)})</span>
                       </div>
                       <div className="flex items-baseline gap-2 mb-3.5">
-                        <span className="text-base font-black text-gray-900">{toINR(p.price)}</span>
+                        <span className="text-base font-black text-gray-900">{fmtINR(toINR(p.price))}</span>
                         <span className="text-xs text-gray-400 line-through font-medium">
-                          {originalINR(p.price, p.discountPercentage)}
+                          {fmtINR(toOriginalINR(p.price, p.discountPercentage))}
                         </span>
                       </div>
                       <button
