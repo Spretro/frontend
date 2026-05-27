@@ -949,13 +949,16 @@ export default function Navbar() {
           }
         }
 
+        /* ── MOBILE — hide Sign In icon + Menu text ── */
+        @media (max-width:767px){
+          .spretro-sign-in-btn svg{ display:none; }
+          .spretro-menu-text{ display:none; }
+        }
+
         /* ── SMALL MOBILE (max 479px) ── */
         @media (max-width:479px){
           .spretro-logo-main{
             font-size:20px;
-          }
-          .spretro-menu-btn span:last-child{
-            display:none;
           }
         }
 
@@ -1103,7 +1106,7 @@ export default function Navbar() {
 
             {!isLoggedIn ? (
               <button
-                className="spretro-menu-btn"
+                className="spretro-menu-btn spretro-sign-in-btn"
                 style={{ background: "linear-gradient(135deg,#3D0ECC,#6A2CFF)", boxShadow: "0 4px 16px rgba(106,44,255,0.35)" }}
                 onClick={() => navigate("/login")}
               >
@@ -1242,7 +1245,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen((o) => !o)}
               >
                 <Menu size={17} strokeWidth={2.2} />
-                <span>Menu</span>
+                <span className="spretro-menu-text">Menu</span>
                 <ChevronDown
                   size={15}
                   strokeWidth={2.2}
