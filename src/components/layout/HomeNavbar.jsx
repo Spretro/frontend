@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 import {
   Search,
@@ -59,9 +60,11 @@ const PATH_TO_CAT = Object.fromEntries(categories.map((c) => [c.path, c.label]))
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { totalQty } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const panelTimer = useRef(null);
 
   const activeLink = PATH_TO_LINK[location.pathname] || "";
@@ -111,17 +114,24 @@ export default function Navbar() {
           position:sticky;
           top:0;
           z-index:999;
-          box-shadow:0 1px 0 rgba(0,0,0,0.05);
+          box-shadow:0 4px 24px rgba(106,44,255,0.08), 0 1px 0 rgba(0,0,0,0.04);
         }
 
         /* TICKER */
 
         .spretro-ticker{
           height:34px;
-          background:#6A2CFF;
+          background:linear-gradient(90deg, #5A14EF 0%, #7C3AED 40%, #9B6DFF 70%, #7C3AED 100%);
+          background-size:200% 100%;
           overflow:hidden;
           display:flex;
           align-items:center;
+          animation:tickerBg 8s linear infinite;
+        }
+
+        @keyframes tickerBg{
+          0%{ background-position:0% 50%; }
+          100%{ background-position:200% 50%; }
         }
 
         .spretro-ticker-track{
@@ -167,8 +177,19 @@ export default function Navbar() {
           display:flex;
           align-items:center;
           justify-content:space-between;
-          border-bottom:1px solid #EEEEEE;
+          border-bottom:1px solid #F0EAFF;
           background:white;
+          position:relative;
+        }
+
+        .spretro-mainbar::after{
+          content:'';
+          position:absolute;
+          bottom:0;
+          left:0;
+          right:0;
+          height:1px;
+          background:linear-gradient(90deg, transparent, #6A2CFF44, #9B6DFF66, #6A2CFF44, transparent);
         }
 
         .spretro-left{
@@ -187,21 +208,28 @@ export default function Navbar() {
           font-size:32px;
           font-weight:900;
           letter-spacing:-1.5px;
-          color:#111;
+          background:linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 45%, #9B6DFF 100%);
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          background-clip:text;
           line-height:1;
         }
 
         .spretro-logo-dot{
-          color:#6A2CFF;
+          background:linear-gradient(135deg, #EC4899, #F97316);
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          background-clip:text;
         }
 
         .spretro-logo-sub{
           font-size:10px;
-          font-weight:600;
-          letter-spacing:3px;
-          color:#888;
-          margin-top:2px;
+          font-weight:700;
+          letter-spacing:3.5px;
+          color:#9B6DFF;
+          margin-top:3px;
           text-transform:uppercase;
+          opacity:0.75;
         }
 
         .spretro-links{
@@ -212,16 +240,17 @@ export default function Navbar() {
 
         .spretro-link{
           font-size:14px;
-          font-weight:600;
+          font-weight:700;
           color:#555;
           text-decoration:none;
           position:relative;
           padding-bottom:5px;
           transition:0.2s ease;
+          letter-spacing:0.01em;
         }
 
         .spretro-link:hover{
-          color:#111;
+          color:#3D0ECC;
         }
 
         .spretro-link::after{
@@ -231,7 +260,8 @@ export default function Navbar() {
           bottom:0;
           width:0;
           height:2px;
-          background:#6A2CFF;
+          background:linear-gradient(90deg, #6A2CFF, #EC4899);
+          border-radius:2px;
           transition:0.25s ease;
         }
 
@@ -240,7 +270,7 @@ export default function Navbar() {
         }
 
         .spretro-link.active{
-          color:#111;
+          color:#6A2CFF;
         }
 
         .spretro-link.active::after{
@@ -258,14 +288,14 @@ export default function Navbar() {
         .spretro-search{
           width:340px;
           height:46px;
-          background:#F5F5F7;
-          border-radius:14px;
+          background:#F5F0FF;
+          border-radius:100px;
           display:flex;
           align-items:center;
           gap:12px;
-          padding:0 16px;
+          padding:0 18px;
           color:#777;
-          border:1px solid transparent;
+          border:1.5px solid #E8DFFF;
           transition:0.2s ease;
           cursor:text;
         }
@@ -273,6 +303,7 @@ export default function Navbar() {
         .spretro-search:hover{
           background:white;
           border-color:#6A2CFF;
+          box-shadow:0 0 0 4px rgba(106,44,255,0.08);
         }
 
         .spretro-search-input{
@@ -318,14 +349,15 @@ export default function Navbar() {
           align-items:center;
           justify-content:center;
           cursor:pointer;
-          color:#444;
+          color:#6A2CFF;
           transition:0.2s ease;
           position:relative;
         }
 
         .spretro-icon-btn:hover{
-          background:#F5F5F7;
-          color:#111;
+          background:#F0EAFF;
+          color:#3D0ECC;
+          transform:translateY(-1px);
         }
 
         .spretro-cart-dot{
@@ -335,42 +367,53 @@ export default function Navbar() {
           width:8px;
           height:8px;
           border-radius:50%;
-          background:#6A2CFF;
+          background:linear-gradient(135deg, #EC4899, #F97316);
+          animation:pulse 2s infinite;
+        }
+
+        @keyframes pulse{
+          0%,100%{ box-shadow:0 0 0 0 rgba(236,72,153,0.5); }
+          50%{ box-shadow:0 0 0 4px rgba(236,72,153,0); }
         }
 
         /* MENU BUTTON */
 
         .spretro-menu-btn{
           height:46px;
-          padding:0 18px;
+          padding:0 20px;
           border:none;
-          border-radius:14px;
-          background:#111;
+          border-radius:100px;
+          background:linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 60%, #9B6DFF 100%);
           color:white;
           display:flex;
           align-items:center;
           gap:8px;
           font-size:13px;
-          font-weight:600;
+          font-weight:700;
           cursor:pointer;
-          transition:0.2s ease;
+          transition:0.25s ease;
+          box-shadow:0 4px 16px rgba(106,44,255,0.35);
+          letter-spacing:0.01em;
         }
 
         .spretro-menu-btn:hover{
-          background:#6A2CFF;
+          background:linear-gradient(135deg, #5A14EF 0%, #7C3AED 60%, #A78BFA 100%);
+          box-shadow:0 6px 24px rgba(106,44,255,0.5);
+          transform:translateY(-1px);
         }
 
         /* CATEGORY STRIP */
 
         .spretro-category-strip{
-          height:96px;
+          height:100px;
           display:flex;
           align-items:center;
-          gap:8px;
+          gap:6px;
           overflow-x:auto;
           padding:0 24px;
-          background:white;
-          border-bottom:1px solid #EEEEEE;
+          background:linear-gradient(180deg, #FAFAFF 0%, #FFFFFF 100%);
+          border-bottom:1px solid #EDE8FF;
+          position:relative;
         }
 
         .spretro-category-strip::-webkit-scrollbar{
@@ -378,61 +421,70 @@ export default function Navbar() {
         }
 
         .spretro-category{
-          min-width:110px;
-          height:72px;
+          min-width:112px;
+          height:74px;
           border-radius:18px;
           display:flex;
           flex-direction:column;
           align-items:center;
           justify-content:center;
-          gap:8px;
+          gap:7px;
           cursor:pointer;
           transition:0.2s ease;
-          color:#666;
+          color:#777;
           background:transparent;
-          border:1px solid transparent;
+          border:1.5px solid transparent;
           flex-shrink:0;
         }
 
         .spretro-category:hover{
-          background:#F8F8FA;
-          color:#111;
+          background:#F3EEFF;
+          color:#6A2CFF;
+          border-color:#E0D4FF;
+          transform:translateY(-2px);
+          box-shadow:0 4px 16px rgba(106,44,255,0.1);
         }
 
         .spretro-category.active{
-          background:#F3EEFF;
+          background:linear-gradient(135deg, #EDE4FF, #E5D8FF);
           color:#6A2CFF;
-          border-color:#E3D8FF;
+          border-color:#C4B0FF;
+          box-shadow:0 4px 20px rgba(106,44,255,0.18);
         }
 
         .spretro-category-label{
           font-size:12px;
-          font-weight:600;
+          font-weight:700;
+          letter-spacing:0.01em;
         }
 
         /* SERVICE STRIP */
 
         .spretro-services{
-          height:58px;
+          height:52px;
           display:flex;
           align-items:center;
           justify-content:space-around;
           padding:0 24px;
-          background:white;
+          background:linear-gradient(90deg, #F9F6FF 0%, #FAFAFE 20%, #FAFAFE 80%, #F9F6FF 100%);
+          border-bottom:1px solid #EDE8FF;
         }
 
         .spretro-service-item{
           display:flex;
           align-items:center;
           gap:8px;
-          color:#555;
-          font-size:13px;
-          font-weight:600;
+          color:#6A2CFF;
+          font-size:12.5px;
+          font-weight:700;
           white-space:nowrap;
+          letter-spacing:0.01em;
+          transition:0.15s ease;
         }
 
         .spretro-service-item:hover{
-          color:#111;
+          color:#3D0ECC;
+          transform:translateY(-1px);
         }
 
         /* DROPDOWN PANELS */
@@ -936,7 +988,7 @@ export default function Navbar() {
 
             {/* LOGO */}
 
-            <div className="spretro-logo">
+            <div className="spretro-logo" onClick={() => navigate("/")}>
 
               <div className="spretro-logo-main">
                 SPRETRO<span className="spretro-logo-dot">.</span>
@@ -1049,69 +1101,84 @@ export default function Navbar() {
 
             {/* PROFILE */}
 
-            <div
-              className="spretro-panel-wrap"
-              onMouseEnter={() => openPanel("user")}
-              onMouseLeave={closePanel}
-            >
-              <button className="spretro-icon-btn">
-                <User size={19} strokeWidth={1.9} />
+            {!isLoggedIn ? (
+              <button
+                className="spretro-menu-btn"
+                style={{ background: "linear-gradient(135deg,#3D0ECC,#6A2CFF)", boxShadow: "0 4px 16px rgba(106,44,255,0.35)" }}
+                onClick={() => navigate("/login")}
+              >
+                <User size={15} strokeWidth={2} />
+                Sign In
               </button>
+            ) : (
+              <div
+                className="spretro-panel-wrap"
+                onMouseEnter={() => openPanel("user")}
+                onMouseLeave={closePanel}
+              >
+                <button className="spretro-icon-btn">
+                  <User size={19} strokeWidth={1.9} />
+                </button>
 
-              {activePanel === "user" && (
-                <div
-                  className="spretro-mini-panel"
-                  style={{ width: 260 }}
-                  onMouseEnter={keepPanel}
-                  onMouseLeave={closePanel}
-                >
+                {activePanel === "user" && (
                   <div
-                    className="spretro-panel-header"
-                    style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14 }}
+                    className="spretro-mini-panel"
+                    style={{ width: 260 }}
+                    onMouseEnter={keepPanel}
+                    onMouseLeave={closePanel}
                   >
                     <div
-                      className="spretro-panel-header-icon"
-                      style={{ background: "rgba(106,44,255,0.4)" }}
+                      className="spretro-panel-header"
+                      style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14 }}
                     >
-                      <User size={16} strokeWidth={2} color="white" />
-                    </div>
-                    <div>
-                      <div className="spretro-panel-header-title" style={{ color: "white" }}>
-                        My Account
+                      <div
+                        className="spretro-panel-header-icon"
+                        style={{ background: "rgba(106,44,255,0.4)" }}
+                      >
+                        <User size={16} strokeWidth={2} color="white" />
                       </div>
-                      <div className="spretro-panel-header-sub" style={{ color: "rgba(255,255,255,0.5)" }}>
-                        Sign in to continue
+                      <div>
+                        <div className="spretro-panel-header-title" style={{ color: "white" }}>
+                          My Account
+                        </div>
+                        <div className="spretro-panel-header-sub" style={{ color: "rgba(255,255,255,0.5)" }}>
+                          Welcome back
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ padding: "10px 8px 4px", display: "flex", gap: 6 }}>
-                    <button className="spretro-panel-cta" style={{ width: "50%", margin: 0 }}>
-                      Sign In
-                    </button>
-                    <button className="spretro-panel-cta spretro-panel-cta-outline" style={{ width: "50%", margin: 0 }}>
-                      Register
-                    </button>
-                  </div>
-                  <div className="spretro-panel-body">
-                    {[
-                      { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage" },
-                      { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items" },
-                      { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers" },
-                      { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences" },
-                      { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact" },
-                    ].map((item) => (
-                      <button key={item.label} className="spretro-panel-link">
-                        <span className="spretro-panel-link-icon">{item.icon}</span>
+                    <div className="spretro-panel-body">
+                      {[
+                        { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage" },
+                        { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items" },
+                        { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers" },
+                        { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences" },
+                        { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact" },
+                      ].map((item) => (
+                        <button key={item.label} className="spretro-panel-link">
+                          <span className="spretro-panel-link-icon">{item.icon}</span>
+                          <span>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: "#222" }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: "#aaa", fontWeight: 500, marginTop: 1 }}>{item.sub}</div>
+                          </span>
+                        </button>
+                      ))}
+                      <button
+                        className="spretro-panel-link"
+                        onClick={() => { setIsLoggedIn(false); setActivePanel(null); }}
+                        style={{ color: "#E83E6C" }}
+                      >
+                        <span className="spretro-panel-link-icon" style={{ color: "#E83E6C" }}>
+                          <User size={15} strokeWidth={2} />
+                        </span>
                         <span>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#222" }}>{item.label}</div>
-                          <div style={{ fontSize: 11, color: "#aaa", fontWeight: 500, marginTop: 1 }}>{item.sub}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#E83E6C" }}>Sign Out</div>
                         </span>
                       </button>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {/* CART */}
 
@@ -1120,9 +1187,12 @@ export default function Navbar() {
               onMouseEnter={() => openPanel("cart")}
               onMouseLeave={closePanel}
             >
-              <button className="spretro-icon-btn">
+              <button className="spretro-icon-btn" onClick={() => navigate("/cart")}>
                 <ShoppingBag size={19} strokeWidth={1.9} />
-                <span className="spretro-cart-dot" />
+                {totalQty > 0
+                  ? <span className="spretro-cart-dot" style={{ width: 16, height: 16, fontSize: 9, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>{totalQty > 99 ? "99+" : totalQty}</span>
+                  : <span className="spretro-cart-dot" />
+                }
               </button>
 
               {activePanel === "cart" && (
@@ -1156,9 +1226,9 @@ export default function Navbar() {
                   </div>
                   <button
                     className="spretro-panel-cta"
-                    onClick={() => { navigate("/women"); setActivePanel(null); }}
+                    onClick={() => { navigate("/cart"); setActivePanel(null); }}
                   >
-                    Start Shopping
+                    View Cart
                   </button>
                 </div>
               )}
