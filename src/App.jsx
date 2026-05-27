@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "./components/layout/Navbar";
+import { CartProvider } from "./context/CartContext";
+import HomeNavbar from "./components/layout/HomeNavbar";
 import SearchNavbar from "./components/layout/SearchNavbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/ui/ScrollToTop";
@@ -18,14 +19,18 @@ import Faqs from "./pages/Faqs";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Sitemap from "./pages/Sitemap";
 import Careers from "./pages/Careers";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Cart from "./pages/Cart";
 
 function Layout() {
   const location = useLocation();
-  const isSearch = location.pathname === "/search";
+  const isSearch = ["/search", "/cart"].includes(location.pathname);
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
   return (
     <div className="min-h-screen" style={{ background: "#F9F8FF" }}>
-      {isSearch ? <SearchNavbar /> : <Navbar />}
+      {!isAuthPage && (isSearch ? <SearchNavbar /> : <HomeNavbar />)}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/women" element={<Women />} />
@@ -42,8 +47,11 @@ function Layout() {
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/sitemap" element={<Sitemap />} />
         <Route path="/careers" element={<Careers />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
-      <Footer />
+      {!isAuthPage && <Footer />}
       <ScrollToTop />
     </div>
   );
@@ -51,8 +59,10 @@ function Layout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <CartProvider>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
+    </CartProvider>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 import {
   Search, X, Heart, ShoppingBag, User,
   TrendingUp, Clock, ArrowRight,
@@ -37,6 +38,7 @@ function saveRecent(q) {
 
 export default function SearchNavbar() {
   const navigate = useNavigate();
+  const { totalQty } = useCart();
   const [searchParams] = useSearchParams();
   const currentQuery = searchParams.get("q") || "";
 
@@ -364,9 +366,12 @@ export default function SearchNavbar() {
             <button className="snav-icon-btn" title="Profile">
               <User size={20} strokeWidth={1.9} />
             </button>
-            <button className="snav-icon-btn" title="Cart">
+            <button className="snav-icon-btn" title="Cart" onClick={() => navigate("/cart")} style={{ position: "relative" }}>
               <ShoppingBag size={20} strokeWidth={1.9} />
-              <span className="snav-cart-dot" />
+              {totalQty > 0
+                ? <span className="snav-cart-dot" style={{ width: 16, height: 16, fontSize: 9, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>{totalQty > 99 ? "99+" : totalQty}</span>
+                : <span className="snav-cart-dot" />
+              }
             </button>
           </div>
         </div>
