@@ -877,6 +877,11 @@ export default function Navbar() {
           }
         }
 
+        /* ── MOBILE NAV TILES (phone only) ── */
+        .spretro-mobile-nav{
+          display:none;
+        }
+
         /* ── MOBILE (max 767px) ── */
         @media (max-width:767px){
           .spretro-mainbar{
@@ -912,18 +917,50 @@ export default function Navbar() {
             gap:4px;
           }
           .spretro-category-strip{
-            height:76px;
-            padding:0 10px;
-            gap:4px;
+            display:none;
           }
-          .spretro-category{
-            min-width:72px;
-            height:60px;
-            border-radius:14px;
+          .spretro-mobile-nav{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:8px;
+            padding:10px 12px;
+            background:linear-gradient(180deg,#FAFAFF 0%,#FFFFFF 100%);
+            border-bottom:1px solid #EDE8FF;
+          }
+          .spretro-mobile-nav-item{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
             gap:5px;
+            padding:10px 4px;
+            border-radius:14px;
+            cursor:pointer;
+            transition:0.2s ease;
+            font-size:11px;
+            font-weight:800;
+            color:#555;
+            border:1.5px solid transparent;
+            letter-spacing:0.01em;
           }
-          .spretro-category-label{
-            font-size:10px;
+          .spretro-mobile-nav-item:hover{
+            background:linear-gradient(135deg,#EDE4FF,#E5D8FF);
+            color:#6A2CFF;
+            border-color:#C4B0FF;
+          }
+          .spretro-mobile-nav-item.active{
+            background:linear-gradient(135deg,#EDE4FF,#E5D8FF);
+            color:#6A2CFF;
+            border-color:#C4B0FF;
+            box-shadow:0 4px 14px rgba(106,44,255,0.15);
+          }
+          .spretro-mobile-nav-icon{
+            width:40px;
+            height:40px;
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
           }
           .spretro-services{
             height:40px;
@@ -1383,6 +1420,31 @@ export default function Navbar() {
 
           </div>
 
+        </div>
+
+        {/* MOBILE NAV TILES — phone only */}
+        <div className="spretro-mobile-nav">
+          {[
+            { label: "Women", path: "/women", bg: "#FFF0F5", color: "#EC4899",
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M9 20h6M12 16v4M8 12c-2.5 1-4 3-4 5h16c0-2-1.5-4-4-5"/></svg> },
+            { label: "Men",   path: "/men",   bg: "#EFF6FF", color: "#3B82F6",
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 14c-5 0-8 2.5-8 4v1h16v-1c0-1.5-3-4-8-4z"/></svg> },
+            { label: "Kids",  path: "/kids",  bg: "#FFFBEB", color: "#F59E0B",
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="3"/><path d="M9 22V12l-2-3h10l-2 3v10"/><path d="M9 17h6"/></svg> },
+            { label: "New In", path: "/new-in", bg: "#F3EEFF", color: "#6A2CFF",
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className={`spretro-mobile-nav-item ${activeLink === item.label ? "active" : ""}`}
+              onClick={() => navigate(item.path)}
+            >
+              <div className="spretro-mobile-nav-icon" style={{ background: item.bg, color: item.color }}>
+                {item.icon}
+              </div>
+              {item.label}
+            </div>
+          ))}
         </div>
 
         {/* CATEGORY STRIP */}
