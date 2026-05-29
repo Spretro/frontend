@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from './hooks/useProduct';
 import mockData from './mockData.json';
-import ProductGallery from './components/ProductGallery';
-import ProductInfo from './components/ProductInfo';
-import ProductTabs from './components/ProductTabs';
-import ProductReviews from './components/ProductReviews';
-import SimilarItems from './components/SimilarItems';
+import ProductGallery from './sections/ProductGallery';
+import ProductInfo from './sections/ProductInfo';
+import ProductTabs from './sections/ProductTabs';
+import ProductReviews from './sections/ProductReviews';
+import SimilarItems from './sections/SimilarItems';
 import { FullPageSkeleton } from '../../components/LoadingSkeletons';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { AlertCircle } from 'lucide-react';
@@ -93,12 +93,10 @@ function ProductPageContent() {
             description={product.description || 'No description available'}
           />
           <ProductReviews 
-            productId={product.id} 
             rating={product.rating || 0} 
             reviews={mockData.reviews || []} 
           />
           <SimilarItems 
-            productId={product.id} 
             products={mockData.similarProducts || []} 
           />
         </div>

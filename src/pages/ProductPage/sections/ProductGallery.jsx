@@ -89,7 +89,7 @@ export default function ProductGallery({ images = [] }) {
           <img
             src={getImageSrc(activeIndex)}
             alt={`Product image ${activeIndex + 1} of ${images.length}`}
-            className="h-full w-full object-contain transition-transform duration-300"
+            className="h-full w-full object-cover transition-transform duration-300"
             onError={() => handleImageError(activeIndex)}
             loading="lazy"
           />
@@ -99,19 +99,19 @@ export default function ProductGallery({ images = [] }) {
         <div className="absolute inset-x-4 top-1/2 flex -translate-y-1/2 items-center justify-between pointer-events-none">
           <button
             type="button"
-            className="rounded-full bg-white/90 p-2 sm:p-3 text-black shadow hover:bg-white active:scale-95 transition pointer-events-auto"
+            className="rounded-full bg-white/40 p-2 sm:p-3 text-black shadow hover:bg-white active:scale-95 transition pointer-events-auto"
             onClick={goPrev}
             aria-label={`Previous image (${activeIndex} of ${images.length})`}
           >
-            <ChevronLeft size={24} className="sm:w-7 sm:h-7" />
+            <ChevronLeft size={24} strokeWidth={4} className="sm:w-7 sm:h-7" />
           </button>
           <button
             type="button"
-            className="rounded-full bg-white/90 p-2 sm:p-3 text-black shadow hover:bg-white active:scale-95 transition pointer-events-auto"
+            className="rounded-full bg-white/40 p-2 sm:p-3 text-black shadow hover:bg-white active:scale-95 transition pointer-events-auto"
             onClick={goNext}
             aria-label={`Next image (${activeIndex + 2} of ${images.length})`}
           >
-            <ChevronRight size={24} className="sm:w-7 sm:h-7" />
+            <ChevronRight size={24} strokeWidth={4} className="sm:w-7 sm:h-7" />
           </button>
         </div>
 
@@ -124,7 +124,7 @@ export default function ProductGallery({ images = [] }) {
       {/* Thumbnail navigation */}
       <div className="relative flex items-center w-full">
         {/* Thumbnails - Full width with position relative */}
-        <div className="flex-1 flex gap-1.5 sm:gap-2 md:gap-3 overflow-hidden">
+        <div className="flex-1 flex gap-1 sm:gap-1.5 md:gap-2 overflow-hidden">
           {thumbnails.map((src, index) => {
             const absoluteIndex = thumbStart + index;
             const isActive = absoluteIndex === activeIndex;
@@ -133,7 +133,7 @@ export default function ProductGallery({ images = [] }) {
               <button
                 key={`${src}-${absoluteIndex}`}
                 type="button"
-                className={`h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 flex-1 overflow-hidden rounded border-2 transition min-w-0 ${
+                className={`aspect-[4/5] flex-1 overflow-hidden rounded border-2 transition ${
                   isActive
                     ? 'border-purple-500 ring-2 ring-purple-300'
                     : 'border-gray-300 hover:border-purple-500'
@@ -145,7 +145,7 @@ export default function ProductGallery({ images = [] }) {
                 <img
                   src={imageErrors[absoluteIndex] ? PRODUCT_CONSTANTS.IMAGE_PLACEHOLDER : src}
                   alt={`Product thumbnail ${absoluteIndex + 1}`}
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
                   onError={() => handleImageError(absoluteIndex)}
                   loading="lazy"
                 />

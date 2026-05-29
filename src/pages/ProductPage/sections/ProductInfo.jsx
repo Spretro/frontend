@@ -1,11 +1,14 @@
 import {
-  Lock,
-  CheckCircle2,
-  RefreshCw,
-  RotateCcw,
+  Ruler,
+  Palette,
   Plus,
   Minus,
   AlertCircle,
+  BadgePercent,
+  ShieldCheck,
+  CheckCircle,
+  Gift,
+  RotateCw
 } from "lucide-react";
 import { PRODUCT_CONSTANTS } from "../../../utils/constants";
 import { calculateDiscount, formatCurrency } from "../../../utils/helpers";
@@ -74,11 +77,14 @@ export default function ProductInfo({
       </div>
 
       {/* Size selector */}
-      <div className="space-y-3 sm:space-y-4">
-        <div className="flex items-center justify-between">
-          <label className="text-base sm:text-lg md:text-xl font-semibold text-black">
-            Size
-          </label>
+      <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4">
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <Ruler size={24} className="text-purple-500" />
+            <label className="text-base sm:text-lg md:text-xl font-semibold text-black">
+              Size
+            </label>
+          </div>
           <button
             className="text-xs sm:text-sm text-purple-500 hover:text-purple-600 font-medium transition"
             aria-label="Open size guide"
@@ -91,7 +97,7 @@ export default function ProductInfo({
             <button
               key={size}
               onClick={() => onSizeChange(size)}
-              className={`h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded border-2 text-sm sm:text-base md:text-lg font-semibold transition ${
+              className={`h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded border-2 text-xs sm:text-sm md:text-base font-semibold transition ${
                 selectedSize === size
                   ? "border-purple-500 bg-purple-50 text-purple-600"
                   : "border-gray-300 text-black hover:border-purple-500 hover:bg-purple-50"
@@ -105,11 +111,14 @@ export default function ProductInfo({
       </div>
 
       {/* Color selector */}
-      <div className="space-y-2 sm:space-y-3">
-        <label className="text-sm sm:text-base font-semibold text-black">
-          Color
-        </label>
-        <div className="flex gap-3 flex-wrap">
+      <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4">
+        <div className="flex items-center gap-2">
+          <Palette size={24} className="text-purple-500" />
+          <label className="text-sm sm:text-base font-semibold text-black">
+            Color
+          </label>
+        </div>
+        <div className="flex gap-3 flex-wrap py-4">
           {(
             product.colors || [
               { name: "Stone", hex: "#A7A49E" },
@@ -137,9 +146,12 @@ export default function ProductInfo({
       {/* Best Offers section */}
       <div className="space-y-3 sm:space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm sm:text-base font-semibold text-black">
-            Best Offers
-          </p>
+          <div className="flex items-center gap-2">
+            <BadgePercent size={27} className="text-purple-500" />
+            <p className="text-sm sm:text-base font-semibold text-black">
+              Best Offers
+            </p>
+          </div>
           <button className="text-xs sm:text-sm text-purple-500 hover:text-purple-600 font-medium transition">
             View all
           </button>
@@ -253,24 +265,27 @@ export default function ProductInfo({
       </div>
 
       {/* Trust badges */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 py-4 sm:py-6 border-y border-gray-300">
+      <div className="grid gap-1 sm:gap-2 md:gap-4 grid-cols-4 py-3 sm:py-4 md:py-6">
         {[
-          { icon: Lock, label: "Secure\nPayments" },
-          { icon: CheckCircle2, label: "Genuine\nProduct" },
-          { icon: RefreshCw, label: "Try & Buy" },
-          { icon: RotateCcw, label: "7 Day\nReturn" },
+          { icon: ShieldCheck, label: "Secure\nPayments" },
+          { icon: CheckCircle, label: "Genuine\nProduct" },
+          { icon: Gift, label: "Try & Buy" },
+          { icon: RotateCw, label: "7 Day\nReturn" },
         ].map((item) => {
           const IconComponent = item.icon;
           return (
             <div
               key={item.label}
-              className="flex flex-col items-center gap-1.5 sm:gap-2 text-center"
+              className="flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3 text-center "
             >
-              <IconComponent
-                size={24}
-                className="sm:w-7 sm:h-7 text-purple-500"
-              />
-              <p className="text-xs sm:text-sm font-medium text-black leading-tight">
+              <div className="bg-gray-100 p-3 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center">
+                <IconComponent
+                  size={22}
+                  className="sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-800"
+                  strokeWidth={1.5}
+                />
+              </div>
+              <p className="text-[10px] sm:text-[9px] md:text-[10px] font-semibold text-black leading-tight break-words">
                 {item.label}
               </p>
             </div>
@@ -279,7 +294,7 @@ export default function ProductInfo({
       </div>
 
       {/* Product details */}
-      <div className="space-y-3 sm:space-y-4 border-t border-gray-300 pt-4 sm:pt-6">
+      <div className="space-y-3 sm:space-y-4 border border-gray-300 pt-4 p-6 rounded-lg">
         <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">

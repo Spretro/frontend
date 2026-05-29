@@ -1,6 +1,6 @@
 // Product page constants
 export const PRODUCT_CONSTANTS = {
-  THUMBNAIL_COUNT: 4,
+  THUMBNAIL_COUNT: 5,
   MAX_QUANTITY: 10,
   MIN_QUANTITY: 1,
   IMAGE_PLACEHOLDER: 'https://via.placeholder.com/400x500?text=Product+Image',

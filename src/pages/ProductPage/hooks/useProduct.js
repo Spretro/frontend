@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import mockDataFile from '../mockData.json';
-import { PRODUCT_CONSTANTS, ERROR_MESSAGES, SUCCESS_MESSAGES, API_ENDPOINTS } from '../../../utils/constants';
+import { PRODUCT_CONSTANTS, ERROR_MESSAGES } from '../../../utils/constants';
 import { clamp } from '../../../utils/helpers';
 
 // Extract mock product data
@@ -169,14 +169,6 @@ export const useProduct = (productId) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 600));
 
-      console.log('✓ Added to cart:', {
-        productId,
-        productName: product?.name,
-        size: selectedSize,
-        color: selectedColor,
-        quantity,
-      });
-
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.GENERIC_ERROR;
@@ -186,7 +178,7 @@ export const useProduct = (productId) => {
     } finally {
       setCartLoading(false);
     }
-  }, [productId, product, selectedSize, selectedColor, quantity, validateCartAddition]);
+  }, [validateCartAddition]);
 
   /**
    * Clear error message

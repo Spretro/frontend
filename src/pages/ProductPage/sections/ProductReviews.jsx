@@ -7,7 +7,7 @@ import { PRODUCT_CONSTANTS } from '../../../utils/constants';
  * ProductReviews Component
  * Displays customer reviews and allows writing new reviews
  */
-export default function ProductReviews({ productId = null, rating = 0, reviews = [] }) {
+export default function ProductReviews({ rating = 0, reviews = [] }) {
   const [writeOpen, setWriteOpen] = useState(false);
   const [formData, setFormData] = useState({
     rating: 0,
@@ -121,7 +121,6 @@ export default function ProductReviews({ productId = null, rating = 0, reviews =
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      console.log('✓ Review submitted:', formData);
       setSubmitted(true);
       resetForm();
 
@@ -137,7 +136,7 @@ export default function ProductReviews({ productId = null, rating = 0, reviews =
     } finally {
       setSubmitting(false);
     }
-  }, [productId, formData, validateForm, resetForm]);
+  }, [validateForm, resetForm]);
 
   const displayReviews = reviews && reviews.length > 0 ? reviews : [];
 

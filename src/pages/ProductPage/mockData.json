@@ -23,7 +23,7 @@
       "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/v/n/xl-rcb-niyansh-fab-original-imahmrqrgpebzrhn.jpeg",
       "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/z/y/7/l-rcb-niyansh-fab-original-imahmrqr5w69anfy.jpeg"
     ],
-    "sizes": ["S", "M", "L", "XL", "XXL", "2XL", "3XL", "4XL"],
+    "sizes": ["S", "M", "L", "XL", "XXL", "2XL", "3XL"],
     "colors": [
       {
         "name": "Stone",
@@ -103,40 +103,80 @@
   "similarProducts": [
     {
       "id": 1,
+      "brand": "SNITCH",
       "name": "Classic White T-Shirt",
       "price": 899,
+      "originalPrice": 1599,
       "rating": 4,
       "reviews": 145,
       "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/q/c/9/xxl-rn-ocdaws041-occupied-clothing-co-original-imahn79uzuetx5gx.jpeg"
     },
     {
       "id": 2,
+      "brand": "Bewakoof",
       "name": "Striped Cotton T-Shirt",
       "price": 999,
+      "originalPrice": 1999,
       "rating": 4,
       "reviews": 89,
       "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/x/k/w/xxl-mens-hs-stripes-smart-colors-original-imahkezvxpedbzt9.jpeg"
     },
     {
       "id": 3,
+      "brand": "Bewakoof",
       "name": "Graphic Print T-Shirt",
       "price": 1099,
+      "originalPrice": 1899,
       "rating": 5,
       "reviews": 267,
       "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/o/4/e/l-tiiddp2uyi-try-this-original-imahk7fftm33w3bj.jpeg"
     },
     {
       "id": 4,
+      "brand": "SNITCH",
       "name": "Solid Black T-Shirt",
       "price": 899,
+      "originalPrice": 1599,
       "rating": 4,
       "reviews": 198,
       "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/x/q/l-mvhs-nilan-tees-wear-original-imah38j8qbtvhzgc.jpeg"
     },
     {
       "id": 5,
+      "brand": "Yazole",
       "name": "Navy Blue T-Shirt",
       "price": 1199,
+      "originalPrice": 2199,
+      "rating": 5,
+      "reviews": 321,
+      "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/n/b/t/s-solid-design-casual-wear-polo-neck-yazole-original-imahgbcygbtvqbcm.jpeg"
+    },
+    {
+      "id": 6,
+      "brand": "Bewakoof",
+      "name": "Printed Casual T-Shirt",
+      "price": 1099,
+      "originalPrice": 1899,
+      "rating": 5,
+      "reviews": 267,
+      "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/o/4/e/l-tiiddp2uyi-try-this-original-imahk7fftm33w3bj.jpeg"
+    },
+    {
+      "id": 7,
+      "brand": "Bewakoof",
+      "name": "Black Distressed T-Shirt",
+      "price": 899,
+      "originalPrice": 1599,
+      "rating": 4,
+      "reviews": 198,
+      "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/x/q/l-mvhs-nilan-tees-wear-original-imah38j8qbtvhzgc.jpeg"
+    },
+    {
+      "id": 8,
+      "brand": "SNITCH",
+      "name": "Premium Navy T-Shirt",
+      "price": 1199,
+      "originalPrice": 2199,
       "rating": 5,
       "reviews": 321,
       "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/n/b/t/s-solid-design-casual-wear-polo-neck-yazole-original-imahgbcygbtvqbcm.jpeg"

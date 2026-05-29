@@ -11,7 +11,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -39,7 +39,7 @@ class ErrorBoundary extends React.Component {
             <p className="text-gray-600 mb-4">
               We encountered an error while loading this page. Please try again.
             </p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="bg-gray-100 p-4 rounded mb-4 text-left overflow-auto max-h-48">
                 <p className="text-red-600 text-sm font-mono">
                   {this.state.error.toString()}
