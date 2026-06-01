@@ -98,20 +98,28 @@ spretro/
     ├── src/
     │   ├── components/
     │   │   ├── ErrorBoundary.jsx
-    │   │   └── LoadingSkeletons.jsx
-    │   ├── pages/
-    │   │   ├── Home.jsx
-    │   │   └── ProductPage/
-    │   │       ├── ProductPage.jsx
-    │   │       ├── mockData.json
-    │   │       ├── components/
-    │   │       └── hooks/
-    │   ├── utils/
-    │   │   ├── constants.js
-    │   │   └── helpers.js
-    │   ├── App.jsx
-    │   ├── main.jsx
-    │   └── index.css
+   │   │   ├── LoadingSkeletons.jsx
+   │   │   ├── Carousel.jsx
+   │   │   └── sections/
+   │   │       ├── ProductGallery.jsx
+   │   │       ├── ProductInfo.jsx
+   │   │       ├── ProductTabs.jsx
+   │   │       ├── ProductReviews.jsx
+   │   │       └── RecommendationSection.jsx
+   │   ├── pages/
+   │   │   └── ProductPage/
+   │   │       ├── ProductPage.jsx
+   │   │       └── ProductPage.css
+   │   ├── data/
+   │   │   ├── mockProduct.js
+   │   │   └── MOCK_DATA.md
+   │   ├── hooks/
+   │   │   └── useProduct.js
+   │   ├── lib/
+   │   │   └── productUtils.js
+   │   ├── App.jsx
+   │   ├── main.jsx
+   │   └── index.css
     ├── public/
     ├── package.json
     ├── vite.config.js
@@ -314,7 +322,7 @@ npm run build
 ### Code Formatting
 - Editor auto-formats on save (if configured)
 - Run linter: `npm run lint -- --fix`
-- Follow naming conventions in [CODING_STANDARDS.md](./CODING_STANDARDS.md)
+- Follow naming conventions in README and COMPONENTS docs
 
 ### Performance Testing
 - Open DevTools Performance tab
@@ -327,7 +335,7 @@ npm run build
 1. Read [README.md](./README.md) for feature overview
 2. Check [ARCHITECTURE.md](./ARCHITECTURE.md) for code structure
 3. Review [COMPONENTS.md](./COMPONENTS.md) for component details
-4. Follow [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
+4. Follow project conventions in README and COMPONENTS docs
 
 ## 🆘 Getting Help
 
@@ -340,4 +348,4 @@ npm run build
 ---
 
 **Version**: 1.0.0
-**Last Updated**: May 2026
+**Last Updated**: June 2026

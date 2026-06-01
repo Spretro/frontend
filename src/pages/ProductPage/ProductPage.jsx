@@ -1,26 +1,20 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useProduct } from './hooks/useProduct';
-import mockData from './mockData.json';
-import ProductGallery from './sections/ProductGallery';
-import ProductInfo from './sections/ProductInfo';
-import ProductTabs from './sections/ProductTabs';
-import ProductReviews from './sections/ProductReviews';
-import SimilarItems from './sections/SimilarItems';
-import { FullPageSkeleton } from '../../components/LoadingSkeletons';
-import ErrorBoundary from '../../components/ErrorBoundary';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import ErrorBoundary from "../../components/ErrorBoundary";
+import { FullPageSkeleton } from "../../components/LoadingSkeletons";
+import { mockReviews } from "../../data/mockProduct";
+import { useProduct } from "../../hooks/useProduct";
+import ProductGallery from "../../components/sections/ProductGallery";
+import ProductInfo from "../../components/sections/ProductInfo";
+import ProductReviews from "../../components/sections/ProductReviews";
+import ProductTabs from "../../components/sections/ProductTabs";
+import RecommendationSection from "../../components/sections/RecommendationSection";
+import "./ProductPage.css";
 
-/**
- * ProductPage - Main product display component
- * Displays product details, gallery, reviews, and similar items
- */
 function ProductPageContent() {
-  // Get product ID from URL params
   const { productId } = useParams();
   const navigate = useNavigate();
-
-  // Use productId from route params, fallback to demo ID
-  const currentProductId = productId || '1307441';
+  const currentProductId = productId || "1307441";
 
   const {
     product,
@@ -39,22 +33,27 @@ function ProductPageContent() {
     clearError,
   } = useProduct(currentProductId);
 
-  // Show loading state
   if (loading) {
     return <FullPageSkeleton />;
   }
 
-  // Show error state
   if (error || !product) {
     return (
-      <main className="w-full bg-light-grey min-h-screen flex items-center justify-center px-4">
-        <div className="text-center bg-white p-8 rounded-lg max-w-md">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-600 font-semibold mb-2 text-lg">Error loading product</p>
-          <p className="text-gray-600 mb-6">{error || 'Product not found'}</p>
+      <main className="flex min-h-screen w-full items-center justify-center bg-[#F9F8FF] px-4">
+        <div
+          className="max-w-md rounded-3xl border border-[#EEE8FF] bg-white p-8 text-center"
+          style={{ boxShadow: "0 12px 40px rgba(106,44,255,0.12)" }}
+        >
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-rose-500" />
+          <h1 className="mb-2 text-lg font-black text-gray-950">
+            Error loading product
+          </h1>
+          <p className="mb-6 text-sm font-medium text-gray-500">
+            {error || "Product not found"}
+          </p>
           <button
-            onClick={() => navigate('/')}
-            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded transition"
+            onClick={() => navigate("/")}
+            className="rounded-full bg-[#6A2CFF] px-6 py-2.5 text-sm font-black text-white transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-95"
           >
             Go Back Home
           </button>
@@ -64,10 +63,13 @@ function ProductPageContent() {
   }
 
   return (
-    <main className="w-full bg-light-grey">
-      <div className="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-10 bg-white">
-        {/* Main product section */}
-        <section className="grid gap-6 sm:gap-8 md:gap-10 lg:grid-cols-[1.2fr_1fr] auto-rows-max">
+    <main className="w-full overflow-x-hidden bg-[#F9F8FF]">
+      <div className="mx-auto max-w-[90rem] overflow-x-hidden px-3 py-4 sm:px-4 md:px-8 md:py-8">
+        <section
+          aria-labelledby="product-title"
+          className="grid min-w-0 gap-5 rounded-3xl border border-[#EEE8FF] bg-white p-3 sm:p-4 md:gap-8 md:p-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)]"
+          style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.07)" }}
+        >
           <ProductGallery images={product.images || []} />
           <ProductInfo
             product={product}
@@ -86,28 +88,23 @@ function ProductPageContent() {
           />
         </section>
 
-        {/* Additional sections */}
-        <div className="mt-12 sm:mt-14 md:mt-16 space-y-12 sm:space-y-14 md:space-y-16">
-          <ProductTabs 
-            specifications={product.specifications || []} 
-            description={product.description || 'No description available'}
+        <div className="mt-8 space-y-8 md:mt-10 md:space-y-10">
+          <ProductTabs
+            specifications={product.specifications || []}
+            description={product.description || "No description available"}
           />
-          <ProductReviews 
-            rating={product.rating || 0} 
-            reviews={mockData.reviews || []} 
+          <ProductReviews
+            rating={product.rating || 0}
+            reviewCount={product.reviewCount || 0}
+            reviews={mockReviews}
           />
-          <SimilarItems 
-            products={mockData.similarProducts || []} 
-          />
+          <RecommendationSection productBrand={product.brand} />
         </div>
       </div>
     </main>
   );
 }
 
-/**
- * ProductPage with Error Boundary
- */
 export default function ProductPage() {
   return (
     <ErrorBoundary>

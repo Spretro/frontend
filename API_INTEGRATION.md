@@ -9,15 +9,15 @@ This guide explains how to integrate real API endpoints into the application, re
 ## 📋 Current State
 
 ### Mock Data Location
-- **File**: `src/pages/ProductPage/mockData.json`
-- **Hook**: `src/pages/ProductPage/hooks/useProduct.js`
+- **File**: `src/data/mockProduct.js`
+- **Hook**: `src/hooks/useProduct.js`
 - **Status**: Using local mock data for development
 
 ### TODO Comments in Code
 ```javascript
-// TODO: Replace with actual API call
+// TODO(BACKEND): Replace with actual API call
 // Example production code:
-// const response = await fetch(`${API_ENDPOINTS.GET_PRODUCT}/${productId}`)
+// const response = await fetch(`${API_BASE_URL}/products/${productId}`)
 ```
 
 ---
@@ -52,44 +52,30 @@ export default defineConfig({
 
 ## 🔌 API Endpoints Configuration
 
-### Update constants.js
+### Create a small endpoint map (recommended)
 
 ```javascript
-// src/utils/constants.js
+// src/lib/apiEndpoints.js
 
 export const API_ENDPOINTS = {
   // Products
   GET_PRODUCT: '/api/v1/products',
-  GET_SIMILAR_PRODUCTS: '/api/v1/products/:id/similar',
-  
+  GET_RECOMMENDATIONS: '/api/v1/products/:id/recommendations',
+
   // Cart
-  ADD_TO_CART: '/api/v1/cart/add',
-  GET_CART: '/api/v1/cart',
-  UPDATE_CART: '/api/v1/cart/update',
-  
+  ADD_TO_CART: '/api/v1/cart/items',
+
   // Reviews
   GET_REVIEWS: '/api/v1/products/:id/reviews',
-  SUBMIT_REVIEW: '/api/v1/reviews/submit',
-  
-  // Wishlist
-  ADD_WISHLIST: '/api/v1/wishlist/add',
-  GET_WISHLIST: '/api/v1/wishlist',
-  REMOVE_WISHLIST: '/api/v1/wishlist/remove',
-}
-
-export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://api.example.com',
-  TIMEOUT: import.meta.env.VITE_API_TIMEOUT || 10000,
-  RETRY_COUNT: 3,
-  RETRY_DELAY: 1000,
-}
+  SUBMIT_REVIEW: '/api/v1/products/:id/reviews',
+};
 ```
 
 ---
 
 ## 🛠️ Create API Service Layer
 
-### New File: src/utils/api.js
+### New File: src/lib/api.js
 
 ```javascript
 /**
@@ -97,13 +83,13 @@ export const API_CONFIG = {
  * Centralized API communication with error handling and retry logic
  */
 
-import { API_CONFIG, ERROR_MESSAGES } from './constants'
+const DEFAULT_TIMEOUT = Number(import.meta.env.VITE_API_TIMEOUT || 10000)
 
 class ApiService {
   constructor() {
-    this.baseUrl = API_CONFIG.BASE_URL
-    this.timeout = API_CONFIG.TIMEOUT
-    this.retryCount = API_CONFIG.RETRY_COUNT
+    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.example.com'
+    this.timeout = DEFAULT_TIMEOUT
+    this.retryCount = 3
   }
 
   /**
@@ -130,7 +116,7 @@ class ApiService {
       return await response.json()
     } catch (error) {
       console.error('API Request Error:', error)
-      throw this._handleError(error)
+      throw error
     }
   }
 
@@ -168,29 +154,7 @@ class ApiService {
     return this.request(endpoint, { method: 'DELETE' })
   }
 
-  /**
-   * Handle API errors
-   */
-  _handleError(error) {
-    if (error.message.includes('Network')) {
-      return new Error(ERROR_MESSAGES.NETWORK_ERROR)
-    }
-    if (error.message.includes('timeout')) {
-      return new Error('Request timeout. Please try again.')
-    }
-    return error
-  }
-
-  /**
-   * Replace URL params in endpoint
-   */
-  _replaceParams(endpoint, params = {}) {
-    let url = endpoint
-    Object.entries(params).forEach(([key, value]) => {
-      url = url.replace(`:${key}`, value)
-    })
-    return url
-  }
+  // Optional: add retry logic or error mapping here if needed.
 }
 
 export default new ApiService()
@@ -203,11 +167,12 @@ export default new ApiService()
 ### Migration from Mock to API
 
 ```javascript
-// src/pages/ProductPage/hooks/useProduct.js
+// src/hooks/useProduct.js
 
 import { useState, useEffect, useCallback } from 'react'
-import apiService from '../../../utils/api'
-import { API_ENDPOINTS, ERROR_MESSAGES } from '../../../utils/constants'
+import apiService from '../lib/api'
+import { API_ENDPOINTS } from '../lib/apiEndpoints'
+import { ERROR_MESSAGES } from '../lib/productUtils'
 
 export const useProduct = (productId) => {
   const [product, setProduct] = useState(null)
@@ -224,7 +189,7 @@ export const useProduct = (productId) => {
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productId) {
-        setError(ERROR_MESSAGES.PRODUCT_NOT_FOUND)
+        setError(ERROR_MESSAGES.productNotFound)
         setLoading(false)
         return
       }
@@ -240,7 +205,7 @@ export const useProduct = (productId) => {
         setProduct(data)
       } catch (err) {
         console.error('Error fetching product:', err)
-        setError(err.message || ERROR_MESSAGES.FETCH_ERROR)
+        setError(err.message || ERROR_MESSAGES.fetchError)
         setProduct(null)
       } finally {
         setLoading(false)
@@ -254,8 +219,12 @@ export const useProduct = (productId) => {
    * Add to cart
    */
   const addToCart = useCallback(async () => {
-    if (!selectedSize || !selectedColor) {
-      setError(ERROR_MESSAGES.SIZE_COLOR_ERROR)
+    if (!selectedSize) {
+      setError(ERROR_MESSAGES.sizeRequired)
+      return
+    }
+    if (!selectedColor) {
+      setError(ERROR_MESSAGES.colorRequired)
       return
     }
 
@@ -271,7 +240,7 @@ export const useProduct = (productId) => {
       await apiService.post(API_ENDPOINTS.ADD_TO_CART, cartData)
       // Handle success - update UI, show toast, etc.
     } catch (err) {
-      setError(err.message || ERROR_MESSAGES.GENERIC_ERROR)
+      setError(err.message || ERROR_MESSAGES.generic)
     } finally {
       setCartLoading(false)
     }
@@ -298,42 +267,42 @@ export const useProduct = (productId) => {
 
 ---
 
-## 📦 Fetch Similar Products
+## 📦 Fetch Recommendations
 
-### Update SimilarItems Component
+### Update RecommendationSection Component
 
 ```javascript
-// src/pages/ProductPage/components/SimilarItems.jsx
+// src/components/sections/RecommendationSection.jsx
 
 import { useEffect, useState } from 'react'
-import apiService from '../../../utils/api'
-import { API_ENDPOINTS } from '../../../utils/constants'
+import apiService from '../../lib/api'
+import { API_ENDPOINTS } from '../../lib/apiEndpoints'
 
-export default function SimilarItems({ products = [] }) {
-  const [items, setItems] = useState(products)
-  const [loading, setLoading] = useState(false)
+export default function RecommendationSection({ productId, productBrand = '' }) {
+  const [recommendations, setRecommendations] = useState({
+    sameBrandProducts: [],
+    similarProducts: [],
+    customersAlsoLike: [],
+    recommendedBySpretro: [],
+  })
 
-  // Fetch similar products if not provided
   useEffect(() => {
-    if (items.length === 0 && productId) {
-      const fetchSimilar = async () => {
-        try {
-          setLoading(true)
-          const endpoint = `${API_ENDPOINTS.GET_SIMILAR_PRODUCTS}/${productId}`
-          const data = await apiService.get(endpoint)
-          setItems(data)
-        } catch (error) {
-          console.error('Failed to fetch similar products:', error)
-        } finally {
-          setLoading(false)
-        }
+    if (!productId) return
+
+    const fetchRecommendations = async () => {
+      try {
+        const endpoint = API_ENDPOINTS.GET_RECOMMENDATIONS.replace(':id', productId)
+        const data = await apiService.get(endpoint)
+        setRecommendations(data)
+      } catch (error) {
+        console.error('Failed to fetch recommendations:', error)
       }
-      
-      fetchSimilar()
     }
+
+    fetchRecommendations()
   }, [productId])
 
-  // ... rest of component
+  // ... render with recommendations
 }
 ```
 
@@ -344,11 +313,11 @@ export default function SimilarItems({ products = [] }) {
 ### Update ProductReviews Component
 
 ```javascript
-// src/pages/ProductPage/components/ProductReviews.jsx
+// src/components/sections/ProductReviews.jsx
 
 import { useEffect, useState } from 'react'
-import apiService from '../../../utils/api'
-import { API_ENDPOINTS } from '../../../utils/constants'
+import apiService from '../../lib/api'
+import { API_ENDPOINTS } from '../../lib/apiEndpoints'
 
 export default function ProductReviews({ productId }) {
   const [reviews, setReviews] = useState([])
@@ -361,7 +330,7 @@ export default function ProductReviews({ productId }) {
     const fetchReviews = async () => {
       try {
         setLoading(true)
-        const endpoint = `${API_ENDPOINTS.GET_REVIEWS}/${productId}`
+        const endpoint = API_ENDPOINTS.GET_REVIEWS.replace(':id', productId)
         const data = await apiService.get(endpoint)
         setReviews(data)
       } catch (error) {
@@ -386,10 +355,8 @@ export default function ProductReviews({ productId }) {
         ...reviewData,
       }
       
-      const response = await apiService.post(
-        API_ENDPOINTS.SUBMIT_REVIEW,
-        payload
-      )
+      const endpoint = API_ENDPOINTS.SUBMIT_REVIEW.replace(':id', productId)
+      const response = await apiService.post(endpoint, payload)
       
       // Add new review to list
       setReviews([response, ...reviews])
@@ -403,104 +370,6 @@ export default function ProductReviews({ productId }) {
   return (
     // Component JSX with submitReview handler
   )
-}
-```
-
----
-
-## 🛒 Wishlist Integration
-
-### Create Wishlist Hook
-
-```javascript
-// src/pages/ProductPage/hooks/useWishlist.js
-
-import { useState, useCallback } from 'react'
-import apiService from '../../../utils/api'
-import { API_ENDPOINTS } from '../../../utils/constants'
-
-export const useWishlist = () => {
-  const [wishlist, setWishlist] = useState({})
-  const [loading, setLoading] = useState(false)
-
-  /**
-   * Add to wishlist
-   */
-  const addToWishlist = useCallback(async (productId) => {
-    try {
-      setLoading(true)
-      await apiService.post(API_ENDPOINTS.ADD_WISHLIST, { productId })
-      setWishlist(prev => ({ ...prev, [productId]: true }))
-    } catch (error) {
-      console.error('Failed to add to wishlist:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  /**
-   * Remove from wishlist
-   */
-  const removeFromWishlist = useCallback(async (productId) => {
-    try {
-      setLoading(true)
-      await apiService.delete(`${API_ENDPOINTS.REMOVE_WISHLIST}/${productId}`)
-      setWishlist(prev => ({ ...prev, [productId]: false }))
-    } catch (error) {
-      console.error('Failed to remove from wishlist:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  return { wishlist, addToWishlist, removeFromWishlist, loading }
-}
-```
-
----
-
-## 🔐 Authentication (Future)
-
-### Add Auth Service
-
-```javascript
-// src/utils/auth.js (Future)
-
-export const authService = {
-  async login(email, password) {
-    // Login API call
-  },
-
-  async logout() {
-    // Logout API call
-  },
-
-  async getProfile() {
-    // Get user profile
-  },
-
-  setToken(token) {
-    localStorage.setItem('authToken', token)
-  },
-
-  getToken() {
-    return localStorage.getItem('authToken')
-  },
-}
-```
-
-### Update API Service for Auth Headers
-
-```javascript
-async request(endpoint, options = {}) {
-  const token = localStorage.getItem('authToken')
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-    ...options.headers,
-  }
-
-  // Rest of request logic
 }
 ```
 
@@ -549,7 +418,7 @@ Content-Type: application/json
   "productId": "1307441",
   "rating": 5,
   "title": "Great product!",
-  "review": "This product exceeded my expectations.",
+  "comment": "This product exceeded my expectations.",
   "author": "John Doe"
 }
 ```
@@ -563,7 +432,7 @@ Content-Type: application/json
     "productId": "1307441",
     "rating": 5,
     "title": "Great product!",
-    "review": "This product exceeded my expectations.",
+    "comment": "This product exceeded my expectations.",
     "author": "John Doe",
     "createdAt": "2026-05-25T10:30:00Z"
   }
@@ -571,20 +440,6 @@ Content-Type: application/json
 ```
 
 ---
-
-## 📊 Rate Limiting & Throttling
-
-### Implement Request Debouncing
-
-```javascript
-// For search, filter operations
-import { debounce } from '../utils/helpers'
-
-const debouncedSearch = debounce(async (query) => {
-  const results = await apiService.get(`/search?q=${query}`)
-  setResults(results)
-}, 500)
-```
 
 ---
 
@@ -641,7 +496,7 @@ class ApiService {
 ## 📝 Checklist for API Integration
 
 - [ ] Environment variables configured
-- [ ] API endpoints defined in constants
+- [ ] API endpoints defined in apiEndpoints
 - [ ] API service layer created
 - [ ] Error handling implemented
 - [ ] Loading states added

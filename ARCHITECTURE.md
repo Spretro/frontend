@@ -10,8 +10,8 @@
 │  ┌────────────────────────────────────┐   │
 │  │      React Router (Routes)         │   │
 │  ├────────────────────────────────────┤   │
-│  │  Home Page  │  Product Page        │   │
-│  │             │  /product/:productId │   │
+│  │  Product Page                       │   │
+│  │  /product/:productId                │   │
 │  └────────────────────────────────────┘   │
 │                                             │
 │  ┌────────────────────────────────────┐   │
@@ -19,13 +19,13 @@
 │  ├────────────────────────────────────┤   │
 │  │ ProductGallery │ ProductInfo       │   │
 │  │ ProductTabs    │ ProductReviews    │   │
-│  │ SimilarItems                       │   │
+│  │ RecommendationSection              │   │
 │  └────────────────────────────────────┘   │
 │                                             │
 │  ┌────────────────────────────────────┐   │
 │  │    Utilities & Helpers             │   │
 │  ├────────────────────────────────────┤   │
-│  │ Constants │ Helpers │ Hooks        │   │
+│  │ Helpers   │ Hooks   │ Mock Data    │   │
 │  └────────────────────────────────────┘   │
 └─────────────────────────────────────────────┘
 ```
@@ -42,6 +42,13 @@ Root source directory containing all application code.
 components/
 ├── ErrorBoundary.jsx      # Error boundary wrapper component
 ├── LoadingSkeletons.jsx   # Skeleton loading states
+├── Carousel.jsx            # Horizontal scroll utility
+└── sections/               # Product page sections
+    ├── ProductGallery.jsx
+    ├── ProductInfo.jsx
+    ├── ProductTabs.jsx
+    ├── ProductReviews.jsx
+    └── RecommendationSection.jsx
 ```
 
 #### ErrorBoundary
@@ -59,37 +66,30 @@ components/
 
 ```
 pages/
-├── Home.jsx               # Home page landing
 └── ProductPage/
     ├── ProductPage.jsx    # Main product page wrapper
-    ├── mockData.json      # Mock product data
-    ├── MOCK_DATA.md       # Mock data documentation
-    ├── components/        # Product-specific components
-    │   ├── ProductGallery.jsx
-    │   ├── ProductInfo.jsx
-    │   ├── ProductTabs.jsx
-    │   ├── ProductReviews.jsx
-    │   └── SimilarItems.jsx
-    └── hooks/
-        └── useProduct.js   # Product data management hook
+    └── ProductPage.css    # Page styles
+
+data/
+├── mockProduct.js         # Mock product data
+└── MOCK_DATA.md           # Mock data documentation
+
+hooks/
+└── useProduct.js          # Product data management hook
 ```
 
-### `/src/utils`
+### `/src/lib`
 **Utility functions and constants** used throughout the app.
 
 ```
-utils/
-├── constants.js           # App-wide constants
-└── helpers.js             # Utility functions
+lib/
+└── productUtils.js        # App-wide helpers/constants
 ```
 
 ## 🔄 Component Hierarchy
 
 ```
 App
-├── Home
-│   └── ProductCard (from mockData)
-│
 └── ProductPage (Error Boundary)
     └── ProductPageContent
         ├── ProductGallery
@@ -113,10 +113,9 @@ App
         │   ├── Reviews List
         │   └── Review Form
         │
-        └── SimilarItems
-            ├── Product Carousel
-            ├── Previous Button
-            └── Next Button
+        └── RecommendationSection
+            ├── Curated product grids
+            └── Optional View All CTA
 ```
 
 ## 🔌 Data Flow
@@ -124,7 +123,7 @@ App
 ### Product Data Flow
 
 ```
-mockData.json
+mockProduct.js
     ↓
 useProduct Hook
     ├── product state
@@ -139,7 +138,7 @@ ProductPageContent
     ├── ProductInfo (product, quantity, selections)
     ├── ProductTabs (specifications, description)
     ├── ProductReviews (reviews, rating)
-    └── SimilarItems (similar products)
+    └── RecommendationSection (recommendations)
 ```
 
 ### Event Flow
@@ -159,7 +158,7 @@ UI Update
 ## 🪝 Custom Hooks
 
 ### useProduct
-**Location**: `src/pages/ProductPage/hooks/useProduct.js`
+**Location**: `src/hooks/useProduct.js`
 
 **Purpose**: Manages all product-related state and operations.
 
@@ -252,7 +251,7 @@ Currently using React's built-in `useState` for local state management:
 
 ## 🔄 Data Fetching (Future)
 
-**Current**: Mock data from JSON file
+**Current**: Mock data from `src/data/mockProduct.js`
 **Target**: Real API calls
 
 ```javascript
@@ -321,7 +320,7 @@ Easy to add, remove, or modify components without affecting others.
 4. Consider state management library (Redux)
 
 ### For Growing Team
-1. Follow coding standards (see CODING_STANDARDS.md)
+1. Follow project conventions in README and COMPONENTS docs
 2. Use clear naming conventions
 3. Write comprehensive comments
 4. Keep documentation updated
@@ -349,4 +348,4 @@ npm run preview  # Preview production build
 ---
 
 **Version**: 1.0.0
-**Last Updated**: May 2026
+**Last Updated**: June 2026

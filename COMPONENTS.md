@@ -36,7 +36,7 @@ This document details all components in the application, their props, usage, and
 
 **Error States**:
 - Component error displayed
-- User can navigate home
+- User can retry rendering
 - Error logged for debugging
 
 ---
@@ -49,8 +49,10 @@ This document details all components in the application, their props, usage, and
 
 **Exports**:
 - `FullPageSkeleton` - Full page loading state
-- `ProductSkeleton` - Product-specific loading
-- `ReviewSkeleton` - Review list loading
+- `ProductGallerySkeleton` - Gallery placeholder
+- `ProductInfoSkeleton` - Product info placeholder
+- `ReviewsSkeleton` - Review list loading
+- `SimilarItemsSkeleton` - Recommendations placeholder
 
 **Usage**:
 ```jsx
@@ -63,21 +65,30 @@ if (loading) {
 
 ---
 
-## Page Components
+### Carousel
 
-### Home
+**Location**: `src/components/Carousel.jsx`
 
-**Location**: `src/pages/Home.jsx`
+**Purpose**: Generic horizontal carousel wrapper with optional navigation buttons.
 
-**Purpose**: Landing page displaying product overview.
+**Props**:
+```javascript
+{
+  items: Array<any>,               // Items to render
+  renderItem: (item) => ReactNode, // Render function
+  ariaLabel: string,               // Accessibility label
+  gapClassName: string             // Tailwind gap classes
+}
+```
 
 **Features**:
-- Product grid/list
-- Navigation to product page
-- Hero section
-- CTA buttons
+- Scrollable track with button controls
+- Responsive gap support
+- Scroll state tracking for button visibility
 
 ---
+
+## Page Components
 
 ### ProductPage
 
@@ -93,7 +104,7 @@ ProductPage (Error Boundary)
     ├── ProductInfo
     ├── ProductTabs
     ├── ProductReviews
-    └── SimilarItems
+    └── RecommendationSection
 ```
 
 **Props**: None (uses URL params)
@@ -107,7 +118,7 @@ ProductPage (Error Boundary)
 
 ### ProductGallery
 
-**Location**: `src/pages/ProductPage/components/ProductGallery.jsx`
+**Location**: `src/components/sections/ProductGallery.jsx`
 
 **Purpose**: Displays product images with carousel and thumbnails.
 
@@ -121,7 +132,7 @@ ProductPage (Error Boundary)
 **Features**:
 - Main image display
 - Previous/next navigation
-- Thumbnail gallery (4 visible)
+- Thumbnail gallery (5 visible)
 - Lazy loading
 - Error handling with placeholders
 - Smooth transitions
@@ -130,14 +141,13 @@ ProductPage (Error Boundary)
 **State**:
 - `activeIndex` - Currently displayed image
 - `thumbStart` - Thumbnail scroll position
-- `imageErrors` - Track failed image loads
+- `failedImages` - Track failed image loads
 
 **Methods**:
-- `goPrev()` - Navigate to previous image
+- `goPrevious()` - Navigate to previous image
 - `goNext()` - Navigate to next image
-- `shiftThumbs(direction)` - Scroll thumbnails
-- `handleImageError(index)` - Handle load errors
-- `getImageSrc(index)` - Get image with fallback
+- `shiftThumbnails(direction)` - Scroll thumbnails
+- `markImageFailed(index)` - Handle load errors
 
 **Usage**:
 ```jsx
@@ -155,7 +165,7 @@ ProductPage (Error Boundary)
 
 ### ProductInfo
 
-**Location**: `src/pages/ProductPage/components/ProductInfo.jsx`
+**Location**: `src/components/sections/ProductInfo.jsx`
 
 **Purpose**: Displays product details, pricing, and purchase options.
 
@@ -238,7 +248,7 @@ ProductPage (Error Boundary)
 
 ### ProductTabs
 
-**Location**: `src/pages/ProductPage/components/ProductTabs.jsx`
+**Location**: `src/components/sections/ProductTabs.jsx`
 
 **Purpose**: Displays product specifications and description in tabs.
 
@@ -275,23 +285,22 @@ ProductPage (Error Boundary)
 
 ### ProductReviews
 
-**Location**: `src/pages/ProductPage/components/ProductReviews.jsx`
+**Location**: `src/components/sections/ProductReviews.jsx`
 
 **Purpose**: Displays customer reviews and allows submission of new reviews.
 
 **Props**:
 ```javascript
 {
-  productId: string,           // Product identifier
   rating: number,              // Overall product rating (0-5)
+  reviewCount: number,         // Total review count
   reviews: Array<{
     id: string,
     author: string,
     rating: number,
     title: string,
-    review: string,
-    date: string,
-    helpful: number
+    comment: string,
+    date: string
   }>
 }
 ```
@@ -302,7 +311,6 @@ ProductPage (Error Boundary)
 - Write review form
 - Form validation
 - Rating validation
-- Author name validation
 - Review text validation (min 10 chars)
 - Success message
 - Error handling
@@ -311,7 +319,6 @@ ProductPage (Error Boundary)
 - Rating (1-5 stars)
 - Title (required)
 - Review text (10+ characters)
-- Author name (optional)
 
 **Form Validation**:
 - Rating required
@@ -322,9 +329,9 @@ ProductPage (Error Boundary)
 **Usage**:
 ```jsx
 <ProductReviews 
-  productId={product.id}
   rating={product.rating}
-  reviews={mockData.reviews}
+  reviewCount={product.reviewCount}
+  reviews={mockReviews}
 />
 ```
 
@@ -336,69 +343,29 @@ ProductPage (Error Boundary)
 
 ---
 
-### SimilarItems
+### RecommendationSection
 
-**Location**: `src/pages/ProductPage/components/SimilarItems.jsx`
+**Location**: `src/components/sections/RecommendationSection.jsx`
 
-**Purpose**: Displays carousel of similar/related products.
+**Purpose**: Displays curated recommendation sections in responsive grids.
 
 **Props**:
 ```javascript
 {
-  products: Array<{
-    id: string,
-    name: string,
-    price: number,
-    image: string,
-    rating: number,
-    reviews: number
-  }>
+  productBrand: string  // Brand name for header context
 }
 ```
 
 **Features**:
-- Product carousel
-- 5 items per view
-- Previous/next navigation
-- Wishlist toggle (heart icon)
-- "Try & Buy" badge
-- Product ratings with stars
-- Click to view product
-- Lazy loading for images
-- Error handling with placeholders
-
-**Carousel State**:
-- `carouselIndex` - Current scroll position
-- `wishlisted` - Wishlist status per product
-
-**Navigation**:
-- Previous button (hidden at start)
-- Next button (hidden at end)
-- Smooth scroll transition
-- Prevents scroll beyond bounds
-
-**Product Cards**:
-- Image with "Try & Buy" badge
-- Wishlist button (top-right)
-- Product name (2-line max)
-- Price display
-- 5-star rating
-- Review count
-- Hover effects
+- Curated recommendation sections
+- Responsive grid layouts per breakpoint
+- Optional "View All" CTA when data is long
+- Add-to-cart stubs for mock flow
 
 **Usage**:
 ```jsx
-<SimilarItems 
-  products={mockData.similarProducts}
-/>
+<RecommendationSection productBrand={product.brand} />
 ```
-
-**Responsive Behavior**:
-- 5 items on desktop
-- 3 items on tablet
-- 2 items on mobile
-- Button gaps adjust
-- Card sizing responsive
 
 ---
 
@@ -406,7 +373,7 @@ ProductPage (Error Boundary)
 
 ### useProduct
 
-**Location**: `src/pages/ProductPage/hooks/useProduct.js`
+**Location**: `src/hooks/useProduct.js`
 
 **Purpose**: Manages all product-related state and operations.
 
@@ -476,45 +443,19 @@ const {
 
 ## Utility Functions
 
-### Constants
+### productUtils
 
-**Location**: `src/utils/constants.js`
+**Location**: `src/lib/productUtils.js`
 
-**Key Constants**:
-```javascript
-PRODUCT_CONSTANTS {
-  THUMBNAIL_COUNT: 4,
-  MAX_QUANTITY: 10,
-  MIN_QUANTITY: 1,
-  IMAGE_PLACEHOLDER: 'https://...',
-  REVIEWS_PER_PAGE: 3,
-  SIMILAR_ITEMS_COUNT: 8,
-}
-
-ERROR_MESSAGES {
-  PRODUCT_NOT_FOUND: '...',
-  NETWORK_ERROR: '...',
-  SIZE_COLOR_ERROR: '...',
-}
-
-SUCCESS_MESSAGES {
-  ADDED_TO_CART: '...',
-  REVIEW_SUBMITTED: '...',
-}
-```
-
-### Helpers
-
-**Location**: `src/utils/helpers.js`
-
-**Functions**:
+**Exports**:
+- `PRODUCT_LIMITS` - Quantity and review limits
+- `IMAGE_PLACEHOLDER` - Fallback image URL
+- `TABS` - Tabs identifiers
+- `ERROR_MESSAGES` - User-facing error strings
 - `calculateDiscount(price, originalPrice)` - Calculate discount %
 - `formatCurrency(amount)` - Format as INR currency
-- `isValidEmail(email)` - Email validation
 - `clamp(value, min, max)` - Clamp number to range
 - `getInitials(name)` - Get name initials for avatar
-- `debounce(func, delay)` - Debounce function calls
-- `isValidImageUrl(url)` - Validate image URL
 
 ---
 

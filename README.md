@@ -12,10 +12,9 @@ This project is a fully functional e-commerce product page showcasing best pract
 - **Product Gallery** - Interactive image carousel with thumbnail navigation
 - **Product Info** - Dynamic pricing, size/color selection, quantity control
 - **Reviews System** - Customer reviews display and review submission
-- **Similar Items** - Product carousel with pagination
+- **Recommendations** - Curated product sections with responsive grid
 - **Trust Badges** - Security, genuine product, and return policy indicators
 - **Error Handling** - Comprehensive error boundaries and fallback UI
-- **Performance Optimized** - React.memo, useCallback, useMemo for optimization
 - **Accessibility** - ARIA labels, semantic HTML, keyboard navigation
 
 ## 🚀 Quick Start
@@ -47,26 +46,31 @@ The application will start at `http://localhost:5173`
 ```
 src/
 ├── components/              # Reusable components
+│   ├── Carousel.jsx         # Horizontal carousel utility
 │   ├── ErrorBoundary.jsx   # Error handling wrapper
 │   └── LoadingSkeletons.jsx # Loading states
 │
 ├── pages/
-│   ├── Home.jsx            # Home page
-│   └── ProductPage/        # Product page directory
-│       ├── ProductPage.jsx # Main product page
-│       ├── mockData.json   # Mock product data
-│       ├── components/     # Product-specific components
-│       │   ├── ProductGallery.jsx
-│       │   ├── ProductInfo.jsx
-│       │   ├── ProductTabs.jsx
-│       │   ├── ProductReviews.jsx
-│       │   └── SimilarItems.jsx
-│       └── hooks/
-│           └── useProduct.js
+│   └── ProductPage/         # Product page directory
+│       ├── ProductPage.jsx  # Main product page
+│       └── ProductPage.css  # Page-specific styles
 │
-├── utils/
-│   ├── constants.js        # App constants
-│   └── helpers.js          # Utility functions
+├── components/sections/     # Product page sections
+│   ├── ProductGallery.jsx
+│   ├── ProductInfo.jsx
+│   ├── ProductTabs.jsx
+│   ├── ProductReviews.jsx
+│   └── RecommendationSection.jsx
+│
+├── data/
+│   ├── mockProduct.js      # Mock product data
+│   └── MOCK_DATA.md        # Mock data docs
+│
+├── hooks/
+│   └── useProduct.js       # Product data hook
+│
+├── lib/
+│   └── productUtils.js     # Shared helpers/constants
 │
 ├── App.jsx                 # Router configuration
 ├── main.jsx                # Entry point
@@ -133,27 +137,26 @@ The main component that orchestrates all product-related sub-components.
 - Detailed description
 - Tab switching interface
 
-### SimilarItems
-- Product carousel
-- Navigation buttons
-- Wishlist functionality
-- "Try & Buy" badges
+### RecommendationSection
+- Recommendation sections
+- Curated product grids
+- Responsive counts per breakpoint
+- Optional "View All" CTA per section
 
 ## 🔗 Routing
 
 ```
-/                    → Home page
 /product             → Product page (default product)
 /product/:productId  → Product page (specific product)
 ```
 
 ## 📊 Mock Data
 
-Mock product data is stored in `src/pages/ProductPage/mockData.json` and includes:
+Mock product data is stored in `src/data/mockProduct.js` and includes:
 - Product details (name, brand, price, images)
 - Size and color options
 - Customer reviews
-- Similar products
+- Recommendation sets
 - Special offers
 
 ## ⚙️ Configuration Files
@@ -230,7 +233,7 @@ When adding new features:
 5. Test responsiveness
 
 ### Adding Utility Functions
-1. Place in `utils/` directory
+1. Place in `lib/` directory
 2. Add JSDoc comments
 3. Export explicitly
 4. Add unit tests if complex
@@ -262,9 +265,8 @@ For questions or issues, please refer to the documentation files:
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Project structure
 - [SETUP.md](./SETUP.md) - Detailed setup guide
 - [COMPONENTS.md](./COMPONENTS.md) - Component documentation
-- [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Code guidelines
 
 ---
 
-**Last Updated**: May 2026
+**Last Updated**: June 2026
 **Version**: 1.0.0
