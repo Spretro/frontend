@@ -22,6 +22,9 @@ import Careers from "./pages/Careers";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Cart from "./pages/Cart";
+import ProductPage from "./pages/ProductPage/ProductPage";
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import AddressPage from "./pages/AddressPage/AddressPage";
 
 function Layout() {
   const location = useLocation();
@@ -50,6 +53,11 @@ function Layout() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/product" element={<ProductPage />} />
+        <Route path="/product/:productId" element={<ProductPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/checkout/address" element={<AddressPage />} />
+        <Route path="/checkout/address/:addressId" element={<AddressPage />} />
       </Routes>
       {!isAuthPage && <Footer />}
       <ScrollToTop />

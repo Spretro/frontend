@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://dummyjson.com/products?limit=8&select=id,title,price,discountPercentage,thumbnail,brand,rating,category\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"https://dummyjson.com/products/categories\")",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'fix: enforce uniform card height across all grid rows *)",
+      "Bash(git filter-branch -f --msg-filter 'python3 -c \" *)",
+      "Bash(git checkout *)",
+      "Bash(git commit *)",
+      "Bash(git reset *)",
+      "Bash(git restore *)"
+    ]
+  }
+}
