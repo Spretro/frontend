@@ -1,18 +1,33 @@
 import { useState } from "react";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, Plus, Minus } from "lucide-react";
 import { toINR } from "../../utils/currency";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product, badge }) {
   const [liked, setLiked] = useState(false);
-  const [added, setAdded] = useState(false);
+  const { addToCart, updateQty, removeFromCart, cartItems } = useCart();
+
   const disc = Math.round(product.discountPercentage);
   const finalPrice = toINR(product.price);
   const originalPrice = disc > 0 ? Math.round(finalPrice / (1 - disc / 100)) : finalPrice;
 
+  const cartItem = cartItems.find(i => i.id === product.id);
+  const qty = cartItem?.qty ?? 0;
+
   const handleAdd = (e) => {
     e.stopPropagation();
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
+    addToCart(product);
+  };
+
+  const handleIncrease = (e) => {
+    e.stopPropagation();
+    updateQty(product.id, 1);
+  };
+
+  const handleDecrease = (e) => {
+    e.stopPropagation();
+    if (qty <= 1) removeFromCart(product.id);
+    else updateQty(product.id, -1);
   };
 
   return (
@@ -48,6 +63,13 @@ export default function ProductCard({ product, badge }) {
         >
           <Heart size={14} strokeWidth={2} className={liked ? "fill-rose-500 text-rose-500" : "text-gray-500"} />
         </button>
+
+        {/* Floating qty badge on image when in cart */}
+        {qty > 0 && (
+          <span className="absolute bottom-3 left-3 bg-[#6A2CFF] text-white text-[9px] font-black px-2 py-0.5 rounded-full">
+            {qty} in cart
+          </span>
+        )}
       </div>
 
       {/* Info */}
@@ -87,15 +109,42 @@ export default function ProductCard({ product, badge }) {
           )}
         </div>
 
-        <button
-          className={`w-full py-2.5 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 ${
-            added ? "bg-emerald-500" : "bg-gray-950 group-hover:bg-[#6A2CFF]"
-          }`}
-          onClick={handleAdd}
-        >
-          <ShoppingBag size={13} strokeWidth={2} />
-          {added ? "Added!" : "Add to Cart"}
-        </button>
+        {/* Add to Cart / Qty controls */}
+        {qty === 0 ? (
+          <button
+            className="w-full py-2.5 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 bg-gray-950 group-hover:bg-[#6A2CFF]"
+            onClick={handleAdd}
+          >
+            <ShoppingBag size={13} strokeWidth={2} />
+            Add to Cart
+          </button>
+        ) : (
+          <div
+            className="w-full rounded-2xl flex items-center overflow-hidden"
+            style={{ background: "linear-gradient(135deg,#3D0ECC,#6A2CFF)", height: 38 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleDecrease}
+              className="flex items-center justify-center transition-all duration-150 hover:bg-white/20 active:scale-90"
+              style={{ width: 38, height: 38, flexShrink: 0, border: "none", background: "transparent", cursor: "pointer", color: "white" }}
+            >
+              <Minus size={13} strokeWidth={3} />
+            </button>
+
+            <span style={{ flex: 1, textAlign: "center", fontSize: 14, fontWeight: 900, color: "white", letterSpacing: "-0.3px" }}>
+              {qty}
+            </span>
+
+            <button
+              onClick={handleIncrease}
+              className="flex items-center justify-center transition-all duration-150 hover:bg-white/20 active:scale-90"
+              style={{ width: 38, height: 38, flexShrink: 0, border: "none", background: "transparent", cursor: "pointer", color: "white" }}
+            >
+              <Plus size={13} strokeWidth={3} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
