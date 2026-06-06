@@ -63,8 +63,31 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const panelTimer = useRef(null);
+  const menuTimer = useRef(null);
+  const closingRef = useRef(false);
+
+  const openMenu = () => {
+    clearTimeout(menuTimer.current);
+    closingRef.current = false;
+    setMenuClosing(false);
+    setMenuOpen(true);
+  };
+
+  const closeMenu = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setMenuClosing(true);
+    menuTimer.current = setTimeout(() => {
+      setMenuOpen(false);
+      setMenuClosing(false);
+      closingRef.current = false;
+    }, 400);
+  };
+
+  const toggleMenu = () => (menuOpen && !closingRef.current ? closeMenu() : openMenu());
 
   const activeLink = PATH_TO_LINK[location.pathname] || "";
   const activeCat = PATH_TO_CAT[location.pathname] || "Topwear";
@@ -672,7 +695,21 @@ export default function Navbar() {
           border:1px solid #F0EAFF;
           overflow:hidden;
           z-index:1000;
-          animation:panelIn 0.18s ease;
+          animation:megaSlideIn 0.45s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        @keyframes megaSlideIn{
+          from{ opacity:0; transform:translateX(40px); }
+          to{ opacity:1; transform:translateX(0); }
+        }
+
+        .spretro-mega-panel.closing{
+          animation:megaSlideOut 0.4s cubic-bezier(0.55,0,0.55,0.2) forwards;
+        }
+
+        @keyframes megaSlideOut{
+          from{ opacity:1; transform:translateX(0); }
+          to{ opacity:0; transform:translateX(40px); }
         }
 
         .spretro-mega-top{
@@ -884,7 +921,7 @@ export default function Navbar() {
         /* ── MOBILE (max 767px) ── */
         @media (max-width:767px){
           .spretro-mainbar{
-            height:60px;
+            height:50px;
             padding:0 14px;
           }
           .spretro-logo-main{
@@ -979,9 +1016,99 @@ export default function Navbar() {
             padding:0 20px;
             font-size:10px;
           }
-          .spretro-mini-panel,
-          .spretro-mega-panel{
+          .spretro-mini-panel{
             display:none;
+          }
+          .spretro-wishlist-panel{
+            display:block !important;
+            position:fixed;
+            top:64px;
+            right:10px;
+            left:auto;
+            width:min(280px, calc(100vw - 20px)) !important;
+          }
+          .spretro-mega-panel{
+            position:fixed;
+            top:56px;
+            right:10px;
+            left:auto;
+            width:min(310px, calc(100vw - 20px));
+            max-height:calc(100vh - 72px);
+            overflow-y:auto;
+            border-radius:18px;
+            scrollbar-width:none;
+          }
+          .spretro-mega-panel::-webkit-scrollbar{
+            display:none;
+          }
+          .spretro-mega-top{
+            padding:13px 15px 11px;
+          }
+          .spretro-mega-title{
+            font-size:15px;
+          }
+          .spretro-mega-sub{
+            font-size:10px;
+          }
+          .spretro-mega-close{
+            width:26px;
+            height:26px;
+          }
+          .spretro-mega-body{
+            padding:12px 12px 16px;
+          }
+          .spretro-mega-section-title{
+            font-size:9px;
+            margin-bottom:7px;
+          }
+
+          /* Quick shop + Help pills — compact */
+          .spretro-mega-pills{
+            gap:5px;
+            margin-bottom:14px;
+          }
+          .spretro-mega-pill{
+            padding:5px 11px;
+            font-size:11px;
+          }
+
+          /* Categories — stacked list, left aligned */
+          .spretro-mega-grid{
+            grid-template-columns:1fr;
+            gap:1px;
+            margin-bottom:14px;
+          }
+          .spretro-mega-cat{
+            flex-direction:row;
+            justify-content:flex-start;
+            gap:12px;
+            padding:8px 9px;
+            border-radius:11px;
+          }
+          .spretro-mega-cat-icon{
+            width:32px;
+            height:32px;
+            border-radius:9px;
+          }
+          .spretro-mega-cat-label{
+            font-size:13px;
+            text-align:left;
+          }
+
+          /* My Account — single column list */
+          .spretro-mega-acc-grid{
+            grid-template-columns:1fr;
+            gap:1px;
+          }
+          .spretro-mega-acc-item{
+            padding:8px 9px;
+          }
+          .spretro-mega-acc-icon{
+            width:30px;
+            height:30px;
+          }
+          .spretro-mega-divider{
+            margin-bottom:13px;
           }
         }
 
@@ -1095,13 +1222,16 @@ export default function Navbar() {
               onMouseEnter={() => openPanel("wishlist")}
               onMouseLeave={closePanel}
             >
-              <button className="spretro-icon-btn">
+              <button
+                className="spretro-icon-btn"
+                onClick={() => setActivePanel((p) => (p === "wishlist" ? null : "wishlist"))}
+              >
                 <Heart size={19} strokeWidth={1.9} />
               </button>
 
               {activePanel === "wishlist" && (
                 <div
-                  className="spretro-mini-panel"
+                  className="spretro-mini-panel spretro-wishlist-panel"
                   style={{ width: 240 }}
                   onMouseEnter={keepPanel}
                   onMouseLeave={closePanel}
@@ -1278,7 +1408,7 @@ export default function Navbar() {
             <div className="spretro-mega-wrap">
               <button
                 className="spretro-menu-btn"
-                onClick={() => setMenuOpen((o) => !o)}
+                onClick={toggleMenu}
               >
                 <Menu size={17} strokeWidth={2.2} />
                 <span className="spretro-menu-text">Menu</span>
@@ -1286,8 +1416,8 @@ export default function Navbar() {
 
               {menuOpen && (
                 <div
-                  className="spretro-mega-panel"
-                  onMouseLeave={() => setMenuOpen(false)}
+                  className={`spretro-mega-panel ${menuClosing ? "closing" : ""}`}
+                  onMouseLeave={closeMenu}
                 >
 
                   {/* Header */}
@@ -1298,7 +1428,7 @@ export default function Navbar() {
                     </div>
                     <button
                       className="spretro-mega-close"
-                      onClick={() => setMenuOpen(false)}
+                      onClick={() => closeMenu()}
                     >
                       ✕
                     </button>
@@ -1313,45 +1443,19 @@ export default function Navbar() {
                         <button
                           key={l.label}
                           className="spretro-mega-pill"
-                          onClick={() => { navigate(l.path); setMenuOpen(false); }}
+                          onClick={() => { navigate(l.path); closeMenu(); }}
                         >
                           {l.label}
                         </button>
                       ))}
                       <button
                         className="spretro-mega-pill"
-                        onClick={() => { navigate("/new-in"); setMenuOpen(false); }}
+                        onClick={() => { navigate("/new-in"); closeMenu(); }}
                         style={{ background: "#FFF0F3", color: "#E83E6C" }}
                       >
                         🔥 Hot Deals
                       </button>
                     </div>
-
-                    {/* Categories */}
-                    <div className="spretro-mega-section-title">Categories</div>
-                    <div className="spretro-mega-grid">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat.label}
-                          className="spretro-mega-cat"
-                          onClick={() => { navigate(cat.path); setMenuOpen(false); }}
-                        >
-                          <div className="spretro-mega-cat-icon">{cat.icon}</div>
-                          <div className="spretro-mega-cat-label">{cat.label}</div>
-                        </button>
-                      ))}
-                      <button
-                        className="spretro-mega-cat"
-                        onClick={() => { navigate("/new-in"); setMenuOpen(false); }}
-                      >
-                        <div className="spretro-mega-cat-icon">
-                          <Zap size={18} strokeWidth={2} />
-                        </div>
-                        <div className="spretro-mega-cat-label">New In</div>
-                      </button>
-                    </div>
-
-                    <div className="spretro-mega-divider" />
 
                     {/* My Account */}
                     <div className="spretro-mega-section-title">My Account</div>
@@ -1367,7 +1471,7 @@ export default function Navbar() {
                         <button
                           key={item.label}
                           className="spretro-mega-acc-item"
-                          onClick={() => { if (item.path) { navigate(item.path); setMenuOpen(false); } }}
+                          onClick={() => { if (item.path) { navigate(item.path); closeMenu(); } }}
                         >
                           <div
                             className="spretro-mega-acc-icon"
@@ -1385,6 +1489,32 @@ export default function Navbar() {
 
                     <div className="spretro-mega-divider" style={{ marginTop: 16 }} />
 
+                    {/* Categories */}
+                    <div className="spretro-mega-section-title">Categories</div>
+                    <div className="spretro-mega-grid">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat.label}
+                          className="spretro-mega-cat"
+                          onClick={() => { navigate(cat.path); closeMenu(); }}
+                        >
+                          <div className="spretro-mega-cat-icon">{cat.icon}</div>
+                          <div className="spretro-mega-cat-label">{cat.label}</div>
+                        </button>
+                      ))}
+                      <button
+                        className="spretro-mega-cat"
+                        onClick={() => { navigate("/new-in"); closeMenu(); }}
+                      >
+                        <div className="spretro-mega-cat-icon">
+                          <Zap size={18} strokeWidth={2} />
+                        </div>
+                        <div className="spretro-mega-cat-label">New In</div>
+                      </button>
+                    </div>
+
+                    <div className="spretro-mega-divider" />
+
                     {/* Help & Legal */}
                     <div className="spretro-mega-section-title">Help & Legal</div>
                     <div className="spretro-mega-pills">
@@ -1400,7 +1530,7 @@ export default function Navbar() {
                           key={l.label}
                           className="spretro-mega-pill"
                           style={{ background: "#F0FDF4", color: "#16A34A" }}
-                          onClick={() => { navigate(l.path); setMenuOpen(false); }}
+                          onClick={() => { navigate(l.path); closeMenu(); }}
                         >
                           {l.label}
                         </button>
