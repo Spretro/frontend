@@ -1,6 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    /* Primary Brand Color */
+    --color-purple: #6A2CFF;
+
+    /* Secondary Colors */
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-light-grey: #F5F5F7;
+    --color-mid-grey: #BDBDBD;
+
+    /* Promotional Colors */
+    --color-orange: #FF6A00;
+    --color-red: #FF3B30;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -13,7 +30,7 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;

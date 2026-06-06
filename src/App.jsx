@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "./components/layout/Navbar";
+import { CartProvider } from "./context/CartContext";
+import HomeNavbar from "./components/layout/HomeNavbar";
 import SearchNavbar from "./components/layout/SearchNavbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/ui/ScrollToTop";
@@ -18,14 +19,27 @@ import Faqs from "./pages/Faqs";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Sitemap from "./pages/Sitemap";
 import Careers from "./pages/Careers";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Cart from "./pages/Cart";
+import ProductPage from "./pages/ProductPage/ProductPage";
+import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
+import AddressPage from "./pages/AddressPage/AddressPage";
+import PaymentPage from "./pages/PaymentPage/PaymentPage";
 
 function Layout() {
   const location = useLocation();
-  const isSearch = location.pathname === "/search";
+  const isSearch = ["/search", "/cart"].includes(location.pathname);
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+  const isCheckoutFlow =
+    location.pathname === "/checkout" ||
+    location.pathname.startsWith("/checkout/") ||
+    location.pathname === "/payment";
+  const hideChrome = isAuthPage || isCheckoutFlow;
 
   return (
     <div className="min-h-screen" style={{ background: "#F9F8FF" }}>
-      {isSearch ? <SearchNavbar /> : <Navbar />}
+      {!hideChrome && (isSearch ? <SearchNavbar /> : <HomeNavbar />)}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/women" element={<Women />} />
@@ -42,8 +56,17 @@ function Layout() {
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="/sitemap" element={<Sitemap />} />
         <Route path="/careers" element={<Careers />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/product" element={<ProductPage />} />
+        <Route path="/product/:productId" element={<ProductPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/checkout/address" element={<AddressPage />} />
+        <Route path="/checkout/address/:addressId" element={<AddressPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
       </Routes>
-      <Footer />
+      {!hideChrome && <Footer />}
       <ScrollToTop />
     </div>
   );
@@ -51,8 +74,10 @@ function Layout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <CartProvider>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
+    </CartProvider>
   );
 }
