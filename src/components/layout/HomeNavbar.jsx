@@ -19,7 +19,6 @@ import {
   RotateCcw,
   ShieldCheck,
   BadgeCheck,
-  ChevronDown,
   Package,
   Settings,
   HelpCircle,
@@ -1283,11 +1282,6 @@ export default function Navbar() {
               >
                 <Menu size={17} strokeWidth={2.2} />
                 <span className="spretro-menu-text">Menu</span>
-                <ChevronDown
-                  size={15}
-                  strokeWidth={2.2}
-                  style={{ transition: "0.2s", transform: menuOpen ? "rotate(180deg)" : "none" }}
-                />
               </button>
 
               {menuOpen && (
