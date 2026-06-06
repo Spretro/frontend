@@ -25,15 +25,21 @@ import Cart from "./pages/Cart";
 import ProductPage from "./pages/ProductPage/ProductPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import AddressPage from "./pages/AddressPage/AddressPage";
+import PaymentPage from "./pages/PaymentPage/PaymentPage";
 
 function Layout() {
   const location = useLocation();
   const isSearch = ["/search", "/cart"].includes(location.pathname);
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+  const isCheckoutFlow =
+    location.pathname === "/checkout" ||
+    location.pathname.startsWith("/checkout/") ||
+    location.pathname === "/payment";
+  const hideChrome = isAuthPage || isCheckoutFlow;
 
   return (
     <div className="min-h-screen" style={{ background: "#F9F8FF" }}>
-      {!isAuthPage && (isSearch ? <SearchNavbar /> : <HomeNavbar />)}
+      {!hideChrome && (isSearch ? <SearchNavbar /> : <HomeNavbar />)}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/women" element={<Women />} />
@@ -58,8 +64,9 @@ function Layout() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/address" element={<AddressPage />} />
         <Route path="/checkout/address/:addressId" element={<AddressPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
       </Routes>
-      {!isAuthPage && <Footer />}
+      {!hideChrome && <Footer />}
       <ScrollToTop />
     </div>
   );

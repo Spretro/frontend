@@ -299,7 +299,7 @@ export default function Cart() {
             {/* Checkout button */}
             <button
               className="checkout-btn"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/checkout")}
               style={{ width: "100%", height: 54, borderRadius: 16, background: "linear-gradient(135deg,#3D0ECC 0%,#6A2CFF 55%,#9B6DFF 100%)", color: "white", border: "none", fontSize: 15, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 9, letterSpacing: "0.07em", textTransform: "uppercase", boxShadow: "0 8px 30px rgba(106,44,255,0.4)", transition: "all 0.22s" }}
             >
               Go to Checkout <ArrowRight size={17} strokeWidth={2.5} />

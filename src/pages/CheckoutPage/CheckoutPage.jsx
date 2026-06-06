@@ -42,8 +42,7 @@ function CheckoutPageContent() {
     const orderSummary = await continueToPayment();
 
     if (orderSummary) {
-      // TODO(PAYMENT): Replace this with Razorpay initialization callback.
-      console.info("Continue to payment callback", orderSummary);
+      navigate("/payment");
     }
   };
 

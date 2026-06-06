@@ -109,7 +109,7 @@ export default function TrendingProducts() {
                   return (
                     <div
                       key={p.id}
-                      className="shrink-0 w-52 md:w-60 bg-white rounded-3xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-2 fade-in-up"
+                      className="shrink-0 w-52 md:w-60 bg-white rounded-3xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-2 fade-in-up flex flex-col"
                       style={{ animationDelay: `${i * 0.06}s`, border: "1px solid #EEE8FF", boxShadow: "0 2px 16px rgba(106,44,255,0.06)" }}
                       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 16px 48px rgba(106,44,255,0.20)")}
                       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 16px rgba(106,44,255,0.06)")}
@@ -125,9 +125,9 @@ export default function TrendingProducts() {
                         </button>
                         <div className="absolute inset-x-0 bottom-0 h-1/4 bg-linear-to-t from-black/10 to-transparent" />
                       </div>
-                      <div className="p-4">
+                      <div className="p-4 flex flex-col flex-1">
                         {p.brand && <p className="text-[9px] font-black text-[#6A2CFF] uppercase tracking-[0.15em] mb-1">{p.brand}</p>}
-                        <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug mb-2.5">{p.title}</h3>
+                        <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug mb-2.5 min-h-10">{p.title}</h3>
                         <div className="flex items-center gap-0.5 mb-2.5">
                           {[...Array(5)].map((_, j) => (
                             <svg key={j} className={`size-3 ${j < Math.floor(p.rating) ? "text-amber-400 fill-current" : "text-gray-200 fill-current"}`} viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function TrendingProducts() {
                           ))}
                           <span className="text-[9px] text-gray-400 ml-1 font-medium">({p.rating.toFixed(1)})</span>
                         </div>
-                        <div className="flex items-baseline gap-2 mb-3.5">
+                        <div className="flex items-baseline gap-2 mb-3.5 mt-auto">
                           <span className="text-base font-black text-gray-900">{fmtINR(toINR(p.price))}</span>
                           <span className="text-xs text-gray-400 line-through font-medium">{fmtINR(toOriginalINR(p.price, p.discountPercentage))}</span>
                         </div>

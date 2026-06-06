@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { useCart } from "../context/CartContext";
 import {
   mockAddresses,
   mockAvailableOffers,
-  mockCartItems,
   mockCheckoutFees,
 } from "../data/mockCheckout";
 import {
@@ -21,7 +21,16 @@ function readStoredJson(key, fallback) {
 }
 
 export function useCheckout() {
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems: liveCartItems } = useCart();
+  const cartItems = useMemo(
+    () =>
+      liveCartItems.map((item) => ({
+        ...item,
+        quantity: item.qty,
+        originalPrice: item.originalPrice ?? item.price,
+      })),
+    [liveCartItems]
+  );
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [couponCode, setCouponCode] = useState("");
@@ -56,7 +65,6 @@ export function useCheckout() {
           storedAddresses[0]?.id ||
           "";
 
-        setCartItems(mockCartItems);
         setAddresses(storedAddresses);
         setSelectedAddressId(storedSelectedAddressId);
       } catch {
