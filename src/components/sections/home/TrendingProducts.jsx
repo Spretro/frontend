@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toINR, toOriginalINR, fmtINR } from "../../../utils/currency";
 import ProductCard from "../../shared/ProductCard";
 
@@ -30,6 +31,7 @@ function SkeletonCard() {
 }
 
 export default function TrendingProducts() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -113,6 +115,7 @@ export default function TrendingProducts() {
                       style={{ animationDelay: `${i * 0.06}s`, border: "1px solid #EEE8FF", boxShadow: "0 2px 16px rgba(106,44,255,0.06)" }}
                       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 16px 48px rgba(106,44,255,0.20)")}
                       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 16px rgba(106,44,255,0.06)")}
+                      onClick={() => navigate(`/product/${p.id}`)}
                     >
                       <div className="relative aspect-3/4 overflow-hidden bg-gray-50">
                         <img src={p.thumbnail} alt={p.title} className="size-full object-cover group-hover:scale-107 transition-transform duration-500" />

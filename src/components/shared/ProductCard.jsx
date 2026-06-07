@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingBag, Plus, Minus } from "lucide-react";
 import { toINR } from "../../utils/currency";
 import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product, badge }) {
   const [liked, setLiked] = useState(false);
+  const navigate = useNavigate();
   const { addToCart, updateQty, removeFromCart, cartItems } = useCart();
 
   const disc = Math.round(product.discountPercentage);
@@ -36,6 +38,7 @@ export default function ProductCard({ product, badge }) {
       style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.07)" }}
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 40px rgba(106,44,255,0.18)")}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 16px rgba(106,44,255,0.07)")}
+      onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image */}
       <div className="relative overflow-hidden bg-gray-50" style={{ aspectRatio: "3/4" }}>
