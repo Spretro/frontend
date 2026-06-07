@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import HomeNavbar from "./components/layout/HomeNavbar";
@@ -29,13 +30,21 @@ import PaymentPage from "./pages/PaymentPage/PaymentPage";
 
 function Layout() {
   const location = useLocation();
-  const isSearch = ["/search", "/cart"].includes(location.pathname);
+  const isSearch =
+    ["/search", "/cart"].includes(location.pathname) ||
+    location.pathname === "/product" ||
+    location.pathname.startsWith("/product/");
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
   const isCheckoutFlow =
     location.pathname === "/checkout" ||
     location.pathname.startsWith("/checkout/") ||
     location.pathname === "/payment";
   const hideChrome = isAuthPage || isCheckoutFlow;
+
+  // Reset scroll to top whenever the route changes.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen" style={{ background: "#F9F8FF" }}>

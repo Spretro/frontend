@@ -38,6 +38,27 @@ export function CartProvider({ children }) {
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
   }, []);
 
+  // Adds a fully-formed cart line (id, name, brand, price in INR, image, size, color, qty).
+  // Merges with an existing line that has the same id + size + color.
+  const addLine = useCallback((line) => {
+    const qty = line.qty || 1;
+    setCartItems(prev => {
+      const idx = prev.findIndex(
+        i => i.id === line.id && i.size === line.size && i.color === line.color
+      );
+      if (idx !== -1) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
+        return next;
+      }
+      return [...prev, { ...line, qty }];
+    });
+
+    const tid = Date.now();
+    setToasts(prev => [...prev, { id: tid, name: line.name, image: line.image }]);
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== tid)), 3000);
+  }, []);
+
   const removeFromCart = useCallback((id) => {
     setCartItems(prev => prev.filter(i => i.id !== id));
   }, []);
@@ -53,7 +74,7 @@ export function CartProvider({ children }) {
   const totalQty = cartItems.reduce((s, i) => s + i.qty, 0);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQty, clearCart, totalQty }}>
+    <CartContext.Provider value={{ cartItems, addToCart, addLine, removeFromCart, updateQty, clearCart, totalQty }}>
       {children}
 
       {/* ── Toast stack ── */}

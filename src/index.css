@@ -2,22 +2,27 @@
 
 @import "tailwindcss";
 
+/* Tailwind v4 design tokens (replaces tailwind.config.js) */
+@theme {
+  --font-inter: "Inter", "Roboto", system-ui, sans-serif;
+
+  /* Primary Brand Color - Purple */
+  --color-purple-50: #F5F1FF;
+  --color-purple-100: #EBE3FF;
+  --color-purple-500: #6A2CFF;
+  --color-purple-600: #5A1FCC;
+  --color-purple-700: #4A1599;
+
+  /* Secondary Colors */
+  --color-light-grey: #F5F5F7;
+  --color-mid-grey: #BDBDBD;
+
+  /* Promotional Colors */
+  --color-brand-orange: #FF6A00;
+  --color-brand-red: #FF3B30;
+}
+
 @layer base {
-  :root {
-    /* Primary Brand Color */
-    --color-purple: #6A2CFF;
-
-    /* Secondary Colors */
-    --color-black: #000000;
-    --color-white: #FFFFFF;
-    --color-light-grey: #F5F5F7;
-    --color-mid-grey: #BDBDBD;
-
-    /* Promotional Colors */
-    --color-orange: #FF6A00;
-    --color-red: #FF3B30;
-  }
-
   * {
     margin: 0;
     padding: 0;
