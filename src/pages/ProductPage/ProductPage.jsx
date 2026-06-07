@@ -4,6 +4,7 @@ import ErrorBoundary from "../../components/ErrorBoundary";
 import { FullPageSkeleton } from "../../components/LoadingSkeletons";
 import { mockReviews } from "../../data/mockProduct";
 import { useProduct } from "../../hooks/useProduct";
+import { useCart } from "../../context/CartContext";
 import ProductGallery from "../../components/sections/ProductGallery";
 import ProductInfo from "../../components/sections/ProductInfo";
 import ProductReviews from "../../components/sections/ProductReviews";
@@ -14,6 +15,7 @@ import "./ProductPage.css";
 function ProductPageContent() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { addLine } = useCart();
   const currentProductId = productId || "1307441";
 
   const {
@@ -29,9 +31,38 @@ function ProductPageContent() {
     updateQuantity,
     incrementQuantity,
     decrementQuantity,
-    addToCart,
+    validateCartAddition,
     clearError,
   } = useProduct(currentProductId);
+
+  const buildLine = () => {
+    if (!product) return null;
+    const colorName =
+      (product.colorVariants || []).find((c) => c.id === selectedColor)?.name || "Default";
+    return {
+      id: product.id,
+      name: product.name,
+      brand: product.brand || "SPRETRO",
+      price: product.price,
+      image: product.images?.[0] || product.thumbnail,
+      size: selectedSize || "Default",
+      color: colorName,
+      qty: quantity,
+    };
+  };
+
+  const handleAddToCart = () => {
+    const line = buildLine();
+    if (!line || !validateCartAddition()) return;
+    addLine(line);
+  };
+
+  const handleBuyNow = () => {
+    const line = buildLine();
+    if (!line || !validateCartAddition()) return;
+    addLine(line);
+    navigate("/checkout");
+  };
 
   if (loading) {
     return <FullPageSkeleton />;
@@ -70,9 +101,9 @@ function ProductPageContent() {
           className="grid min-w-0 gap-5 rounded-3xl border border-[#EEE8FF] bg-white p-3 sm:p-4 md:gap-8 md:p-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)]"
           style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.07)" }}
         >
-          <ProductGallery images={product.images || []} />
+          <ProductGallery images={product?.images || []} />
           <ProductInfo
-            product={product}
+            product={product || {}}
             selectedSize={selectedSize}
             selectedColor={selectedColor}
             quantity={quantity}
@@ -83,22 +114,23 @@ function ProductPageContent() {
             onQuantityChange={updateQuantity}
             onIncrementQuantity={incrementQuantity}
             onDecrementQuantity={decrementQuantity}
-            onAddToCart={addToCart}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
             onClearError={clearError}
           />
         </section>
 
         <div className="mt-8 space-y-8 md:mt-10 md:space-y-10">
           <ProductTabs
-            specifications={product.specifications || []}
-            description={product.description || "No description available"}
+            specifications={product?.specifications || []}
+            description={product?.description || "No description available"}
           />
           <ProductReviews
-            rating={product.rating || 0}
-            reviewCount={product.reviewCount || 0}
+            rating={product?.rating || 0}
+            reviewCount={product?.reviewCount || 0}
             reviews={mockReviews}
           />
-          <RecommendationSection productBrand={product.brand} />
+          <RecommendationSection productBrand={product?.brand} />
         </div>
       </div>
     </main>

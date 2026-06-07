@@ -39,13 +39,16 @@ export default function ProductInfo({
   onIncrementQuantity = () => {},
   onDecrementQuantity = () => {},
   onAddToCart = () => {},
+  onBuyNow = () => {},
   onClearError = () => {},
 }) {
   const discount = calculateDiscount(product.price, product.originalPrice);
   const colorVariants = product.colorVariants || [];
   const hasColorVariants = colorVariants.length > 0;
+  const sizes = product.sizes || [];
+  const hasSizes = sizes.length > 0;
   const addToCartDisabled =
-    cartLoading || !selectedSize || (hasColorVariants && !selectedColor);
+    cartLoading || (hasSizes && !selectedSize) || (hasColorVariants && !selectedColor);
 
   return (
     <section aria-label="Product purchase details" className="min-w-0 space-y-6">
@@ -89,6 +92,7 @@ export default function ProductInfo({
         <p className="text-xs font-medium text-gray-400">Inclusive of all taxes</p>
       </section>
 
+      {hasSizes && (
       <section aria-labelledby="size-heading" className="space-y-3 py-1">
         <div className="flex items-center justify-between gap-3">
           <h2
@@ -106,7 +110,7 @@ export default function ProductInfo({
           </button>
         </div>
         <div className="flex flex-wrap gap-2 py-2" role="radiogroup" aria-labelledby="size-heading">
-          {(product.sizes || []).map((size) => (
+          {sizes.map((size) => (
             <button
               key={size}
               type="button"
@@ -124,6 +128,7 @@ export default function ProductInfo({
           ))}
         </div>
       </section>
+      )}
 
       {hasColorVariants && (
         <section aria-labelledby="color-heading" className="space-y-3">
@@ -236,7 +241,7 @@ export default function ProductInfo({
               onChange={(event) => onQuantityChange(event.target.value)}
               min={PRODUCT_LIMITS.minQuantity}
               max={PRODUCT_LIMITS.maxQuantity}
-              className="border-x border-gray-200 text-center text-sm font-black text-gray-950 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#6A2CFF]"
+              className="border-x border-gray-200 text-center text-sm font-black text-gray-950 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#6A2CFF] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="Product quantity"
             />
             <button
@@ -277,7 +282,7 @@ export default function ProductInfo({
       <div className="grid gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={onAddToCart}
+          onClick={onBuyNow}
           className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-2 border-[#6A2CFF] px-4 text-sm font-black text-[#6A2CFF] transition-all duration-200 hover:scale-[1.02] hover:bg-[#F3EEFF] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
           disabled={addToCartDisabled}
         >
