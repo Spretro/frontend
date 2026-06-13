@@ -1,122 +1,272 @@
-# SPETRO - E-Commerce Platform
+# Spretro Frontend - Product Page
 
-A modern, futuristic e-commerce platform built with React + Vite and Tailwind CSS.
+A modern, responsive React-based product page application built with Vite, Tailwind CSS, and React Router.
 
-## 🎨 Design Features
+## 📋 Overview
 
-- ✅ Clean, modern UI with proper typography
-- ✅ Auto-sliding hero carousel (4s intervals)
-- ✅ Product images from Unsplash API
-- ✅ Responsive navigation with icons
-- ✅ Shopping cart with badge counter
-- ✅ Horizontal scrolling product sections
-- ✅ Hover effects and smooth transitions
-- ✅ Organized folder structure with pages
+This project is a fully functional e-commerce product page showcasing best practices in React development, responsive design, and user experience. The application displays detailed product information, images, pricing, reviews, and similar product recommendations.
+
+## 🎯 Key Features
+
+- **Responsive Design** - Mobile-first approach with breakpoints for all devices
+- **Product Gallery** - Interactive image carousel with thumbnail navigation
+- **Product Info** - Dynamic pricing, size/color selection, quantity control
+- **Reviews System** - Customer reviews display and review submission
+- **Recommendations** - Curated product sections with responsive grid
+- **Trust Badges** - Security, genuine product, and return policy indicators
+- **Error Handling** - Comprehensive error boundaries and fallback UI
+- **Accessibility** - ARIA labels, semantic HTML, keyboard navigation
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 16+ 
+- npm or yarn
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linter
+npm run lint
+```
+
+The application will start at `http://localhost:5173`
 
 ## 📁 Project Structure
 
 ```
 src/
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.jsx          # Top navigation with search
-│   │   └── Footer.jsx          # Footer with links & newsletter
-│   ├── sections/
-│   │   ├── HeroBanner.jsx      # Auto-sliding carousel
-│   │   ├── ShopByCategory.jsx  # Category grid
-│   │   ├── CuratedCollections.jsx
-│   │   ├── BeautySection.jsx
-│   │   └── JewellerySection.jsx
-│   └── ui/
-│       └── SectionDivider.jsx
+├── components/              # Reusable components
+│   ├── Carousel.jsx         # Horizontal carousel utility
+│   ├── ErrorBoundary.jsx   # Error handling wrapper
+│   └── LoadingSkeletons.jsx # Loading states
+│
 ├── pages/
-│   └── Home/
-│       └── index.jsx            # Home page composition
+│   └── ProductPage/         # Product page directory
+│       ├── ProductPage.jsx  # Main product page
+│       └── ProductPage.css  # Page-specific styles
+│
+├── components/sections/     # Product page sections
+│   ├── ProductGallery.jsx
+│   ├── ProductInfo.jsx
+│   ├── ProductTabs.jsx
+│   ├── ProductReviews.jsx
+│   └── RecommendationSection.jsx
+│
 ├── data/
-│   └── index.js                 # Centralized data
-├── App.jsx                      # Main app component
-└── index.css                    # Global styles
+│   ├── mockProduct.js      # Mock product data
+│   └── MOCK_DATA.md        # Mock data docs
+│
+├── hooks/
+│   └── useProduct.js       # Product data hook
+│
+├── lib/
+│   └── productUtils.js     # Shared helpers/constants
+│
+├── App.jsx                 # Router configuration
+├── main.jsx                # Entry point
+└── index.css               # Global styles
+
+public/                     # Static assets
 ```
 
-## 🖼️ Images Used
+## 🔧 Technologies Used
 
-All product images are loaded from **Unsplash** via CDN:
+- **React 19.2** - UI library
+- **Vite 8** - Build tool and dev server
+- **React Router 7.15** - Client-side routing
+- **Tailwind CSS 4.3** - Utility-first CSS
+- **Lucide React** - Icon library
+- **ESLint** - Code linting
+- **Babel** - JavaScript compiler with React compiler
 
-### Hero Banner Images:
-- Fashion model in brown dress
-- Men's casual wear
-- Shopping bags and accessories
+## 📱 Responsive Breakpoints
 
-### Category Images:
-- Dresses, Topwear, Bottomwear
-- Handbags, Beauty products
-- Footwear, Jewellery
-- Travel bags, Home decor
+- **Mobile**: Default (< 640px)
+- **Tablet**: `sm:` (640px+)
+- **Desktop**: `md:` (768px+), `lg:` (1024px+)
+- **Large Desktop**: `xl:` (1280px+)
 
-### Product Collections:
-- Women's ethnic wear (Sarees, Kurtas)
-- Men's fashion
-- Accessories (Clutch, Totes, Backpacks)
-- Footwear collection
+## 🎨 Design System
 
-## 🎯 To Add Custom Images:
+### Color Palette
+- **Primary**: Purple (#6A2CFF)
+- **Secondary**: Black (#000000), White (#FFFFFF)
+- **Accent**: Orange (#FF6A00), Red (#FF3B30)
+- **Neutral**: Light Grey (#F5F5F7), Mid Grey (#BDBDBD)
 
-1. **Replace Unsplash URLs** in `src/data/index.js`:
-   ```javascript
-   image: "YOUR_IMAGE_URL_HERE"
-   ```
+### Typography
+- **Font Family**: Inter, Roboto, system-ui, sans-serif
+- **Weights**: 400, 500, 600, 700, 800
 
-2. **Or use local images**:
-   - Add images to `public/images/products/`
-   - Update paths: `image: "/images/products/your-image.jpg"`
+## 🧩 Main Components
 
-## 🚀 Run the Project
+### ProductPage
+The main component that orchestrates all product-related sub-components.
+
+### ProductGallery
+- Image carousel with navigation
+- Thumbnail gallery with scroll
+- Error handling for missing images
+- Lazy loading support
+
+### ProductInfo
+- Product header and description
+- Pricing with discount percentage
+- Size and color selection
+- Quantity selector
+- Add to cart functionality
+
+### ProductReviews
+- Display customer reviews
+- Review submission form
+- Rating display with stars
+- Form validation
+
+### ProductTabs
+- Product specifications
+- Detailed description
+- Tab switching interface
+
+### RecommendationSection
+- Recommendation sections
+- Curated product grids
+- Responsive counts per breakpoint
+- Optional "View All" CTA per section
+
+## 🔗 Routing
+
+```
+/product             → Product page (default product)
+/product/:productId  → Product page (specific product)
+```
+
+## 📊 Mock Data
+
+Mock product data is stored in `src/data/mockProduct.js` and includes:
+- Product details (name, brand, price, images)
+- Size and color options
+- Customer reviews
+- Recommendation sets
+- Special offers
+
+## ⚙️ Configuration Files
+
+### tailwind.config.js
+Tailwind CSS configuration with custom colors and theme extensions.
+
+### vite.config.js
+Vite configuration with React plugin, Babel support, and Tailwind CSS integration.
+
+### eslint.config.js
+ESLint rules for code quality including React hooks validation.
+
+## 🔐 Error Handling
+
+- **Error Boundary**: Catches React component errors
+- **Fallback UI**: Graceful error display with recovery options
+- **Image Error Handling**: Placeholder images for failed loads
+- **Validation**: Form and input validation with error messages
+
+## 🚨 Known TODOs
+
+- [ ] Replace mock data with actual API endpoints
+- [ ] Implement real cart functionality
+- [ ] Add user authentication
+- [ ] Implement wishlist persistence
+- [ ] Add image optimization
+- [ ] Setup production API calls
+- [ ] Add analytics tracking
+- [ ] Implement payment integration
+
+## 📚 Best Practices
+
+### Component Structure
+- Single responsibility per component
+- Props validation with clear defaults
+- Clear JSDoc comments for all functions
+- Consistent naming conventions
+
+### Performance
+- Use `useCallback` for event handlers passed to children
+- Use `useMemo` for expensive computations
+- Lazy load images with `loading="lazy"`
+- Avoid unnecessary re-renders
+
+### Accessibility
+- Use semantic HTML elements
+- Include ARIA labels for interactive elements
+- Support keyboard navigation
+- Maintain proper color contrast
+
+### Code Quality
+- ESLint rules enforced
+- Consistent formatting
+- No unused imports or variables
+- Clear error messages
+
+## 🤝 Contributing
+
+When adding new features:
+1. Follow the existing component structure
+2. Add JSDoc comments
+3. Use existing utility functions
+4. Test on multiple breakpoints
+5. Update this documentation
+
+## 📝 Development Guidelines
+
+### Adding a New Component
+1. Create in appropriate directory
+2. Add JSDoc comments
+3. Include prop defaults
+4. Handle error cases
+5. Test responsiveness
+
+### Adding Utility Functions
+1. Place in `lib/` directory
+2. Add JSDoc comments
+3. Export explicitly
+4. Add unit tests if complex
+
+### Styling
+- Use Tailwind classes for styling
+- Follow mobile-first approach
+- Test on all breakpoints
+- Use custom theme variables for colors
+
+## 🐛 Debugging
+
+Enable React development tools:
+- React Developer Tools browser extension
+- React Profiler for performance analysis
+- Console for error tracking
+
+## 📦 Building for Production
 
 ```bash
-npm install
-npm run dev
+npm run build
 ```
 
-## 🎨 Design Improvements Made:
+Output will be in the `dist/` folder. Ready for deployment.
 
-1. **Typography**:
-   - Increased font sizes for better readability
-   - Added letter-spacing for headings
-   - Used font weights: 400, 600, 700, 900
+## 📞 Support
 
-2. **Spacing**:
-   - Consistent padding/margins (px-6, py-8)
-   - Proper gap between elements (gap-4, gap-6)
-
-3. **Colors**:
-   - Primary: Rose/Pink (#e11d48)
-   - Neutral: Gray scale
-   - Backgrounds: White, Gray-50
-
-4. **Components**:
-   - Rounded corners (rounded-2xl, rounded-3xl)
-   - Shadows for depth (shadow-md, shadow-lg)
-   - Smooth transitions (duration-300, duration-500)
-
-5. **Images**:
-   - Object-cover for proper aspect ratios
-   - Hover scale effects
-   - Gradient overlays for text readability
-
-## 📱 Responsive Design
-
-- Desktop-first approach
-- Horizontal scrolling for product carousels
-- Sticky navigation header
-- Grid layouts for categories
-
-## 🔧 Tech Stack
-
-- React 19
-- Vite 8
-- Tailwind CSS 4
-- Lucide React (icons replaced with custom SVG)
+For questions or issues, please refer to the documentation files:
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Project structure
+- [SETUP.md](./SETUP.md) - Detailed setup guide
+- [COMPONENTS.md](./COMPONENTS.md) - Component documentation
 
 ---
 
-Built for **SPETRO** - Your Fashion Destination 🛍️
+**Last Updated**: June 2026
+**Version**: 1.0.0

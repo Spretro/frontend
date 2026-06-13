@@ -115,7 +115,7 @@ export default function Footer() {
                 <div className="grid gap-3">
                   {group.links.map((link) => (
                     <a
-                      key={link.href}
+                      key={link.label}
                       href={link.href}
                       className="text-sm font-semibold text-gray-400 transition-colors hover:text-white"
                     >

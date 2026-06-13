@@ -1,102 +1,121 @@
-const deals = [
+import { useNavigate } from "react-router-dom";
+
+const MAIN = {
+  tag: "SUMMER EDIT 2025",
+  title: "Flat 40%",
+  titleAccent: "Off",
+  sub: "On 1000+ handpicked styles across women, men & kids",
+  cta: "Shop the Sale",
+  path: "/sale",
+  image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=85",
+};
+
+const SIDE = [
   {
-    label: "Summer Sale",
-    value: "Up to 70%",
-    unit: "OFF",
-    sub: "On selected styles",
-    gradient: "linear-gradient(135deg, #5B21B6 0%, #7C3AED 50%, #9B6DFF 100%)",
-    shine: "rgba(255,255,255,0.12)",
-    glow: "rgba(106,44,255,0.45)",
-    icon: (
-      <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-      </svg>
-    ),
+    tag: "NEW IN",
+    title: "Fresh Drops",
+    sub: "New styles every week",
+    cta: "Explore",
+    path: "/new-in",
+    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=85",
+    overlay: "linear-gradient(160deg, rgba(232,62,108,0.72) 0%, rgba(15,23,42,0.55) 100%)",
   },
   {
-    label: "New Arrivals",
-    value: "Fresh",
-    unit: "Every Week",
-    sub: "Straight from the runway",
-    gradient: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
-    shine: "rgba(255,255,255,0.06)",
-    glow: "rgba(30,41,59,0.5)",
-    icon: (
-      <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Free Shipping",
-    value: "On ₹999+",
-    unit: "Orders",
-    sub: "No code needed · Always",
-    gradient: "linear-gradient(135deg, #065F46 0%, #059669 60%, #34D399 100%)",
-    shine: "rgba(255,255,255,0.1)",
-    glow: "rgba(5,150,105,0.4)",
-    icon: (
-      <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-      </svg>
-    ),
+    tag: "SNEAKER DROP",
+    title: "The Kick Edit",
+    sub: "Top sneaker brands, curated",
+    cta: "Shop Sneakers",
+    path: "/category/sneakers",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=85",
+    overlay: "linear-gradient(160deg, rgba(15,23,42,0.75) 0%, rgba(106,44,255,0.45) 100%)",
   },
 ];
 
 export default function PromoBanner() {
-  return (
-    <section className="py-5 px-3 md:px-6" style={{ background: "#F9F8FF" }}>
-      <div className="max-w-360 mx-auto grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        {deals.map((deal, i) => (
-          <div
-            key={i}
-            className="relative rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1.5"
-            style={{
-              background: deal.gradient,
-              boxShadow: `0 4px 28px ${deal.glow}`,
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.boxShadow = `0 16px 48px ${deal.glow}`)
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.boxShadow = `0 4px 28px ${deal.glow}`)
-            }
-          >
-            {/* Top shine overlay */}
-            <div
-              className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
-              style={{ background: `linear-gradient(180deg, ${deal.shine} 0%, transparent 100%)` }}
-            />
-            {/* Diagonal shimmer line */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              style={{ background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.07) 50%, transparent 65%)" }}
-            />
-            {/* Decorative circle top-right */}
-            <div className="absolute -top-6 -right-6 size-28 rounded-full bg-white/5 pointer-events-none" />
-            <div className="absolute -top-2 -right-2 size-16 rounded-full bg-white/5 pointer-events-none" />
+  const navigate = useNavigate();
 
-            <div className="relative px-6 py-7 flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/50 mb-1">
-                  {deal.label}
-                </p>
-                <p className="text-2xl md:text-3xl font-black text-white leading-none tracking-tight">
-                  {deal.value}
-                </p>
-                <p className="text-sm font-black text-white/80 leading-tight mb-1">{deal.unit}</p>
-                <p className="text-[10px] text-white/50 font-medium truncate">{deal.sub}</p>
-              </div>
-              <div className="flex flex-col items-center gap-2.5 shrink-0">
-                <div className="size-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-white backdrop-blur-sm">
-                  {deal.icon}
-                </div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-white/80 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full group-hover:bg-white/20 transition-colors whitespace-nowrap">
-                  SHOP →
-                </span>
-              </div>
+  return (
+    <section className="px-3 sm:px-4 md:px-6 py-4 md:py-5" style={{ background: "#F9F8FF" }}>
+      <div className="max-w-360 mx-auto grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-3 md:gap-4" style={{ minHeight: 420 }}>
+
+        {/* ── Main tall card ── */}
+        <div
+          className="relative overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer group"
+          style={{ minHeight: 380 }}
+          onClick={() => navigate(MAIN.path)}
+        >
+          <img
+            src={MAIN.image}
+            alt={MAIN.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(15,10,35,0.78) 0%, rgba(106,44,255,0.35) 60%, transparent 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
+
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-9">
+            <span className="self-start text-[9px] md:text-[10px] font-black tracking-[0.22em] uppercase text-white/60 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
+              {MAIN.tag}
+            </span>
+
+            <div>
+              <h2 className="text-5xl md:text-7xl font-black text-white leading-none tracking-tighter">
+                {MAIN.title}{" "}
+                <span style={{ color: "#A78BFA" }}>{MAIN.titleAccent}</span>
+              </h2>
+              <p className="mt-3 text-sm md:text-base text-white/60 font-medium max-w-xs leading-relaxed">
+                {MAIN.sub}
+              </p>
+              <button
+                className="mt-5 inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-2.5 rounded-full text-sm font-black hover:bg-[#6A2CFF] hover:text-white transition-all duration-300 shadow-lg"
+                onClick={(e) => { e.stopPropagation(); navigate(MAIN.path); }}
+              >
+                {MAIN.cta}
+                <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* ── Two stacked side cards ── */}
+        <div className="grid grid-rows-2 gap-3 md:gap-4">
+          {SIDE.map((card) => (
+            <div
+              key={card.tag}
+              className="relative overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer group"
+              onClick={() => navigate(card.path)}
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0" style={{ background: card.overlay }} />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%)" }} />
+
+              <div className="absolute inset-0 flex flex-col justify-between p-5 md:p-6">
+                <span className="self-start text-[9px] font-black tracking-[0.2em] uppercase text-white/60 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  {card.tag}
+                </span>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-black text-white leading-none tracking-tight">
+                    {card.title}
+                  </h3>
+                  <p className="mt-1.5 text-xs text-white/55 font-medium">{card.sub}</p>
+                  <button
+                    className="mt-3 inline-flex items-center gap-1.5 text-white text-xs font-black border border-white/30 px-4 py-2 rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200"
+                    onClick={(e) => { e.stopPropagation(); navigate(card.path); }}
+                  >
+                    {card.cta} →
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
