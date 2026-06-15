@@ -29,11 +29,12 @@ import ProductPage from "./pages/ProductPage/ProductPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import AddressPage from "./pages/AddressPage/AddressPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
+import AccountPage from "./pages/Account";
 
 function Layout() {
   const location = useLocation();
   const isSearch =
-    ["/search", "/cart"].includes(location.pathname) ||
+    ["/search", "/cart", "/account"].includes(location.pathname) ||
     location.pathname === "/product" ||
     location.pathname.startsWith("/product/");
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
@@ -41,6 +42,7 @@ function Layout() {
     location.pathname === "/checkout" ||
     location.pathname.startsWith("/checkout/") ||
     location.pathname === "/payment";
+  const isAccount = location.pathname === "/account";
   const hideChrome = isAuthPage || isCheckoutFlow;
 
   // Reset scroll to top whenever the route changes.
@@ -76,6 +78,7 @@ function Layout() {
         <Route path="/checkout/address" element={<AddressPage />} />
         <Route path="/checkout/address/:addressId" element={<AddressPage />} />
         <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
       {!hideChrome && <Footer />}
       <ScrollToTop />

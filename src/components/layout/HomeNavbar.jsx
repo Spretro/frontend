@@ -1336,7 +1336,10 @@ export default function Navbar() {
                 onMouseEnter={() => openPanel("user")}
                 onMouseLeave={closePanel}
               >
-                <button className="spretro-icon-btn">
+                <button
+                  className="spretro-icon-btn"
+                  onClick={() => { navigate("/account"); setActivePanel(null); }}
+                >
                   <User size={19} strokeWidth={1.9} />
                 </button>
 
@@ -1349,7 +1352,8 @@ export default function Navbar() {
                   >
                     <div
                       className="spretro-panel-header"
-                      style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14 }}
+                      style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14, cursor: "pointer" }}
+                      onClick={() => { navigate("/account"); setActivePanel(null); }}
                     >
                       <div
                         className="spretro-panel-header-icon"
@@ -1368,13 +1372,17 @@ export default function Navbar() {
                     </div>
                     <div className="spretro-panel-body">
                       {[
-                        { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage" },
-                        { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items" },
-                        { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers" },
-                        { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences" },
-                        { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact" },
+                        { icon: <Package size={15} strokeWidth={2} />, label: "My Orders",     sub: "Track & manage",      path: "/account" },
+                        { icon: <Heart size={15} strokeWidth={2} />,   label: "Wishlist",      sub: "Saved items",         path: null },
+                        { icon: <Star size={15} strokeWidth={2} />,    label: "Rewards",       sub: "Points & offers",     path: "/account" },
+                        { icon: <Settings size={15} strokeWidth={2} />,label: "Settings",      sub: "Account preferences", path: "/account" },
+                        { icon: <HelpCircle size={15} strokeWidth={2} />,label: "Help & Support", sub: "FAQs & contact",  path: "/account" },
                       ].map((item) => (
-                        <button key={item.label} className="spretro-panel-link">
+                        <button
+                          key={item.label}
+                          className="spretro-panel-link"
+                          onClick={() => { if (item.path) { navigate(item.path); setActivePanel(null); } }}
+                        >
                           <span className="spretro-panel-link-icon">{item.icon}</span>
                           <span>
                             <div style={{ fontSize: 13, fontWeight: 700, color: "#222" }}>{item.label}</div>
@@ -1512,11 +1520,11 @@ export default function Navbar() {
                     <div className="spretro-mega-section-title">My Account</div>
                     <div className="spretro-mega-acc-grid">
                       {[
-                        { icon: <Package size={16} strokeWidth={2} />, label: "My Orders", sub: "Track deliveries", bg: "#EEF2FF", color: "#4F67E4", path: null },
+                        { icon: <Package size={16} strokeWidth={2} />, label: "My Orders", sub: "Track deliveries", bg: "#EEF2FF", color: "#4F67E4", path: "/account" },
                         { icon: <Heart size={16} strokeWidth={2} />, label: "Wishlist", sub: "Saved items", bg: "#FFF0F5", color: "#E83E6C", path: null },
                         { icon: <Gift size={16} strokeWidth={2} />, label: "Offers & Gifts", sub: "Exclusive deals", bg: "#FFF7ED", color: "#F97316", path: "/sale" },
-                        { icon: <Star size={16} strokeWidth={2} />, label: "Rewards", sub: "Points balance", bg: "#FFFBEB", color: "#D97706", path: null },
-                        { icon: <Settings size={16} strokeWidth={2} />, label: "Settings", sub: "Profile & prefs", bg: "#F1F5F9", color: "#475569", path: null },
+                        { icon: <Star size={16} strokeWidth={2} />, label: "Rewards", sub: "Points balance", bg: "#FFFBEB", color: "#D97706", path: "/account" },
+                        { icon: <Settings size={16} strokeWidth={2} />, label: "Settings", sub: "Profile & prefs", bg: "#F1F5F9", color: "#475569", path: "/account" },
                         { icon: <HelpCircle size={16} strokeWidth={2} />, label: "Help", sub: "FAQs & support", bg: "#F0FDF4", color: "#16A34A", path: "/faqs" },
                       ].map((item) => (
                         <button
