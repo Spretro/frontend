@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import HomeNavbar from "./components/layout/HomeNavbar";
 import SearchNavbar from "./components/layout/SearchNavbar";
 import Footer from "./components/layout/Footer";
@@ -83,10 +85,14 @@ function Layout() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
-        <Layout />
-      </BrowserRouter>
-    </CartProvider>
+    <AuthProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Layout />
+          </BrowserRouter>
+        </CartProvider>
+      </WishlistProvider>
+    </AuthProvider>
   );
 }

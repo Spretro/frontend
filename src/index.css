@@ -56,6 +56,15 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .product-scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .product-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes fadeInUp {
