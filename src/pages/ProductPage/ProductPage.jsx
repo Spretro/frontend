@@ -11,7 +11,6 @@ import ProductInfo from "../../components/sections/ProductInfo";
 import ProductReviews from "../../components/sections/ProductReviews";
 import ProductTabs from "../../components/sections/ProductTabs";
 import RecommendationSection from "../../components/sections/RecommendationSection";
-import "./ProductPage.css";
 
 function ProductPageContent() {
   const { productId } = useParams();

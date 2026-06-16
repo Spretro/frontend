@@ -1,8 +1,0 @@
-.product-scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.product-scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}

@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   BadgePercent,
+  Heart,
   Minus,
   Palette,
   Plus,
@@ -18,6 +19,7 @@ import {
   IMAGE_PLACEHOLDER,
   PRODUCT_LIMITS,
 } from "../../lib/productUtils";
+import { useWishlist } from "../../context/WishlistContext";
 
 const trustItems = [
   { icon: Truck, title: "60 min delivery" },
@@ -43,6 +45,9 @@ export default function ProductInfo({
   onClearError = () => {},
   onReviewClick = () => {},
 }) {
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
+
   const discount = calculateDiscount(product.price, product.originalPrice);
   const colorVariants = product.colorVariants || [];
   const hasColorVariants = colorVariants.length > 0;
@@ -319,6 +324,20 @@ export default function ProductInfo({
           {cartLoading ? "Adding..." : "Add to Cart"}
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={() => toggleWishlist(product)}
+        className={`inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-2xl border-2 px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          wishlisted
+            ? "border-rose-500 bg-rose-50 text-rose-500 hover:bg-rose-100 focus:ring-rose-500"
+            : "border-gray-200 bg-white text-gray-600 hover:border-rose-400 hover:text-rose-500 hover:bg-rose-50 focus:ring-rose-400"
+        }`}
+        aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        <Heart size={16} className={wishlisted ? "fill-rose-500" : ""} />
+        {wishlisted ? "Saved to Wishlist" : "Add to Wishlist"}
+      </button>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {trustItems.map(({ icon: Icon, title }) => (
