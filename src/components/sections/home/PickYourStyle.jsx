@@ -15,7 +15,7 @@ export default function BagsSection() {
       {/* Desktop: original horizontal scroll with overlay */}
       <section
         className="py-14 relative overflow-hidden hidden md:block"
-        style={{ background: "linear-gradient(135deg, #F0EFFF 0%, #EEF2FF 50%, #F5F0FF 100%)" }}
+        style={{ background: "#FFFFFF" }}
       >
         <div className="absolute inset-0 opacity-[0.06]">
           <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=60" alt="" className="w-full h-full object-cover" />
@@ -23,8 +23,8 @@ export default function BagsSection() {
         <div className="relative max-w-360 mx-auto px-4 md:px-8">
           <div className="flex items-end justify-between mb-10 fade-in">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-violet-400 mb-1">Bags For</p>
-              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+              <p className="section-label text-violet-500 mb-1">Bags For</p>
+              <h2 className="section-heading text-gray-900">
                 Every <em className="text-violet-500 not-italic">Occasion</em>
               </h2>
             </div>
@@ -60,7 +60,7 @@ export default function BagsSection() {
         <CategoryProductSection
           title="Every" titleAccent="Occasion" subtitle="Bags For"
           accentColor="#7C3AED"
-          bg="linear-gradient(135deg, #F0EFFF 0%, #EEF2FF 50%, #F5F0FF 100%)"
+          bg="#FFFFFF"
           bgImage="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=60"
           apiUrl="https://dummyjson.com/products/category/womens-bags?limit=20&select=id,title,price,thumbnail,rating,discountPercentage,brand"
         />

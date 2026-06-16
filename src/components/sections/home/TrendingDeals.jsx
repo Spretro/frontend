@@ -2,12 +2,12 @@ export default function TrendingDeals() {
   return (
     <section
       className="py-10 md:py-14"
-      style={{ background: "linear-gradient(135deg, #F9F8FF 0%, #EEF2FF 50%, #F5F0FF 100%)" }}
+      style={{ background: "#FFFFFF" }}
     >
       <div className="max-w-360 mx-auto px-4 md:px-8">
         <div className="mb-10 fade-in">
-          <span className="text-xs font-bold text-[#6A2CFF] uppercase tracking-widest">Explore</span>
-          <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mt-1 leading-none">
+          <span className="section-label text-[#6A2CFF]">Explore</span>
+          <h2 className="section-heading text-gray-900 mt-1">
             Shop by <em className="text-[#6A2CFF] not-italic">Gender</em>
           </h2>
         </div>

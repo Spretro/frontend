@@ -13,19 +13,16 @@ const categories = [
 
 export default function ShopByCategory() {
   return (
-    <section className="py-10 md:py-12" style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F9F8FF 100%)" }}>
+    <section className="py-10 md:py-12" style={{ background: "#FFFFFF" }}>
       <div className="max-w-360 mx-auto px-4 md:px-8">
 
         {/* Header */}
         <div className="flex items-end justify-between mb-8 md:mb-10 fade-in">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6A2CFF] mb-1">Browse</p>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-none">
+            <p className="section-label mb-1">Browse</p>
+            <h2 className="section-heading text-gray-900">
               <span className="text-gray-900">Shop by </span>
-              <span
-                className="inline-block"
-                style={{ background: "linear-gradient(135deg, #6A2CFF, #EC4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
-              >
+              <span className="inline-block" style={{ color: "#6A2CFF" }}>
                 Category
               </span>
             </h2>
@@ -50,7 +47,7 @@ export default function ShopByCategory() {
               <div className="relative p-0.5 rounded-full transition-all duration-300"
                 style={{ background: "transparent" }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = `linear-gradient(135deg, ${cat.ring}, #6A2CFF)`)
+                  (e.currentTarget.style.background = "transparent")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background = "transparent")
@@ -59,7 +56,7 @@ export default function ShopByCategory() {
                 {/* Default ring (always visible, subtle) */}
                 <div
                   className="absolute inset-0 rounded-full opacity-30 group-hover:opacity-0 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(135deg, ${cat.ring}66, #6A2CFF44)`, padding: "2px" }}
+                  style={{ background: "transparent", padding: "2px" }}
                 />
                 <div
                   className="relative size-20 md:size-24 rounded-full overflow-hidden transition-all duration-300 group-hover:scale-105"
@@ -79,7 +76,7 @@ export default function ShopByCategory() {
                   {/* Subtle tint overlay on hover */}
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                    style={{ background: `radial-gradient(circle at center, ${cat.ring}, transparent)` }}
+                    style={{ background: "transparent" }}
                   />
                 </div>
               </div>
