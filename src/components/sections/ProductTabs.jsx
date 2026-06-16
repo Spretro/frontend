@@ -108,7 +108,7 @@ export default function ProductTabs({ specifications = [], description = "" }) {
                       Description
                     </dt>
                     <dd
-                      className={`mt-1 whitespace-pre-line break-words text-sm font-black font-medium leading-relaxed text-gray-600 ${
+                      className={`mt-1 whitespace-pre-line break-words text-sm font-medium leading-relaxed text-gray-600 ${
                         hasMoreDescription && !showAllDescription
                           ? "max-h-32 overflow-hidden"
                           : ""
