@@ -1,4 +1,5 @@
 import { AlertCircle } from "lucide-react";
+import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import { FullPageSkeleton } from "../../components/LoadingSkeletons";
@@ -17,6 +18,14 @@ function ProductPageContent() {
   const navigate = useNavigate();
   const { addLine } = useCart();
   const currentProductId = productId || "1307441";
+  const reviewsRef = useRef(null);
+
+  const scrollToReviews = () => {
+    reviewsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const {
     product,
@@ -38,7 +47,8 @@ function ProductPageContent() {
   const buildLine = () => {
     if (!product) return null;
     const colorName =
-      (product.colorVariants || []).find((c) => c.id === selectedColor)?.name || "Default";
+      (product.colorVariants || []).find((c) => c.id === selectedColor)?.name ||
+      "Default";
     return {
       id: product.id,
       name: product.name,
@@ -117,6 +127,7 @@ function ProductPageContent() {
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
             onClearError={clearError}
+            onReviewClick={scrollToReviews}
           />
         </section>
 
@@ -125,11 +136,13 @@ function ProductPageContent() {
             specifications={product?.specifications || []}
             description={product?.description || "No description available"}
           />
-          <ProductReviews
-            rating={product?.rating || 0}
-            reviewCount={product?.reviewCount || 0}
-            reviews={mockReviews}
-          />
+          <div ref={reviewsRef}>
+            <ProductReviews
+              rating={product?.rating || 0}
+              reviewCount={product?.reviewCount || 0}
+              reviews={mockReviews}
+            />
+          </div>
           <RecommendationSection productBrand={product?.brand} />
         </div>
       </div>
