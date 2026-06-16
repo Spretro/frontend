@@ -18,7 +18,7 @@ const SIDE = [
     cta: "Explore",
     path: "/new-in",
     image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=85",
-    overlay: "linear-gradient(160deg, rgba(232,62,108,0.72) 0%, rgba(15,23,42,0.55) 100%)",
+    overlay: "rgba(0,0,0,0.5)",
   },
   {
     tag: "SNEAKER DROP",
@@ -27,7 +27,7 @@ const SIDE = [
     cta: "Shop Sneakers",
     path: "/category/sneakers",
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=85",
-    overlay: "linear-gradient(160deg, rgba(15,23,42,0.75) 0%, rgba(106,44,255,0.45) 100%)",
+    overlay: "rgba(0,0,0,0.5)",
   },
 ];
 
@@ -49,8 +49,8 @@ export default function PromoBanner() {
             alt={MAIN.title}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(15,10,35,0.78) 0%, rgba(106,44,255,0.35) 60%, transparent 100%)" }} />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.6)" }} />
+          <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.4)" }} />
 
           {/* Content */}
           <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-9">
@@ -92,8 +92,8 @@ export default function PromoBanner() {
                 alt={card.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0" style={{ background: card.overlay }} />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%)" }} />
+              <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.5)" }} />
+              <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.3)" }} />
 
               <div className="absolute inset-0 flex flex-col justify-between p-5 md:p-6">
                 <span className="self-start text-[9px] font-black tracking-[0.2em] uppercase text-white/60 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">

@@ -17,13 +17,13 @@ export default function JewellerySection() {
       {/* Desktop: original horizontal scroll */}
       <section
         className="py-14 hidden md:block"
-        style={{ background: "linear-gradient(135deg, #FAFAFA 0%, #F5F0FF 100%)" }}
+        style={{ background: "#FFFFFF" }}
       >
         <div className="max-w-360 mx-auto px-4 md:px-8">
           <div className="flex items-end justify-between mb-10 fade-in">
             <div>
-              <span className="text-xs font-bold text-[#6A2CFF] uppercase tracking-widest">What's Hot</span>
-              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mt-1 leading-none">
+              <span className="section-label text-[#6A2CFF]">What's Hot</span>
+              <h2 className="section-heading text-gray-900 mt-1">
                 Trending <em className="text-[#6A2CFF] not-italic">Styles</em>
               </h2>
             </div>
@@ -59,7 +59,7 @@ export default function JewellerySection() {
         <CategoryProductSection
           title="Trending" titleAccent="Styles" subtitle="What's Hot"
           accentColor="#6A2CFF"
-          bg="linear-gradient(135deg, #FAFAFA 0%, #F5F0FF 100%)"
+          bg="#FFFFFF"
           apiUrl="https://dummyjson.com/products/category/womens-jewellery?limit=20&select=id,title,price,thumbnail,rating,discountPercentage,brand"
         />
       </div>

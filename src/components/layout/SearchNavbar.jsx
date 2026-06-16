@@ -1,17 +1,21 @@
 import { useState, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import {
   Search, X, Heart, ShoppingBag, User,
   TrendingUp, Clock, ArrowRight,
 } from "lucide-react";
 
-const QUICK_LINKS = [
-  { label: "Men", path: "/men" },
+const PRIMARY_LINKS = [
   { label: "Women", path: "/women" },
+  { label: "Men", path: "/men" },
+  { label: "Kids", path: "/kids" },
   { label: "New In", path: "/new-in" },
   { label: "Brands", path: "/brands" },
-  { label: "Sale 🔥", path: "/sale" },
+  { label: "Sale", path: "/sale" },
+];
+
+const SECONDARY_LINKS = [
   { label: "Topwear", path: "/category/topwear" },
   { label: "Sneakers", path: "/category/sneakers" },
   { label: "Beauty", path: "/category/beauty" },
@@ -39,12 +43,14 @@ function saveRecent(q) {
 export default function SearchNavbar() {
   const navigate = useNavigate();
   const { totalQty } = useCart();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const currentQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(currentQuery);
   const [focused, setFocused] = useState(false);
   const [recent, setRecent] = useState(getRecent);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const inputRef = useRef(null);
 
 
@@ -79,29 +85,16 @@ export default function SearchNavbar() {
           height: 72px;
           display: flex;
           align-items: center;
-          gap: 20px;
+          justify-content: space-between;
+          gap: 24px;
           padding: 0 24px;
           max-width: 1440px;
           margin: 0 auto;
         }
-        .snav-back {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          cursor: pointer;
-          color: #555;
-          font-size: 13px;
-          font-weight: 700;
-          white-space: nowrap;
-          transition: color 0.2s;
-          text-decoration: none;
-          shrink-0: true;
-        }
-        .snav-back:hover { color: #6A2CFF; }
         .snav-logo {
-          font-size: 26px;
-          font-weight: 900;
-          letter-spacing: -1.5px;
+          font-size: 20px;
+          font-weight: 800;
+          letter-spacing: -0.75px;
           color: #111;
           cursor: pointer;
           white-space: nowrap;
@@ -111,14 +104,15 @@ export default function SearchNavbar() {
         .snav-logo span { color: #6A2CFF; }
         .snav-search-wrap {
           flex: 1;
+          min-width: 0;
           position: relative;
         }
         .snav-search-box {
           width: 100%;
           height: 48px;
-          background: #F5F5F7;
-          border: 2px solid transparent;
-          border-radius: 16px;
+          background: #F7F5FA;
+          border: 1px solid transparent;
+          border-radius: 14px;
           display: flex;
           align-items: center;
           gap: 12px;
@@ -127,7 +121,7 @@ export default function SearchNavbar() {
         }
         .snav-search-box.active {
           background: white;
-          border-color: #6A2CFF;
+          border-color: #D6C7FF;
           box-shadow: 0 0 0 4px rgba(106,44,255,0.08);
         }
         .snav-input {
@@ -148,7 +142,7 @@ export default function SearchNavbar() {
           background: #6A2CFF;
           color: white;
           border: none;
-          border-radius: 10px;
+          border-radius: 12px;
           font-size: 13px;
           font-weight: 700;
           cursor: pointer;
@@ -161,60 +155,97 @@ export default function SearchNavbar() {
         .snav-icons {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 12px;
           flex-shrink: 0;
         }
         .snav-icon-btn {
-          width: 42px;
-          height: 42px;
+          width: 38px;
+          height: 38px;
           border: none;
           background: transparent;
-          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: #444;
+          color: #111;
           position: relative;
-          transition: 0.2s ease;
+          transition: 0.2s ease, transform 0.2s ease;
         }
-        .snav-icon-btn:hover { background: #F5F5F7; color: #111; }
+        .snav-icon-btn:hover { background: #F5F5F7; transform: translateY(-1px); }
         .snav-cart-dot {
           position: absolute;
-          top: 8px;
-          right: 8px;
+          top: 6px;
+          right: 6px;
           width: 8px;
           height: 8px;
           border-radius: 50%;
           background: #6A2CFF;
         }
-        /* Quick links strip */
-        .snav-links {
-          height: 42px;
+        .snav-navrow {
+          height: 46px;
           display: flex;
           align-items: center;
-          gap: 4px;
-          overflow-x: auto;
+          gap: 28px;
           padding: 0 24px;
-          border-top: 1px solid #F0F0F0;
           max-width: 1440px;
           margin: 0 auto;
+          border-top: 1px solid #F4F1FB;
+          border-bottom: 1px solid #F4F1FB;
+          background: #FFFFFF;
         }
-        .snav-links::-webkit-scrollbar { display: none; }
-        .snav-link {
-          padding: 5px 14px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 700;
-          cursor: pointer;
+        .snav-nav-item {
+          position: relative;
+          display: flex;
+          align-items: center;
           white-space: nowrap;
-          transition: 0.2s ease;
-          text-decoration: none;
-          color: #555;
-          border: 1px solid transparent;
-          flex-shrink: 0;
         }
-        .snav-link:hover { background: #F3EEFF; color: #6A2CFF; border-color: #E3D8FF; }
+        .snav-link {
+          font-size: 15px;
+          font-weight: 600;
+          color: #3A3A47;
+          text-decoration: none;
+          padding: 4px 0;
+          transition: color 0.2s ease;
+          border-bottom: 2px solid transparent;
+        }
+        .snav-link:hover,
+        .snav-link.active {
+          color: #4F3DFF;
+          border-bottom-color: #6A2CFF;
+        }
+        .snav-link.active { color: #6A2CFF; }
+        .snav-categories-dropdown {
+          position: absolute;
+          top: calc(100% + 10px);
+          left: 0;
+          width: 260px;
+          background: white;
+          border-radius: 18px;
+          box-shadow: 0 24px 48px rgba(15,23,42,0.12);
+          border: 1px solid #ECE7FF;
+          padding: 16px;
+          z-index: 1000;
+          display: grid;
+          gap: 8px;
+        }
+        .snav-category-link {
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 10px 14px;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #2D2D36;
+          background: #F8F6FF;
+          transition: background 0.2s ease, color 0.2s ease;
+          border: 1px solid transparent;
+        }
+        .snav-category-link:hover {
+          background: #EDE4FF;
+          color: #3D0ECC;
+          border-color: #D8C7FF;
+        }
         /* Dropdown */
         .snav-dropdown {
           position: absolute;
@@ -273,13 +304,14 @@ export default function SearchNavbar() {
         }
         .snav-trending-pill:hover { background: #F3EEFF; color: #6A2CFF; }
         @media (max-width: 767px) {
-          .snav-top { padding: 0 12px; gap: 10px; height: 60px; }
-          .snav-logo { font-size: 20px; }
-          .snav-back span { display: none; }
+          .snav-top { padding: 0 12px; gap: 12px; height: 68px; }
+          .snav-logo { font-size: 18px; }
           .snav-search-btn { display: none; }
-          .snav-links { padding: 0 12px; gap: 3px; }
-          .snav-link { font-size: 11px; padding: 4px 10px; }
+          .snav-navrow { padding: 0 12px; gap: 16px; overflow-x: auto; }
+          .snav-nav-item { flex-shrink: 0; }
+          .snav-category-link { font-size: 13px; }
         }
+        /* end duplicate dropdown styles */
       `}</style>
 
       <nav className="snav">
@@ -376,22 +408,43 @@ export default function SearchNavbar() {
           </div>
         </div>
 
-        {/* Quick links */}
-        <div style={{ borderTop: "1px solid #F0F0F0" }}>
-          <div className="snav-links" style={{ maxWidth: "1440px", margin: "0 auto" }}>
-            <a href="/" className="snav-link" onClick={(e) => { e.preventDefault(); navigate("/"); }}>
-              🏠 Home
+        <div className="snav-navrow">
+          {PRIMARY_LINKS.map((link) => (
+            <a
+              key={link.path}
+              href={link.path}
+              className={`snav-link ${location.pathname === link.path ? "active" : ""}`}
+              onClick={(e) => { e.preventDefault(); navigate(link.path); }}
+            >
+              {link.label}
             </a>
-            {QUICK_LINKS.map((link) => (
-              <a
-                key={link.path}
-                href={link.path}
-                className="snav-link"
-                onClick={(e) => { e.preventDefault(); navigate(link.path); }}
-              >
-                {link.label}
-              </a>
-            ))}
+          ))}
+          <div
+            className="snav-nav-item"
+            onMouseEnter={() => setCategoriesOpen(true)}
+            onMouseLeave={() => setCategoriesOpen(false)}
+          >
+            <button
+              className={`snav-link ${categoriesOpen ? "active" : ""}`}
+              type="button"
+              onClick={() => setCategoriesOpen((open) => !open)}
+            >
+              Categories
+            </button>
+            {categoriesOpen && (
+              <div className="snav-categories-dropdown">
+                {SECONDARY_LINKS.map((link) => (
+                  <button
+                    key={link.path}
+                    type="button"
+                    className="snav-category-link"
+                    onClick={() => { navigate(link.path); setCategoriesOpen(false); }}
+                  >
+                    {link.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </nav>
