@@ -1,8 +1,10 @@
 import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
+import { useAuth } from "../../context/AuthContext";
 
-import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, Package, Star, Settings, HelpCircle } from "lucide-react";
 
 const tickerItems = [
   "FREE SHIPPING ABOVE ₹2999",
@@ -40,9 +42,9 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
-  const { isAuthenticated: isLoggedIn, user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const panelTimer = useRef(null);
   const menuTimer = useRef(null);
 
@@ -1399,18 +1401,18 @@ export default function Navbar() {
 
             <div
               className="spretro-panel-wrap"
-              onMouseEnter={() => isLoggedIn && openPanel("user")}
+              onMouseEnter={() => isAuthenticated && openPanel("user")}
               onMouseLeave={closePanel}
             >
-              <button
+                <button
                 className="spretro-icon-btn"
-                onClick={() => navigate(isLoggedIn ? "/account" : "/login")}
-                title={isLoggedIn ? "My Account" : "Sign In"}
+                onClick={() => navigate(isAuthenticated ? "/account" : "/login")}
+                title={isAuthenticated ? "My Account" : "Sign In"}
               >
                 <User size={19} strokeWidth={1.9} />
               </button>
 
-              {isLoggedIn && activePanel === "user" && (
+              {isAuthenticated && activePanel === "user" && (
                 <div
                   className="spretro-mini-panel"
                   style={{ width: 260 }}
