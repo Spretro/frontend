@@ -13,7 +13,7 @@ import JewellerySection from "../../components/sections/home/JewellerySection";
 
 export default function Home() {
   return (
-    <main className="w-full overflow-x-hidden" style={{ background: "#F9F8FF" }}>
+    <main className="w-full overflow-x-hidden" style={{ background: "#F9F8FF", fontFamily: "Playfair Display, system-ui, sans-serif" }}>
       <HeroBanner />
       <PromoBanner />
       <ShopByCategory />
