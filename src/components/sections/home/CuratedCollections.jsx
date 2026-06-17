@@ -83,13 +83,13 @@ export default function CuratedCollections() {
   return (
     <section
       className="py-14"
-      style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F9F8FF 100%)" }}
+      style={{ background: "#FFFFFF" }}
     >
       <div className="max-w-360 mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-10 fade-in">
           <div>
-            <p className="text-xs font-bold text-[#6A2CFF] uppercase tracking-widest mb-1">Brand Drops</p>
-            <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+            <p className="section-label mb-1">Brand Drops</p>
+            <h2 className="section-heading text-gray-900">
               Shop by <em className="text-[#6A2CFF] not-italic">Brand</em>
             </h2>
           </div>

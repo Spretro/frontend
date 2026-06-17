@@ -13,13 +13,19 @@ export default function BeautySection() {
   return (
     <>
       {/* Desktop: original dark horizontal scroll */}
-      <section className="py-14 hidden md:block" style={{ background: "#130820" }}>
+      <section
+        className="py-14 hidden md:block"
+        style={{
+          background: "#111",
+          backgroundImage: "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 20%)",
+        }}
+      >
         <div className="max-w-360 mx-auto px-4 md:px-8">
           <div className="text-center mb-10 fade-in">
-            <p className="text-xs font-bold text-pink-400 uppercase tracking-widest mb-2">
+            <p className="section-label text-pink-400 mb-2">
               100% Genuine · Your Favourites
             </p>
-            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
+            <h2 className="section-heading text-white">
               Glam Up In Minutes
             </h2>
           </div>
@@ -32,7 +38,7 @@ export default function BeautySection() {
                   style={{
                     width: "clamp(170px, 17vw, 220px)",
                     aspectRatio: "2/3",
-                    background: `linear-gradient(160deg, ${cat.accent}99, ${cat.accent}44)`,
+                    background: "#F9F8FF",
                     boxShadow: `0 4px 24px ${cat.accent}44`,
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = `0 16px 48px ${cat.accent}88`)}

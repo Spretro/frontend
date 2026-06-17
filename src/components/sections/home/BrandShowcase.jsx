@@ -22,13 +22,13 @@ export default function BrandShowcase() {
       {/* Desktop: original horizontal scroll */}
       <section
         className="py-12 hidden md:block"
-        style={{ background: "linear-gradient(135deg, #EDF5FF 0%, #F5F0FF 100%)" }}
+        style={{ background: "#FFFFFF" }}
       >
         <div className="max-w-360 mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between mb-8 fade-in">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-1">The Curated</p>
-              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+              <p className="section-label text-blue-500 mb-1">The Curated</p>
+              <h2 className="section-heading text-gray-900">
                 Style For <em className="text-blue-500 not-italic">Him</em>
               </h2>
             </div>
@@ -65,7 +65,7 @@ export default function BrandShowcase() {
         <CategoryProductSection
           title="Style For" titleAccent="Him" subtitle="The Curated"
           accentColor="#3B82F6"
-          bg="linear-gradient(135deg, #EDF5FF 0%, #F5F0FF 100%)"
+          bg="#FFFFFF"
           apiUrl="https://dummyjson.com/products/category/mens-shirts?limit=20&select=id,title,price,thumbnail,rating,discountPercentage,brand"
         />
       </div>
