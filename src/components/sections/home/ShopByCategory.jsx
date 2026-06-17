@@ -1,17 +1,21 @@
+import { useNavigate } from "react-router-dom";
+
 const categories = [
-  { label: "For You",     image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=300&q=80", ring: "#EC4899" },
-  { label: "Women",       image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&q=80", ring: "#F43F5E" },
-  { label: "Men",         image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&q=80", ring: "#3B82F6" },
-  { label: "Beauty",      image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&q=80", ring: "#EC4899" },
-  { label: "Accessories", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=300&q=80", ring: "#F59E0B" },
-  { label: "Footwear",    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80", ring: "#10B981" },
-  { label: "Home",        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&q=80", ring: "#6366F1" },
-  { label: "Jewellery",   image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&q=80", ring: "#F59E0B" },
-  { label: "Gifting",     image: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=300&q=80", ring: "#EF4444" },
-  { label: "Sport",       image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&q=80", ring: "#6A2CFF" },
+  { label: "For You",     image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=300&q=80", ring: "#EC4899", path: "/" },
+  { label: "Women",       image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&q=80", ring: "#F43F5E", path: "/women" },
+  { label: "Men",         image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&q=80", ring: "#3B82F6", path: "/men" },
+  { label: "Beauty",      image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&q=80", ring: "#EC4899", path: "/category/beauty" },
+  { label: "Accessories", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=300&q=80", ring: "#F59E0B", path: "/category/watches" },
+  { label: "Footwear",    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80", ring: "#10B981", path: "/category/sneakers" },
+  { label: "Home",        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&q=80", ring: "#6366F1", path: "/brands" },
+  { label: "Jewellery",   image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&q=80", ring: "#F59E0B", path: "/category/jewellery" },
+  { label: "Gifting",     image: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=300&q=80", ring: "#EF4444", path: "/sale" },
+  { label: "Sport",       image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&q=80", ring: "#6A2CFF", path: "/category/topwear" },
 ];
 
 export default function ShopByCategory() {
+  const navigate = useNavigate();
+  
   return (
     <section className="py-10 md:py-12" style={{ background: "#FFFFFF" }}>
       <div className="max-w-360 mx-auto px-4 md:px-8">
@@ -42,6 +46,7 @@ export default function ShopByCategory() {
               key={i}
               className="flex flex-col items-center gap-2.5 shrink-0 cursor-pointer group fade-in-up"
               style={{ animationDelay: `${i * 0.05}s` }}
+              onClick={() => navigate(cat.path)}
             >
               {/* Ring + circle container */}
               <div className="relative p-0.5 rounded-full transition-all duration-300"

@@ -27,6 +27,7 @@ const menuItems = [
   { label: "Jewellery", path: "/category/jewellery" },
   { label: "Watches", path: "/category/watches" },
   { label: "Luxury", path: "/category/luxury" },
+  { label: "Offers", path: "/category/offers" },
 ];
 
 const PATH_TO_LINK = Object.fromEntries(navLinks.map((l) => [l.path, l.label]));
@@ -185,12 +186,15 @@ export default function Navbar() {
           display:flex;
           align-items:center;
           gap:24px;
+          min-width:0;
         }
 
         .spretro-logo{
           display:flex;
           flex-direction:column;
           cursor:pointer;
+          min-width:0;
+          max-width:220px;
         }
 
         .spretro-logo-main{
@@ -199,6 +203,9 @@ export default function Navbar() {
           letter-spacing:-1.2px;
           color:#111;
           line-height:1;
+          white-space:nowrap;
+          overflow:hidden;
+          text-overflow:ellipsis;
         }
 
         .spretro-logo-dot{
@@ -224,6 +231,7 @@ export default function Navbar() {
           display:flex;
           align-items:center;
           gap:22px;
+          min-width:0;
         }
 
         .spretro-link{
@@ -266,6 +274,7 @@ export default function Navbar() {
           display:flex;
           align-items:center;
           gap:12px;
+          min-width:0;
         }
 
         /* SEARCH */
@@ -914,19 +923,63 @@ export default function Navbar() {
         /* ── TABLET (max 1023px) ── */
         @media (max-width:1023px){
           .spretro-mainbar{
+            height:auto;
             padding:0 16px;
+            display:flex;
+            flex-wrap:wrap;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:10px;
           }
           .spretro-left{
-            gap:20px;
+            display:flex;
+            flex-wrap:wrap;
+            align-items:flex-start;
+            justify-content:flex-start;
+            gap:16px;
+            min-width:0;
+            width:100%;
+          }
+          .spretro-logo{
+            max-width:160px;
+            min-width:0;
           }
           .spretro-links{
-            gap:16px;
+            width:100%;
+            display:flex;
+            align-items:center;
+            gap:14px;
+            min-width:0;
+            overflow-x:auto;
+            padding-bottom:2px;
+            margin-top:4px;
+          }
+          .spretro-links::-webkit-scrollbar{
+            display:none;
+          }
+          .spretro-link{
+            white-space:nowrap;
+            flex-shrink:0;
           }
           .spretro-search{
-            width:200px;
+            width:100%;
+            max-width:100%;
+            flex:1 1 100%;
+            min-width:0;
+          }
+          .spretro-right{
+            width:100%;
+            display:flex;
+            justify-content:flex-end;
+            gap:10px;
+            min-width:0;
+            flex:1 1 100%;
           }
           .spretro-logo-main{
             font-size:26px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
           }
         }
 
@@ -944,9 +997,15 @@ export default function Navbar() {
           .spretro-logo-main{
             font-size:22px;
             letter-spacing:-1px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
           }
           .spretro-logo-sub{
             display:none;
+          }
+          .spretro-logo{
+            max-width:140px;
           }
           .spretro-links{
             display:none;
