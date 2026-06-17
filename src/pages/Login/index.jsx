@@ -1,16 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { DUMMY_CREDENTIALS } from "../../api/config";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { signInWithDummy } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
+  // Sign in is dummy-only — it never hits the backend.
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/");
+    const res = signInWithDummy({ email, password });
+    if (res.ok) navigate("/");
+    else setError(res.error);
+  };
+
+  const useDemoAccount = () => {
+    setEmail(DUMMY_CREDENTIALS.email);
+    setPassword(DUMMY_CREDENTIALS.password);
+    setError("");
   };
 
   return (
@@ -47,6 +60,24 @@ export default function Login() {
             <p style={{ fontSize: 15, fontWeight: 700, color: "#6A2CFF", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8, margin: "0 0 10px" }}>Welcome back</p>
             <h1 style={{ fontSize: 38, fontWeight: 900, color: "#0F0A1E", letterSpacing: "-1.2px", lineHeight: 1.1, margin: 0 }}>Sign in to<br />your account</h1>
           </div>
+
+          {/* Demo account hint — sign in is dummy-only, no backend call. */}
+          <button
+            type="button"
+            onClick={useDemoAccount}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, width: "100%", marginBottom: 16, padding: "10px 14px", borderRadius: 12, border: "1.5px dashed #C9B6FF", background: "#F6F2FF", cursor: "pointer", textAlign: "left" }}
+          >
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: "#5B2BD6" }}>
+              Demo account · demo@spretro.com / demo1234
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: "#6A2CFF", whiteSpace: "nowrap" }}>Use it →</span>
+          </button>
+
+          {error && (
+            <div style={{ marginBottom: 14, padding: "10px 14px", borderRadius: 10, background: "#FEF2F2", border: "1px solid #FECACA", fontSize: 13, fontWeight: 600, color: "#DC2626" }}>
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
