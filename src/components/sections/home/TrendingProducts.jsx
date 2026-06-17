@@ -47,49 +47,54 @@ export default function TrendingProducts() {
 
   const visible = expanded ? products : products.slice(0, 4);
 
-  const premiumHeader = (onViewAll) => (
-    <div
-      className="relative rounded-2xl md:rounded-3xl overflow-hidden mb-8 px-6 md:px-10 py-7 md:py-8 flex items-center justify-between"
-      style={{ background: "linear-gradient(135deg, #0F0620 0%, #1E0D40 50%, #2D1060 100%)" }}
-    >
-      <div className="absolute right-20 top-0 size-40 rounded-full bg-violet-500/20 blur-2xl pointer-events-none" />
-      <div className="absolute right-0 bottom-0 size-28 rounded-full bg-fuchsia-500/15 blur-2xl pointer-events-none" />
+  const premiumHeader = (onViewAll) => {
+    const trendingCount = products.length || 24;
+
+    return (
       <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        className="relative rounded-3xl overflow-hidden mb-8"
         style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
+          background: "#1b1030",
+          minHeight: 126,
+          boxShadow: "0 24px 70px rgba(15, 8, 38, 0.24)",
         }}
-      />
-      <div className="relative">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Live · Real Products</span>
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "radial-gradient(circle at 22% 30%, rgba(124,58,237,0.16), transparent 18%), radial-gradient(circle at 78% 25%, rgba(168,85,247,0.10), transparent 20%)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.06), transparent 24%, rgba(0,0,0,0.16))" }}
+        />
+        <div className="relative grid gap-5 grid-cols-1 lg:grid-cols-[1.75fr_1fr] items-center p-5 md:p-7 lg:p-9">
+          <div className="max-w-[28rem]">
+            <p className="section-label mb-2" style={{ color: "#F3E8FF" }}>Trending This Week</p>
+            <h2 className="section-heading text-white mb-3">Trending Now</h2>
+            <p className="section-description text-white/70 max-w-[450px]">Most loved products this week</p>
+          </div>
+          <div className="flex flex-col items-start justify-center gap-4 lg:items-end">
+            <button
+              onClick={onViewAll}
+              className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-white/15 hover:-translate-y-0.5"
+            >
+              {expanded ? "Show Less" : "View All"}
+              <span className="ml-2">→</span>
+            </button>
+            <div className="text-left lg:text-right">
+              <p className="text-xs uppercase tracking-[0.24em] text-white/50 mb-2">Trending Products</p>
+              <p className="text-3xl font-black text-white">{trendingCount} Trending Products</p>
+            </div>
+          </div>
         </div>
-        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-none">
-          Trending{" "}
-          <span style={{ background: "linear-gradient(90deg, #A78BFA, #F472B6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-            Now
-          </span>
-        </h2>
-        <p className="text-sm text-white/40 mt-1.5 font-medium">Most loved products this week</p>
       </div>
-      {onViewAll && (
-        <button
-          onClick={onViewAll}
-          className="relative hidden md:flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold px-5 py-3 rounded-full transition-all duration-200 backdrop-blur-sm"
-        >
-          {expanded ? "Show Less" : "View All"}
-          <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      )}
-    </div>
-  );
+    );
+  };
 
   return (
-    <section className="py-12" style={{ background: "linear-gradient(180deg, #F9F8FF 0%, #FFFFFF 100%)" }}>
+    <section className="py-12" style={{ background: "#FFFFFF" }}>
       <style>{`
         @keyframes trendSlideUp {
           from { opacity: 0; transform: translateY(24px); }
@@ -145,9 +150,9 @@ export default function TrendingProducts() {
                         </div>
                         <button
                           className="w-full py-2.5 rounded-xl text-xs font-black text-white transition-all duration-200 hover:scale-[1.02] active:scale-95"
-                          style={{ background: "linear-gradient(135deg, #1F2937 0%, #111827 100%)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #6A2CFF, #9B6DFF)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #1F2937 0%, #111827 100%)")}
+                          style={{ background: "#1F2937" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "#6A2CFF")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "#1F2937")}
                         >
                           Add to Cart
                         </button>

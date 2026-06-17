@@ -17,13 +17,13 @@ export default function HomeSection() {
       {/* Desktop: original horizontal scroll */}
       <section
         className="py-14 hidden md:block"
-        style={{ background: "linear-gradient(135deg, #FFF5F9 0%, #F5F0FF 50%, #F0F9FF 100%)" }}
+        style={{ background: "#FFFFFF" }}
       >
         <div className="max-w-360 mx-auto px-4 md:px-8">
           <div className="flex items-end justify-between mb-10 fade-in">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-pink-400 mb-1">Cute Finds For</p>
-              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+              <p className="section-label text-pink-500 mb-1">Cute Finds For</p>
+              <h2 className="section-heading text-gray-900">
                 Your <em className="text-pink-500 not-italic">Home</em>
               </h2>
             </div>
@@ -59,7 +59,7 @@ export default function HomeSection() {
         <CategoryProductSection
           title="Your" titleAccent="Home" subtitle="Cute Finds For"
           accentColor="#EC4899"
-          bg="linear-gradient(135deg, #FFF5F9 0%, #F5F0FF 50%, #F0F9FF 100%)"
+          bg="#FFFFFF"
           apiUrl="https://dummyjson.com/products/category/home-decoration?limit=20&select=id,title,price,thumbnail,rating,discountPercentage,brand"
         />
       </div>
