@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
 
@@ -36,10 +38,13 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalQty } = useCart();
+  const { wishlistItems, removeFromWishlist } = useWishlist();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const { isAuthenticated: isLoggedIn, user, logout } = useAuth();
   const panelTimer = useRef(null);
   const menuTimer = useRef(null);
 
@@ -1301,14 +1306,26 @@ export default function Navbar() {
               <button
                 className="spretro-icon-btn"
                 onClick={() => setActivePanel((p) => (p === "wishlist" ? null : "wishlist"))}
+                style={{ position: "relative" }}
               >
-                <Heart size={19} strokeWidth={1.9} />
+                <Heart size={19} strokeWidth={1.9} className={wishlistItems.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
+                {wishlistItems.length > 0 && (
+                  <span style={{
+                    position: "absolute", top: -4, right: -4,
+                    width: 16, height: 16, borderRadius: "50%",
+                    background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)",
+                    fontSize: 9, fontWeight: 800, color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {wishlistItems.length > 99 ? "99+" : wishlistItems.length}
+                  </span>
+                )}
               </button>
 
               {activePanel === "wishlist" && (
                 <div
                   className="spretro-mini-panel spretro-wishlist-panel"
-                  style={{ width: 240 }}
+                  style={{ width: 260 }}
                   onMouseEnter={keepPanel}
                   onMouseLeave={closePanel}
                 >
@@ -1321,24 +1338,60 @@ export default function Navbar() {
                     </div>
                     <div>
                       <div className="spretro-panel-header-title">Wishlist</div>
-                      <div className="spretro-panel-header-sub">0 saved items</div>
+                      <div className="spretro-panel-header-sub">
+                        {wishlistItems.length} saved {wishlistItems.length === 1 ? "item" : "items"}
+                      </div>
                     </div>
                   </div>
                   <div className="spretro-panel-divider" />
-                  <div className="spretro-panel-empty">
-                    <div className="spretro-panel-empty-icon">
-                      <Heart size={22} strokeWidth={1.8} />
+                  {wishlistItems.length === 0 ? (
+                    <div className="spretro-panel-empty">
+                      <div className="spretro-panel-empty-icon">
+                        <Heart size={22} strokeWidth={1.8} />
+                      </div>
+                      <div className="spretro-panel-empty-text">Nothing saved yet</div>
+                      <div className="spretro-panel-empty-sub">
+                        Tap the heart on any product<br />to save it here
+                      </div>
                     </div>
-                    <div className="spretro-panel-empty-text">Nothing saved yet</div>
-                    <div className="spretro-panel-empty-sub">
-                      Tap the heart on any product<br />to save it here
+                  ) : (
+                    <div style={{ maxHeight: 220, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, padding: "4px 0" }}>
+                      {wishlistItems.slice(0, 5).map((item) => (
+                        <div
+                          key={item.id}
+                          style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 4px", cursor: "pointer", borderRadius: 10 }}
+                          onClick={() => { navigate(`/product/${item.id}`); setActivePanel(null); }}
+                        >
+                          <div style={{ width: 42, height: 42, borderRadius: 8, overflow: "hidden", background: "#F5F3FF", flexShrink: 0 }}>
+                            <img src={item.image} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", padding: 3 }} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 10, fontWeight: 800, color: "#6A2CFF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.brand}</div>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A1E", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</div>
+                            <div style={{ fontSize: 11, fontWeight: 800, color: "#333", marginTop: 1 }}>₹{Number(item.price).toLocaleString("en-IN")}</div>
+                          </div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); removeFromWishlist(item.id); }}
+                            style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: "#FFF0F5", color: "#E83E6C", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, fontSize: 14, fontWeight: 700 }}
+                            title="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                      {wishlistItems.length > 5 && (
+                        <div style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: "#999", paddingTop: 4 }}>
+                          +{wishlistItems.length - 5} more items
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  )}
                   <button
                     className="spretro-panel-cta"
                     onClick={() => { navigate("/women"); setActivePanel(null); }}
+                    style={wishlistItems.length > 0 ? { background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" } : {}}
                   >
-                    Browse & Save
+                    {wishlistItems.length > 0 ? "Continue Shopping" : "Browse & Save"}
                   </button>
                 </div>
               )}
@@ -1381,7 +1434,7 @@ export default function Navbar() {
                           My Account
                         </div>
                         <div className="spretro-panel-header-sub" style={{ color: "rgba(255,255,255,0.5)" }}>
-                          Welcome back
+                          {user?.full_name ? `Hi, ${user.full_name}` : "Welcome back"}
                         </div>
                       </div>
                     </div>
@@ -1403,7 +1456,7 @@ export default function Navbar() {
                       ))}
                       <button
                         className="spretro-panel-link"
-                        onClick={() => { setIsLoggedIn(false); setActivePanel(null); }}
+                        onClick={() => { logout(); setActivePanel(null); navigate("/"); }}
                         style={{ color: "#E83E6C" }}
                       >
                         <span className="spretro-panel-link-icon" style={{ color: "#E83E6C" }}>
