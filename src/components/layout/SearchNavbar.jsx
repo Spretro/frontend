@@ -90,6 +90,7 @@ export default function SearchNavbar() {
           padding: 0 24px;
           max-width: 1440px;
           margin: 0 auto;
+          min-width: 0;
         }
         .snav-logo {
           font-size: 20px;
@@ -99,7 +100,11 @@ export default function SearchNavbar() {
           cursor: pointer;
           white-space: nowrap;
           text-decoration: none;
-          flex-shrink: 0;
+          flex-shrink: 1;
+          min-width: 0;
+          max-width: 160px;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .snav-logo span { color: #6A2CFF; }
         .snav-search-wrap {
@@ -305,7 +310,7 @@ export default function SearchNavbar() {
         .snav-trending-pill:hover { background: #F3EEFF; color: #6A2CFF; }
         @media (max-width: 767px) {
           .snav-top { padding: 0 12px; gap: 12px; height: 68px; }
-          .snav-logo { font-size: 18px; }
+          .snav-logo { font-size: 18px; max-width: 120px; }
           .snav-search-btn { display: none; }
           .snav-navrow { padding: 0 12px; gap: 16px; overflow-x: auto; }
           .snav-nav-item { flex-shrink: 0; }

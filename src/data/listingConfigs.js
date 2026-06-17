@@ -2,7 +2,7 @@ export const LISTING_CONFIGS = {
   women: {
     title: "Women's Fashion",
     subtitle: "Discover the latest trends for her",
-    heroGradient: "linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #EC4899 100%)",
+    heroGradient: "linear-gradient(135deg, #0f0a1f 0%, #271249 45%, #4f2778 100%)",
     accentColor: "#EC4899",
     categories: [
       "womens-dresses", "womens-tops", "womens-bags", "womens-shoes",

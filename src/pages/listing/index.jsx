@@ -94,85 +94,67 @@ export default function ListingPage({ config }) {
   const hasMore = visibleCount < filtered.length;
 
   return (
-    <main style={{ background: "#F9F8FF" }} onClick={() => showSort && setShowSort(false)}>
-
-      {/* ── Hero ── */}
-      <div
-        className="relative overflow-hidden"
-        style={{ background: config.heroGradient, minHeight: "220px" }}
-      >
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 w-64 h-64 rounded-full bg-white blur-3xl" />
-        </div>
-        <div className="relative max-w-360 mx-auto px-4 md:px-8 py-12 md:py-16">
-          <nav className="flex items-center gap-2 text-white/50 text-xs font-medium mb-4">
-            <a href="/" className="hover:text-white/80 transition-colors">Home</a>
-            <span>/</span>
-            <span className="text-white/90">{config.title}</span>
-          </nav>
-          <h1 className="text-4xl md:text-6xl font-black text-white leading-none tracking-tighter mb-2">
-            {config.title}
-          </h1>
-          <p className="text-white/60 text-sm md:text-base font-semibold tracking-wide mb-4">
-            {config.subtitle}
-          </p>
-          {!loading && (
-            <span className="inline-flex items-center gap-2 bg-white/15 border border-white/25 text-white text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm">
-              <span className="size-1.5 rounded-full bg-white animate-pulse" />
-              {products.length} Products
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Filter bar ── */}
-      <div className="bg-white border-b border-gray-100" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-        <div className="max-w-360 mx-auto px-4 md:px-8">
-
-          {/* Sub-category tabs */}
-          {config.subCategories && (
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pt-4 pb-3 border-b border-gray-100">
-              {config.subCategories.map((sc) => (
-                <button
-                  key={sc.label}
-                  onClick={() => setActiveSubCat(sc.label)}
-                  className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
-                    activeSubCat === sc.label
-                      ? "bg-[#6A2CFF] text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {sc.label}
-                </button>
-              ))}
+    <main className="bg-[#faf9ff]" onClick={() => showSort && setShowSort(false)}>
+      <div className="mx-auto max-w-[1440px] px-8">
+        <section className="mt-8 overflow-hidden rounded-[32px] border border-[#ECE8F9] bg-white shadow-[0_24px_80px_rgba(106,44,255,0.05)]">
+          <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr] items-end min-h-[160px] px-6 py-6 md:px-10 md:py-8">
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] font-semibold text-[#6A2CFF] mb-3">Category</p>
+              <h1 className="text-3xl md:text-4xl xl:text-5xl font-black tracking-tight text-slate-950 leading-tight">
+                {config.title}
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm md:text-base text-slate-500">
+                {config.subtitle}
+              </p>
             </div>
-          )}
-
-          {/* Filter row */}
-          <div className="flex items-center gap-3 py-3 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1.5 text-gray-500 shrink-0">
-              <SlidersHorizontal size={15} strokeWidth={2} />
-              <span className="text-xs font-bold">Filters:</span>
+            <div className="flex min-w-0 flex-col gap-3 items-start justify-between text-left lg:items-end lg:text-right">
+              <div className="rounded-3xl bg-[#F6F1FF] px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-[#7C3AED]">Products</p>
+                <p className="mt-2 text-4xl font-black text-[#4A1599]">{loading ? "—" : filtered.length} Products</p>
+              </div>
+              <a href="#brands" className="text-sm font-semibold text-[#6A2CFF] transition-colors hover:text-[#4C1D95]">
+                View All Brands →
+              </a>
             </div>
+          </div>
+        </section>
 
-            {/* Sort */}
-            <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
+        {config.subCategories && (
+          <div className="mt-6 flex flex-wrap items-center gap-3 border-b border-gray-200 pb-2">
+            {config.subCategories.map((sc) => (
               <button
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-gray-200 text-xs font-bold text-gray-700 hover:border-[#6A2CFF] hover:text-[#6A2CFF] transition-colors bg-white"
+                key={sc.label}
+                onClick={() => setActiveSubCat(sc.label)}
+                className={`text-sm font-semibold transition-colors ${activeSubCat === sc.label ? "text-slate-950 border-b-2 border-[#6A2CFF]" : "text-slate-500 hover:text-slate-900"}`}
+                style={{ padding: "10px 0", minWidth: 88 }}
+              >
+                {sc.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="sticky top-0 z-30 mt-4 bg-[#faf9ff] border-b border-gray-200 py-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button className="flex items-center gap-2 rounded-full border border-[#E6E0FF] bg-white px-4 py-2 text-sm font-semibold text-[#4A1599] shadow-sm">
+              <SlidersHorizontal size={16} strokeWidth={2} />
+              Filter
+            </button>
+
+            <div className="relative">
+              <button
+                className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-[#6A2CFF] hover:text-[#6A2CFF] transition-colors"
                 onClick={() => setShowSort((s) => !s)}
               >
-                {SORT_OPTIONS.find((o) => o.value === sort)?.label}
-                <ChevronDown size={12} strokeWidth={2.5} className={`transition-transform ${showSort ? "rotate-180" : ""}`} />
+                Sort
+                <ChevronDown size={14} strokeWidth={2.5} className={`transition-transform ${showSort ? "rotate-180" : ""}`} />
               </button>
               {showSort && (
-                <div className="absolute top-full left-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 min-w-44">
+                <div className="absolute left-0 top-full mt-2 w-52 overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-xl">
                   {SORT_OPTIONS.map((o) => (
                     <button
                       key={o.value}
-                      className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${
-                        sort === o.value ? "text-[#6A2CFF] bg-[#F3EEFF]" : "text-gray-700 hover:bg-gray-50"
-                      }`}
+                      className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors ${sort === o.value ? "text-[#6A2CFF] bg-[#F5F0FF]" : "text-slate-700 hover:bg-slate-50"}`}
                       onClick={() => { setSort(o.value); setShowSort(false); }}
                     >
                       {o.label}
@@ -182,115 +164,91 @@ export default function ListingPage({ config }) {
               )}
             </div>
 
-            {/* Price */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              {PRICE_FILTERS.map((pf, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPriceIdx(i)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                    priceIdx === i
-                      ? "bg-[#6A2CFF] text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {pf.label}
-                </button>
-              ))}
-            </div>
+            <button
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${priceIdx === 0 ? "border-[#6A2CFF] bg-[#EFF3FF] text-[#4A1599]" : "border-gray-200 bg-white text-slate-700 hover:border-[#6A2CFF]"}`}
+              onClick={() => setPriceIdx((i) => (i + 1) % PRICE_FILTERS.length)}
+            >
+              {PRICE_FILTERS[priceIdx].label}
+            </button>
 
-            {/* Rating */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              {[0, 3, 4].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setMinRating(r)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                    minRating === r
-                      ? "bg-amber-400 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {r === 0 ? "All Ratings" : `${r}★ & above`}
-                </button>
-              ))}
-            </div>
+            <button
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${minRating === 0 ? "border-gray-200 bg-white text-slate-700" : "border-[#F59E0B] bg-[#FFFAF0] text-[#B45309]"}`}
+              onClick={() => setMinRating((r) => (r === 0 ? 3 : r === 3 ? 4 : 0))}
+            >
+              {minRating === 0 ? "All Ratings" : `${minRating}★+`}
+            </button>
 
-            {/* Search */}
-            <div className="flex items-center gap-2 shrink-0 ml-auto bg-gray-100 rounded-full px-3.5 py-1.5 min-w-40">
-              <Search size={13} strokeWidth={2} className="text-gray-400 shrink-0" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="text-xs font-medium bg-transparent text-gray-700 placeholder-gray-400 outline-none w-full"
-              />
-              {search && (
-                <button onClick={() => setSearch("")}>
-                  <X size={12} strokeWidth={2.5} className="text-gray-400 hover:text-gray-600" />
-                </button>
-              )}
+            <div className="ml-auto min-w-[220px] flex-1">
+              <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
+                <Search size={16} strokeWidth={2} className="text-gray-400" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search products"
+                  className="w-full bg-transparent text-sm font-medium text-slate-900 placeholder:text-gray-400 outline-none"
+                />
+                {search && (
+                  <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600">
+                    <X size={14} strokeWidth={2.5} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Product grid ── */}
-      <div className="max-w-360 mx-auto px-4 md:px-8 py-10">
-        <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-widest">
-          {loading ? "Loading..." : `${filtered.length} products found`}
-        </p>
-
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
-            {Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center py-24 gap-4">
-            <div className="size-20 rounded-full bg-gray-100 flex items-center justify-center">
-              <Search size={28} strokeWidth={1.5} className="text-gray-300" />
-            </div>
-            <p className="text-lg font-black text-gray-900">No products found</p>
-            <p className="text-sm text-gray-400">Try adjusting your filters</p>
-            <button
-              onClick={() => { setActiveSubCat("All"); setPriceIdx(0); setMinRating(0); setSearch(""); }}
-              className="px-6 py-2.5 rounded-full bg-[#6A2CFF] text-white text-sm font-bold hover:opacity-90 transition-opacity mt-1"
-            >
-              Clear all filters
-            </button>
-          </div>
-        ) : (
-          <>
+        <div className="py-6">
+          {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
-              {visible.map((p) => (
-                <div key={p.id} className="fade-in-up h-full" style={{ animationDelay: `${(visible.indexOf(p) % 10) * 0.04}s` }}>
-                  <ProductCard product={p} badge={config.badge} />
-                </div>
-              ))}
+              {Array.from({ length: 10 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
-
-            {hasMore && (
-              <div className="flex flex-col items-center mt-12 gap-3">
-                <p className="text-xs text-gray-400 font-medium">
-                  Showing {visibleCount} of {filtered.length}
-                </p>
-                <div className="w-48 h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#6A2CFF] rounded-full transition-all duration-500"
-                    style={{ width: `${(visibleCount / filtered.length) * 100}%` }}
-                  />
-                </div>
-                <button
-                  onClick={() => setVisibleCount((c) => c + 20)}
-                  className="mt-2 px-8 py-3 rounded-full bg-gray-950 text-white text-sm font-bold hover:bg-[#6A2CFF] transition-all duration-300 flex items-center gap-2"
-                >
-                  Load More
-                  <ChevronDown size={16} strokeWidth={2.5} />
-                </button>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-[32px] border border-gray-200 bg-white px-8 py-24 text-center">
+              <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#F4F2FF]">
+                <Search size={28} strokeWidth={1.5} className="text-[#7C3AED]" />
               </div>
-            )}
-          </>
-        )}
+              <p className="text-xl font-black text-slate-900">No products found</p>
+              <p className="mt-2 text-sm text-slate-500">Try adjusting your filters or search query.</p>
+              <button
+                onClick={() => { setActiveSubCat("All"); setPriceIdx(0); setMinRating(0); setSearch(""); }}
+                className="mt-6 rounded-full bg-[#6A2CFF] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#5B28E1]"
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
+                {visible.map((p, index) => (
+                  <div key={p.id} className="fade-in-up h-full" style={{ animationDelay: `${(index % 10) * 0.04}s` }}>
+                    <ProductCard product={p} badge={config.badge} />
+                  </div>
+                ))}
+              </div>
+
+              {hasMore && (
+                <div className="mt-10 flex flex-col items-center gap-3">
+                  <p className="text-sm text-slate-500">
+                    Showing {visibleCount} of {filtered.length}
+                  </p>
+                  <div className="h-1.5 w-full max-w-lg overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-[#6A2CFF] transition-all duration-500"
+                      style={{ width: `${(visibleCount / filtered.length) * 100}%` }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => setVisibleCount((c) => c + 20)}
+                    className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#4A1599] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#6A2CFF]"
+                  >
+                    Load more
+                    <ChevronDown size={16} strokeWidth={2.5} />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   );
