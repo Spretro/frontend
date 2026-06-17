@@ -89,6 +89,13 @@
     color: #6B7280;
     max-width: 500px;
     margin-top: 0.75rem;
+  .product-scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .product-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
   }
 }
 

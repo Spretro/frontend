@@ -41,6 +41,8 @@ export default function Navbar() {
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const { isAuthenticated: isLoggedIn, user, logout } = useAuth();
   const panelTimer = useRef(null);
   const menuTimer = useRef(null);
 
