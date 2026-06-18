@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, ChevronDown, Search, X } from "lucide-react";
 import ProductCard from "../../components/shared/ProductCard";
 import SkeletonCard from "../../components/sections/listing/SkeletonCard";
@@ -21,9 +22,13 @@ const PRICE_FILTERS = [
 ];
 
 export default function ListingPage({ config }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const subParam = searchParams.get("sub");
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeSubCat, setActiveSubCat] = useState("All");
+  // The active sub-category is driven by the ?sub= URL param (set by navbar dropdowns or the tabs below)
+  const activeSubCat = subParam || "All";
   const [sort, setSort] = useState(config.sortDefault || "relevance");
   const [priceIdx, setPriceIdx] = useState(0);
   const [minRating, setMinRating] = useState(0);
@@ -56,6 +61,19 @@ export default function ListingPage({ config }) {
     }
     fetchAll();
   }, [config]);
+
+  const selectSubCat = (label) => {
+    setVisibleCount(20);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (label && label !== "All") next.set("sub", label);
+        else next.delete("sub");
+        return next;
+      },
+      { replace: true }
+    );
+  };
 
   const filtered = useMemo(() => {
     let items = [...products];
@@ -124,7 +142,7 @@ export default function ListingPage({ config }) {
             {config.subCategories.map((sc) => (
               <button
                 key={sc.label}
-                onClick={() => setActiveSubCat(sc.label)}
+                onClick={() => selectSubCat(sc.label)}
                 className={`text-sm font-semibold transition-colors ${activeSubCat === sc.label ? "text-slate-950 border-b-2 border-[#6A2CFF]" : "text-slate-500 hover:text-slate-900"}`}
                 style={{ padding: "10px 0", minWidth: 88 }}
               >
@@ -210,7 +228,7 @@ export default function ListingPage({ config }) {
               <p className="text-xl font-black text-slate-900">No products found</p>
               <p className="mt-2 text-sm text-slate-500">Try adjusting your filters or search query.</p>
               <button
-                onClick={() => { setActiveSubCat("All"); setPriceIdx(0); setMinRating(0); setSearch(""); }}
+                onClick={() => { selectSubCat("All"); setPriceIdx(0); setMinRating(0); setSearch(""); }}
                 className="mt-6 rounded-full bg-[#6A2CFF] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#5B28E1]"
               >
                 Reset filters

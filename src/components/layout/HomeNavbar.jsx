@@ -4,7 +4,8 @@ import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { useAuth } from "../../context/AuthContext";
 
-import { Search, Heart, ShoppingBag, User, Menu, Package, Star, Settings, HelpCircle } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, Package, Star, Settings, HelpCircle, ChevronDown } from "lucide-react";
+import { LISTING_CONFIGS } from "../../data/listingConfigs";
 
 const tickerItems = [
   "FREE SHIPPING ABOVE ₹2999",
@@ -34,6 +35,24 @@ const menuItems = [
 
 const PATH_TO_LINK = Object.fromEntries(navLinks.map((l) => [l.path, l.label]));
 
+// Top-level department pages now open the Search UI in category mode.
+const groupPath = (key) => `/search?group=${key}`;
+const subCatPath = (key, cats) =>
+  cats?.length ? `/search?group=${key}&cats=${encodeURIComponent(cats.join(","))}` : groupPath(key);
+
+// Build AJIO-style dropdown sub-categories for nav links that have them.
+const NAV_SUBCATS = navLinks.reduce((acc, link) => {
+  const key = link.path.replace(/^\//, "");
+  const cfg = LISTING_CONFIGS[key];
+  if (cfg?.subCategories?.length) {
+    acc[link.path] = cfg.subCategories.map((sc) => ({
+      label: sc.label,
+      to: subCatPath(key, sc.cats),
+    }));
+  }
+  return acc;
+}, {});
+
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,12 +62,17 @@ export default function Navbar() {
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   //const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [menuClosing, setMenuClosing] = useState(false);
+  const [activeNav, setActiveNav] = useState(null);
   const { isAuthenticated, user, logout } = useAuth();
   const panelTimer = useRef(null);
   const menuTimer = useRef(null);
+  const navTimer = useRef(null);
 
-  const activeLink = PATH_TO_LINK[location.pathname] || "";
+  const groupParam = new URLSearchParams(location.search).get("group");
+  const activeLink =
+    PATH_TO_LINK[location.pathname] ||
+    (groupParam ? PATH_TO_LINK[`/${groupParam}`] : "") ||
+    "";
 
   const handleSearch = () => {
     const q = searchQuery.trim();
@@ -83,6 +107,19 @@ export default function Navbar() {
 
   const keepMenu = () => {
     clearTimeout(menuTimer.current);
+  };
+
+  const openNav = (label) => {
+    clearTimeout(navTimer.current);
+    setActiveNav(label);
+  };
+
+  const closeNav = () => {
+    navTimer.current = setTimeout(() => setActiveNav(null), 300);
+  };
+
+  const keepNav = () => {
+    clearTimeout(navTimer.current);
   };
 
   const doubled = [...tickerItems, ...tickerItems];
@@ -273,6 +310,74 @@ export default function Navbar() {
 
         .spretro-link.active{
           color:#3D0ECC;
+        }
+
+        /* NAV DROPDOWN (AJIO-style) */
+
+        .spretro-nav-item{
+          position:relative;
+          display:flex;
+          align-items:center;
+          gap:3px;
+        }
+
+        .spretro-nav-caret{
+          color:#9B8FB5;
+          transition:transform 0.2s ease, color 0.2s ease;
+          flex-shrink:0;
+        }
+
+        .spretro-nav-item:hover .spretro-nav-caret{
+          color:#6A2CFF;
+        }
+
+        .spretro-nav-item.open .spretro-nav-caret{
+          transform:rotate(180deg);
+          color:#6A2CFF;
+        }
+
+        .spretro-nav-dropdown{
+          position:absolute;
+          top:calc(100% + 12px);
+          left:0;
+          min-width:208px;
+          background:white;
+          border-radius:16px;
+          box-shadow:0 24px 64px rgba(15,23,42,0.13), 0 4px 16px rgba(106,44,255,0.08);
+          border:1px solid #ECE7FF;
+          padding:8px;
+          z-index:1000;
+          animation:dropIn 0.18s ease;
+        }
+
+        /* invisible bridge so hover survives the gap to the dropdown */
+        .spretro-nav-dropdown::before{
+          content:'';
+          position:absolute;
+          top:-12px;
+          left:0;
+          right:0;
+          height:12px;
+        }
+
+        .spretro-nav-dropdown-item{
+          display:block;
+          width:100%;
+          text-align:left;
+          border:none;
+          background:transparent;
+          border-radius:10px;
+          padding:9px 12px;
+          font-size:13px;
+          font-weight:600;
+          color:#3A356B;
+          cursor:pointer;
+          transition:0.15s ease;
+        }
+
+        .spretro-nav-dropdown-item:hover{
+          background:#F5F0FF;
+          color:#6A2CFF;
         }
 
         .spretro-right{
@@ -1251,21 +1356,57 @@ export default function Navbar() {
 
             <div className="spretro-links">
 
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.path}
-                  className={`spretro-link ${
-                    activeLink === link.label ? "active" : ""
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(link.path);
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const subs = NAV_SUBCATS[link.path];
+                const topTo = subs ? groupPath(link.path.replace(/^\//, "")) : link.path;
+                return (
+                  <div
+                    key={link.label}
+                    className={`spretro-nav-item ${activeNav === link.label ? "open" : ""}`}
+                    onMouseEnter={() => subs && openNav(link.label)}
+                    onMouseLeave={() => subs && closeNav()}
+                  >
+                    <a
+                      href={topTo}
+                      className={`spretro-link ${
+                        activeLink === link.label ? "active" : ""
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(topTo);
+                        setActiveNav(null);
+                      }}
+                    >
+                      {link.label}
+                    </a>
+
+                    {subs && (
+                      <ChevronDown size={13} strokeWidth={2.5} className="spretro-nav-caret" />
+                    )}
+
+                    {subs && activeNav === link.label && (
+                      <div
+                        className="spretro-nav-dropdown"
+                        onMouseEnter={keepNav}
+                        onMouseLeave={closeNav}
+                      >
+                        {subs.map((sc) => (
+                          <button
+                            key={sc.label}
+                            className="spretro-nav-dropdown-item"
+                            onClick={() => {
+                              navigate(sc.to);
+                              setActiveNav(null);
+                            }}
+                          >
+                            {sc.label === "All" ? `All ${link.label}` : sc.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
             </div>
 

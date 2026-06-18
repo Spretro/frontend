@@ -4,9 +4,10 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import {
   Search, X, Heart, ShoppingBag, User,
-  TrendingUp, Clock, ArrowRight,
+  TrendingUp, Clock, ArrowRight, ChevronDown,
   Package, Star, Settings, HelpCircle,
 } from "lucide-react";
+import { LISTING_CONFIGS } from "../../data/listingConfigs";
 
 const NAV_LINKS = [
   { label: "Women",  path: "/women" },
@@ -16,6 +17,24 @@ const NAV_LINKS = [
   { label: "Brands", path: "/brands" },
   { label: "Sale",   path: "/sale", hot: true },
 ];
+
+// Department pages open the Search UI in category mode.
+const groupPath = (key) => `/search?group=${key}`;
+const subCatPath = (key, cats) =>
+  cats?.length ? `/search?group=${key}&cats=${encodeURIComponent(cats.join(","))}` : groupPath(key);
+
+// AJIO-style dropdown sub-categories for nav links that have them.
+const NAV_SUBCATS = NAV_LINKS.reduce((acc, link) => {
+  const key = link.path.replace(/^\//, "");
+  const cfg = LISTING_CONFIGS[key];
+  if (cfg?.subCategories?.length) {
+    acc[link.path] = cfg.subCategories.map((sc) => ({
+      label: sc.label,
+      to: subCatPath(key, sc.cats),
+    }));
+  }
+  return acc;
+}, {});
 
 const TRENDING = [
   "ethnic kurtas", "white sneakers", "minimalist watch", "summer dresses",
@@ -38,17 +57,24 @@ export default function SearchNavbar() {
   const { user, isAuthenticated: isLoggedIn, logout } = useAuth();
   const [searchParams] = useSearchParams();
   const currentQuery   = searchParams.get("q") || "";
+  const navGroupParam  = searchParams.get("group") || "";
 
   const [query,       setQuery]       = useState(currentQuery);
   const [focused,     setFocused]     = useState(false);
   const [recent,      setRecent]      = useState(getRecent);
   const [activePanel, setActivePanel] = useState(null);
+  const [activeNav,   setActiveNav]   = useState(null);
   const inputRef   = useRef(null);
   const panelTimer = useRef(null);
+  const navTimer   = useRef(null);
 
   const openPanel  = (name) => { clearTimeout(panelTimer.current); setActivePanel(name); };
   const closePanel = ()     => { panelTimer.current = setTimeout(() => setActivePanel(null), 120); };
   const keepPanel  = ()     => { clearTimeout(panelTimer.current); };
+
+  const openNav    = (label) => { clearTimeout(navTimer.current); setActiveNav(label); };
+  const closeNav   = ()      => { navTimer.current = setTimeout(() => setActiveNav(null), 300); };
+  const keepNav    = ()      => { clearTimeout(navTimer.current); };
 
   const doSearch = (q) => {
     const trimmed = (q || query).trim();
@@ -137,6 +163,39 @@ export default function SearchNavbar() {
         .snav-link.active { color: #6A2CFF; }
         .snav-link.hot { color: #E83E6C; }
         .snav-link.hot:hover { background: #FFF0F5; color: #E83E6C; }
+
+        /* nav dropdown (AJIO-style) */
+        .snav-nav-item { position: relative; display: flex; align-items: center; }
+        .snav-link-btn {
+          display: flex; align-items: center; gap: 3px;
+          background: none; border: none; font-family: inherit;
+        }
+        .snav-caret { color: #aaa; transition: transform 0.2s ease, color 0.2s ease; flex-shrink: 0; }
+        .snav-nav-item:hover .snav-caret { color: #6A2CFF; }
+        .snav-nav-item.open .snav-caret { transform: rotate(180deg); color: #6A2CFF; }
+        .snav-nav-dropdown {
+          position: absolute;
+          top: calc(100% + 10px);
+          left: 0;
+          min-width: 200px;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 16px 48px rgba(15,23,42,0.13), 0 4px 16px rgba(106,44,255,0.08);
+          border: 1px solid #ECE7FF;
+          padding: 7px;
+          z-index: 1001;
+          animation: snavDrop 0.16s ease;
+        }
+        .snav-nav-dropdown::before {
+          content: ''; position: absolute; top: -10px; left: 0; right: 0; height: 10px;
+        }
+        .snav-nav-dropdown-item {
+          display: block; width: 100%; text-align: left; border: none;
+          background: transparent; border-radius: 9px; padding: 8px 12px;
+          font-size: 13px; font-weight: 600; color: #3A356B; cursor: pointer;
+          transition: 0.14s ease;
+        }
+        .snav-nav-dropdown-item:hover { background: #F5F0FF; color: #6A2CFF; }
 
         /* ── Spacer ── */
         .snav-spacer { flex: 1; }
@@ -342,16 +401,43 @@ export default function SearchNavbar() {
 
           {/* Nav links */}
           <div className="snav-links">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.path}
-                href={l.path}
-                className={`snav-link${l.hot ? " hot" : ""}${location.pathname === l.path ? " active" : ""}`}
-                onClick={(e) => { e.preventDefault(); navigate(l.path); }}
-              >
-                {l.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((l) => {
+              const subs = NAV_SUBCATS[l.path];
+              const topTo = subs ? groupPath(l.path.replace(/^\//, "")) : l.path;
+              const isActive = location.pathname === l.path
+                || (subs && navGroupParam === l.path.replace(/^\//, ""));
+              return (
+                <div
+                  key={l.path}
+                  className={`snav-nav-item${activeNav === l.label ? " open" : ""}`}
+                  onMouseEnter={() => subs && openNav(l.label)}
+                  onMouseLeave={() => subs && closeNav()}
+                >
+                  <a
+                    href={topTo}
+                    className={`snav-link${l.hot ? " hot" : ""}${isActive ? " active" : ""}`}
+                    onClick={(e) => { e.preventDefault(); navigate(topTo); setActiveNav(null); }}
+                  >
+                    {l.label}
+                  </a>
+                  {subs && <ChevronDown size={12} strokeWidth={2.5} className="snav-caret" />}
+
+                  {subs && activeNav === l.label && (
+                    <div className="snav-nav-dropdown" onMouseEnter={keepNav} onMouseLeave={closeNav}>
+                      {subs.map((sc) => (
+                        <button
+                          key={sc.label}
+                          className="snav-nav-dropdown-item"
+                          onClick={() => { navigate(sc.to); setActiveNav(null); }}
+                        >
+                          {sc.label === "All" ? `All ${l.label}` : sc.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="snav-spacer" />
