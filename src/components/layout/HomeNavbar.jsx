@@ -4,7 +4,8 @@ import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { useAuth } from "../../context/AuthContext";
 
-import { Search, Heart, ShoppingBag, User, Menu, Package, Star, Settings, HelpCircle } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Menu, Package, Star, Settings, HelpCircle, ChevronDown } from "lucide-react";
+import { LISTING_CONFIGS } from "../../data/listingConfigs";
 
 const tickerItems = [
   "FREE SHIPPING ABOVE ₹2999",
@@ -34,6 +35,24 @@ const menuItems = [
 
 const PATH_TO_LINK = Object.fromEntries(navLinks.map((l) => [l.path, l.label]));
 
+// Top-level department pages now open the Search UI in category mode.
+const groupPath = (key) => `/search?group=${key}`;
+const subCatPath = (key, cats) =>
+  cats?.length ? `/search?group=${key}&cats=${encodeURIComponent(cats.join(","))}` : groupPath(key);
+
+// Build AJIO-style dropdown sub-categories for nav links that have them.
+const NAV_SUBCATS = navLinks.reduce((acc, link) => {
+  const key = link.path.replace(/^\//, "");
+  const cfg = LISTING_CONFIGS[key];
+  if (cfg?.subCategories?.length) {
+    acc[link.path] = cfg.subCategories.map((sc) => ({
+      label: sc.label,
+      to: subCatPath(key, sc.cats),
+    }));
+  }
+  return acc;
+}, {});
+
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,12 +62,17 @@ export default function Navbar() {
   const [activePanel, setActivePanel] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   //const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [menuClosing, setMenuClosing] = useState(false);
+  const [activeNav, setActiveNav] = useState(null);
   const { isAuthenticated, user, logout } = useAuth();
   const panelTimer = useRef(null);
   const menuTimer = useRef(null);
+  const navTimer = useRef(null);
 
-  const activeLink = PATH_TO_LINK[location.pathname] || "";
+  const groupParam = new URLSearchParams(location.search).get("group");
+  const activeLink =
+    PATH_TO_LINK[location.pathname] ||
+    (groupParam ? PATH_TO_LINK[`/${groupParam}`] : "") ||
+    "";
 
   const handleSearch = () => {
     const q = searchQuery.trim();
@@ -85,1238 +109,169 @@ export default function Navbar() {
     clearTimeout(menuTimer.current);
   };
 
+  const openNav = (label) => {
+    clearTimeout(navTimer.current);
+    setActiveNav(label);
+  };
+
+  const closeNav = () => {
+    navTimer.current = setTimeout(() => setActiveNav(null), 300);
+  };
+
+  const keepNav = () => {
+    clearTimeout(navTimer.current);
+  };
+
   const doubled = [...tickerItems, ...tickerItems];
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-
-        *{
-          box-sizing:border-box;
-        }
-
-        body{
-          margin:0;
-          background:#F5F5F7;
-          font-family:'Inter',sans-serif;
-        }
-
-        .spretro-navbar{
-          width:100%;
-          background:white;
-          position:sticky;
-          top:0;
-          z-index:999;
-          box-shadow:0 4px 24px rgba(106,44,255,0.08), 0 1px 0 rgba(0,0,0,0.04);
-        }
-
-        /* TICKER */
-
-        .spretro-ticker{
-          height:30px;
-          background:linear-gradient(90deg, #5A14EF 0%, #7C3AED 40%, #9B6DFF 70%, #7C3AED 100%);
-          background-size:200% 100%;
-          overflow:hidden;
-          display:flex;
-          align-items:center;
-          animation:tickerBg 8s linear infinite;
-        }
-
-        @keyframes tickerBg{
-          0%{ background-position:0% 50%; }
-          100%{ background-position:200% 50%; }
-        }
-
-        .spretro-ticker-track{
-          display:flex;
-          white-space:nowrap;
-          animation:ticker 25s linear infinite;
-        }
-
-        @keyframes ticker{
-          0%{
-            transform:translateX(0);
-          }
-          100%{
-            transform:translateX(-50%);
-          }
-        }
-
-        .spretro-ticker-item{
-          display:flex;
-          align-items:center;
-          gap:12px;
-          padding:0 40px;
-          color:white;
-          font-size:11px;
-          font-weight:600;
-          letter-spacing:1px;
-          white-space:nowrap;
-        }
-
-        .spretro-dot{
-          width:4px;
-          height:4px;
-          border-radius:50%;
-          background:white;
-          flex-shrink:0;
-        }
-
-        /* MAIN NAVBAR */
-
-        .spretro-mainbar{
-          height:64px;
-          padding:0 32px;
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          border-bottom:1px solid #F2E8FF;
-          background:white;
-          position:relative;
-          min-height:64px;
-        }
-
-        .spretro-mainbar::after{
-          content:'';
-          position:absolute;
-          bottom:0;
-          left:0;
-          right:0;
-          height:1px;
-          background:linear-gradient(90deg, transparent, #6A2CFF33, #9B6DFF55, #6A2CFF33, transparent);
-        }
-
-        .spretro-left{
-          display:flex;
-          align-items:center;
-          gap:24px;
-          min-width:0;
-        }
-
-        .spretro-logo{
-          display:flex;
-          flex-direction:column;
-          cursor:pointer;
-          min-width:0;
-          max-width:220px;
-        }
-
-        .spretro-logo-main{
-          font-size:30px;
-          font-weight:800;
-          letter-spacing:-1.2px;
-          color:#111;
-          line-height:1;
-          white-space:nowrap;
-          overflow:hidden;
-          text-overflow:ellipsis;
-        }
-
-        .spretro-logo-dot{
-          display:inline-block;
-          color:transparent;
-          background:linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 45%, #9B6DFF 100%);
-          -webkit-background-clip:text;
-          -webkit-text-fill-color:transparent;
-          background-clip:text;
-        }
-
-        .spretro-logo-sub{
-          font-size:10px;
-          font-weight:700;
-          letter-spacing:3px;
-          color:#9B6DFF;
-          margin-top:2px;
-          text-transform:uppercase;
-          opacity:0.7;
-        }
-
-        .spretro-links{
-          display:flex;
-          align-items:center;
-          gap:22px;
-          min-width:0;
-        }
-
-        .spretro-link{
-          font-size:14px;
-          font-weight:600;
-          color:#4F4F5C;
-          text-decoration:none;
-          position:relative;
-          transition:0.2s ease;
-          letter-spacing:0.01em;
-          padding:6px 0;
-        }
-
-        .spretro-link:hover{
-          color:#3D0ECC;
-        }
-
-        .spretro-link::after{
-          content:'';
-          position:absolute;
-          left:0;
-          bottom:-2px;
-          width:0;
-          height:2px;
-          background:linear-gradient(90deg, #6A2CFF, #9B6DFF);
-          border-radius:2px;
-          transition:0.2s ease;
-        }
-
-        .spretro-link:hover::after,
-        .spretro-link.active::after{
-          width:100%;
-        }
-
-        .spretro-link.active{
-          color:#3D0ECC;
-        }
-
-        .spretro-right{
-          display:flex;
-          align-items:center;
-          gap:12px;
-          min-width:0;
-        }
-
-        /* SEARCH */
-
-        .spretro-search{
-          width:420px;
-          max-width:100%;
-          height:42px;
-          background:#F8F4FF;
-          border-radius:12px;
-          display:flex;
-          align-items:center;
-          gap:12px;
-          padding:0 16px;
-          color:#777;
-          border:1px solid transparent;
-          transition:0.2s ease;
-          cursor:text;
-        }
-
-        .spretro-search:hover{
-          background:white;
-          border-color:#D8C8FF;
-          box-shadow:0 0 0 3px rgba(106,44,255,0.08);
-        }
-
-        .spretro-search-input{
-          background:transparent;
-          border:none;
-          outline:none;
-          flex:1;
-          min-width:0;
-          font-family:'Inter',sans-serif;
-          font-size:14px;
-          font-weight:500;
-          color:#2A2A2A;
-        }
-
-        .spretro-search-input::placeholder{
-          color:#888;
-        }
-
-        .spretro-search-icon{
-          cursor:pointer;
-          transition:0.2s ease;
-          color:#111;
-        }
-
-        .spretro-search-icon:hover{
-          color:#111;
-        }
-
-        .spretro-search-text{
-          font-size:13px;
-          font-weight:500;
-        }
-
-        /* ICON BUTTONS */
-
-        .spretro-icon-btn{
-          width:42px;
-          height:42px;
-          border:none;
-          border-radius:12px;
-          background:#FAF5FF;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          cursor:pointer;
-          color:#111;
-          transition:0.2s ease, transform 0.2s ease;
-          position:relative;
-        }
-
-        .spretro-icon-btn:hover{
-          background:#F3EEFF;
-          color:#111;
-          transform:translateY(-1px);
-        }
-
-        .spretro-cart-dot{
-          position:absolute;
-          top:9px;
-          right:9px;
-          width:8px;
-          height:8px;
-          border-radius:50%;
-          background:linear-gradient(135deg, #EC4899, #F97316);
-          animation:pulse 2s infinite;
-        }
-
-        @keyframes pulse{
-          0%,100%{ box-shadow:0 0 0 0 rgba(236,72,153,0.5); }
-          50%{ box-shadow:0 0 0 4px rgba(236,72,153,0); }
-        }
-
-        /* MENU BUTTON */
-
-        .spretro-menu-btn{
-          width:42px;
-          height:42px;
-          border:none;
-          border-radius:12px;
-          background:#FAF5FF;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          cursor:pointer;
-          color:#111;
-          transition:0.2s ease, transform 0.2s ease;
-        }
-
-        .spretro-menu-btn:hover{
-          background:#F3EEFF;
-          color:#111;
-          transform:translateY(-1px);
-        }
-
-        .spretro-menu-dropdown{
-          position:absolute;
-          top:calc(100% + 10px);
-          right:0;
-          width:320px;
-          background:white;
-          border-radius:18px;
-          box-shadow:0 24px 64px rgba(15,23,42,0.12);
-          border:1px solid #ECE7FF;
-          overflow:hidden;
-          z-index:1000;
-          animation:dropIn 0.18s ease;
-        }
-
-        @keyframes dropIn{
-          from{ opacity:0; transform:translateY(-8px); }
-          to{ opacity:1; transform:translateY(0); }
-        }
-
-        .spretro-menu-dropdown-section{
-          padding:16px;
-        }
-
-        .spretro-menu-dropdown-title{
-          font-size:12px;
-          font-weight:800;
-          letter-spacing:0.18em;
-          text-transform:uppercase;
-          color:#8F89A3;
-          margin-bottom:12px;
-        }
-
-        .spretro-menu-dropdown-grid{
-          display:grid;
-          grid-template-columns:repeat(2,minmax(0,1fr));
-          gap:10px;
-        }
-
-        .spretro-menu-dropdown-link{
-          width:100%;
-          text-align:left;
-          border:none;
-          background:#F8F4FF;
-          border-radius:12px;
-          padding:12px 14px;
-          font-size:14px;
-          font-weight:600;
-          color:#3A356B;
-          cursor:pointer;
-          transition:0.2s ease;
-        }
-
-        .spretro-menu-dropdown-link:hover{
-          background:#ECE4FF;
-          color:#3D0ECC;
-        }
-
-        /* CATEGORY STRIP */
-
-        .spretro-category-strip{
-          height:100px;
-          display:flex;
-          align-items:center;
-          gap:6px;
-          overflow-x:auto;
-          padding:0 24px;
-          background:linear-gradient(180deg, #FAFAFF 0%, #FFFFFF 100%);
-          border-bottom:1px solid #EDE8FF;
-          position:relative;
-        }
-
-        .spretro-category-strip::-webkit-scrollbar{
-          display:none;
-        }
-
-        .spretro-category{
-          min-width:112px;
-          height:74px;
-          border-radius:18px;
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          justify-content:center;
-          gap:7px;
-          cursor:pointer;
-          transition:0.2s ease;
-          color:#777;
-          background:transparent;
-          border:1.5px solid transparent;
-          flex-shrink:0;
-        }
-
-        .spretro-category:hover{
-          background:#F3EEFF;
-          color:#6A2CFF;
-          border-color:#E0D4FF;
-          transform:translateY(-2px);
-          box-shadow:0 4px 16px rgba(106,44,255,0.1);
-        }
-
-        .spretro-category.active{
-          background:linear-gradient(135deg, #EDE4FF, #E5D8FF);
-          color:#6A2CFF;
-          border-color:#C4B0FF;
-          box-shadow:0 4px 20px rgba(106,44,255,0.18);
-        }
-
-        .spretro-category-label{
-          font-size:12px;
-          font-weight:700;
-          letter-spacing:0.01em;
-        }
-
-        /* SERVICE STRIP */
-
-        .spretro-services{
-          height:52px;
-          display:flex;
-          align-items:center;
-          justify-content:space-around;
-          padding:0 24px;
-          background:linear-gradient(90deg, #F9F6FF 0%, #FAFAFE 20%, #FAFAFE 80%, #F9F6FF 100%);
-          border-bottom:1px solid #EDE8FF;
-        }
-
-        .spretro-service-item{
-          display:flex;
-          align-items:center;
-          gap:8px;
-          color:#6A2CFF;
-          font-size:12.5px;
-          font-weight:700;
-          white-space:nowrap;
-          letter-spacing:0.01em;
-          transition:0.15s ease;
-        }
-
-        .spretro-service-item:hover{
-          color:#3D0ECC;
-          transform:translateY(-1px);
-        }
-
-        /* DROPDOWN PANELS */
-
-        .spretro-panel-wrap{
-          position:relative;
-        }
-
-        .spretro-mini-panel{
-          position:absolute;
-          top:calc(100% + 12px);
-          right:0;
-          background:white;
-          border-radius:20px;
-          box-shadow:0 16px 56px rgba(0,0,0,0.14), 0 4px 16px rgba(106,44,255,0.1);
-          border:1px solid #F0EAFF;
-          overflow:hidden;
-          z-index:1000;
-          animation:panelIn 0.18s ease;
-        }
-
-        @keyframes panelIn{
-          from{ opacity:0; transform:translateY(-8px) scale(0.97); }
-          to{ opacity:1; transform:translateY(0) scale(1); }
-        }
-
-        .spretro-panel-header{
-          padding:14px 18px 12px;
-          display:flex;
-          align-items:center;
-          gap:10px;
-        }
-
-        .spretro-panel-header-icon{
-          width:34px;
-          height:34px;
-          border-radius:10px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          flex-shrink:0;
-        }
-
-        .spretro-panel-header-title{
-          font-size:14px;
-          font-weight:800;
-          color:#111;
-          line-height:1.1;
-        }
-
-        .spretro-panel-header-sub{
-          font-size:11px;
-          color:#888;
-          font-weight:500;
-          margin-top:1px;
-        }
-
-        .spretro-panel-divider{
-          height:1px;
-          background:#F3F3F6;
-          margin:0 18px;
-        }
-
-        .spretro-panel-body{
-          padding:12px 8px;
-        }
-
-        .spretro-panel-link{
-          display:flex;
-          align-items:center;
-          gap:10px;
-          padding:9px 12px;
-          border-radius:12px;
-          cursor:pointer;
-          transition:0.15s ease;
-          text-decoration:none;
-          color:#333;
-          font-size:13px;
-          font-weight:600;
-          border:none;
-          background:transparent;
-          width:100%;
-          text-align:left;
-        }
-
-        .spretro-panel-link:hover{
-          background:#F5F0FF;
-          color:#6A2CFF;
-        }
-
-        .spretro-panel-link-icon{
-          width:30px;
-          height:30px;
-          border-radius:9px;
-          background:#F5F5F7;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          flex-shrink:0;
-          transition:0.15s ease;
-          color:#555;
-        }
-
-        .spretro-panel-link:hover .spretro-panel-link-icon{
-          background:#EDE4FF;
-          color:#6A2CFF;
-        }
-
-        .spretro-panel-empty{
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          padding:20px 18px 16px;
-          gap:8px;
-        }
-
-        .spretro-panel-empty-icon{
-          width:48px;
-          height:48px;
-          border-radius:16px;
-          background:#F5F0FF;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          color:#6A2CFF;
-        }
-
-        .spretro-panel-empty-text{
-          font-size:13px;
-          font-weight:700;
-          color:#111;
-        }
-
-        .spretro-panel-empty-sub{
-          font-size:11px;
-          color:#aaa;
-          font-weight:500;
-          text-align:center;
-          line-height:1.4;
-        }
-
-        .spretro-panel-cta{
-          display:block;
-          width:calc(100% - 36px);
-          margin:0 18px 14px;
-          padding:10px;
-          border-radius:12px;
-          background:#6A2CFF;
-          color:white;
-          font-size:12px;
-          font-weight:700;
-          text-align:center;
-          border:none;
-          cursor:pointer;
-          transition:0.2s ease;
-        }
-
-        .spretro-panel-cta:hover{
-          background:#5A1EEF;
-        }
-
-        .spretro-panel-cta-outline{
-          background:transparent;
-          border:1.5px solid #6A2CFF;
-          color:#6A2CFF;
-        }
-
-        .spretro-panel-cta-outline:hover{
-          background:#F3EEFF;
-        }
-
-        /* MEGA MENU */
-
-        .spretro-mega-wrap{
-          position:relative;
-        }
-
-        .spretro-mega-panel{
-          position:absolute;
-          top:calc(100% + 12px);
-          right:0;
-          width:540px;
-          background:white;
-          border-radius:22px;
-          box-shadow:0 20px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(106,44,255,0.1);
-          border:1px solid #F0EAFF;
-          overflow:hidden;
-          z-index:1000;
-          animation:megaSlideIn 0.45s cubic-bezier(0.22,1,0.36,1);
-        }
-
-        @keyframes megaSlideIn{
-          from{ opacity:0; transform:translateX(40px); }
-          to{ opacity:1; transform:translateX(0); }
-        }
-
-        .spretro-mega-panel.closing{
-          animation:megaSlideOut 0.4s cubic-bezier(0.55,0,0.55,0.2) forwards;
-        }
-
-        @keyframes megaSlideOut{
-          from{ opacity:1; transform:translateX(0); }
-          to{ opacity:0; transform:translateX(40px); }
-        }
-
-        .spretro-mega-top{
-          padding:18px 20px 14px;
-          background:linear-gradient(135deg,#6A2CFF 0%,#9B6DFF 100%);
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-        }
-
-        .spretro-mega-title{
-          font-size:16px;
-          font-weight:900;
-          color:white;
-          letter-spacing:-0.3px;
-        }
-
-        .spretro-mega-sub{
-          font-size:11px;
-          color:rgba(255,255,255,0.65);
-          font-weight:500;
-          margin-top:2px;
-        }
-
-        .spretro-mega-close{
-          width:28px;
-          height:28px;
-          border-radius:8px;
-          background:rgba(255,255,255,0.2);
-          border:none;
-          color:white;
-          font-size:16px;
-          font-weight:700;
-          cursor:pointer;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          transition:0.15s ease;
-          line-height:1;
-        }
-
-        .spretro-mega-close:hover{
-          background:rgba(255,255,255,0.35);
-        }
-
-        .spretro-mega-body{
-          padding:16px 20px 20px;
-        }
-
-        .spretro-mega-section-title{
-          font-size:10px;
-          font-weight:800;
-          letter-spacing:0.12em;
-          text-transform:uppercase;
-          color:#bbb;
-          margin-bottom:10px;
-        }
-
-        .spretro-mega-pills{
-          display:flex;
-          flex-wrap:wrap;
-          gap:6px;
-          margin-bottom:18px;
-        }
-
-        .spretro-mega-pill{
-          padding:6px 14px;
-          border-radius:100px;
-          background:#F5F5F7;
-          color:#444;
-          font-size:12px;
-          font-weight:700;
-          border:none;
-          cursor:pointer;
-          transition:0.15s ease;
-        }
-
-        .spretro-mega-pill:hover{
-          background:#6A2CFF;
-          color:white;
-        }
-
-        .spretro-mega-grid{
-          display:grid;
-          grid-template-columns:repeat(4,1fr);
-          gap:6px;
-          margin-bottom:18px;
-        }
-
-        .spretro-mega-cat{
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-          gap:6px;
-          padding:10px 6px;
-          border-radius:14px;
-          cursor:pointer;
-          transition:0.15s ease;
-          border:1px solid transparent;
-          background:transparent;
-        }
-
-        .spretro-mega-cat:hover{
-          background:#F3EEFF;
-          border-color:#E3D8FF;
-        }
-
-        .spretro-mega-cat-icon{
-          width:36px;
-          height:36px;
-          border-radius:10px;
-          background:#F5F5F7;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          color:#555;
-          transition:0.15s ease;
-        }
-
-        .spretro-mega-cat:hover .spretro-mega-cat-icon{
-          background:#EDE4FF;
-          color:#6A2CFF;
-        }
-
-        .spretro-mega-cat-label{
-          font-size:11px;
-          font-weight:700;
-          color:#333;
-          text-align:center;
-          line-height:1.2;
-        }
-
-        .spretro-mega-divider{
-          height:1px;
-          background:#F3F3F6;
-          margin-bottom:16px;
-        }
-
-        .spretro-mega-acc-grid{
-          display:grid;
-          grid-template-columns:repeat(2,1fr);
-          gap:6px;
-        }
-
-        .spretro-mega-acc-item{
-          display:flex;
-          align-items:center;
-          gap:9px;
-          padding:10px 12px;
-          border-radius:12px;
-          cursor:pointer;
-          transition:0.15s ease;
-          border:none;
-          background:transparent;
-          text-align:left;
-        }
-
-        .spretro-mega-acc-item:hover{
-          background:#F5F0FF;
-        }
-
-        .spretro-mega-acc-icon{
-          width:32px;
-          height:32px;
-          border-radius:9px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          flex-shrink:0;
-        }
-
-        .spretro-mega-acc-label{
-          font-size:12px;
-          font-weight:700;
-          color:#222;
-        }
-
-        .spretro-mega-acc-sub{
-          font-size:10px;
-          color:#aaa;
-          font-weight:500;
-          margin-top:1px;
-        }
-
-        /* ── TABLET (max 1023px) ── */
-        @media (max-width:1023px){
-          .spretro-mainbar{
-            height:auto;
-            padding:0 16px;
-            display:flex;
-            flex-wrap:wrap;
-            align-items:flex-start;
-            justify-content:space-between;
-            gap:10px;
-          }
-          .spretro-left{
-            display:flex;
-            flex-wrap:wrap;
-            align-items:flex-start;
-            justify-content:flex-start;
-            gap:16px;
-            min-width:0;
-            width:100%;
-          }
-          .spretro-logo{
-            max-width:160px;
-            min-width:0;
-          }
-          .spretro-links{
-            width:100%;
-            display:flex;
-            align-items:center;
-            gap:14px;
-            min-width:0;
-            overflow-x:auto;
-            padding-bottom:2px;
-            margin-top:4px;
-          }
-          .spretro-links::-webkit-scrollbar{
-            display:none;
-          }
-          .spretro-link{
-            white-space:nowrap;
-            flex-shrink:0;
-          }
-          .spretro-search{
-            width:100%;
-            max-width:100%;
-            flex:1 1 100%;
-            min-width:0;
-          }
-          .spretro-right{
-            width:100%;
-            display:flex;
-            justify-content:flex-end;
-            gap:10px;
-            min-width:0;
-            flex:1 1 100%;
-          }
-          .spretro-logo-main{
-            font-size:26px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-          }
-        }
-
-        /* ── MOBILE NAV TILES (phone only) ── */
-        .spretro-mobile-nav{
-          display:none;
-        }
-
-        /* ── MOBILE (max 767px) ── */
-        @media (max-width:767px){
-          .spretro-mainbar{
-            height:50px;
-            padding:0 14px;
-          }
-          .spretro-logo-main{
-            font-size:22px;
-            letter-spacing:-1px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-          }
-          .spretro-logo-sub{
-            display:none;
-          }
-          .spretro-logo{
-            max-width:140px;
-          }
-          .spretro-links{
-            display:none;
-          }
-          .spretro-search{
-            display:none;
-          }
-          .spretro-icon-btn{
-            width:36px;
-            height:36px;
-            border-radius:10px;
-          }
-          .spretro-menu-btn{
-            height:38px;
-            padding:0 12px;
-            font-size:12px;
-            border-radius:10px;
-            gap:5px;
-          }
-          .spretro-right{
-            gap:4px;
-          }
-          .spretro-category-strip{
-            display:none;
-          }
-          .spretro-mobile-nav{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:8px;
-            padding:10px 12px;
-            background:linear-gradient(180deg,#FAFAFF 0%,#FFFFFF 100%);
-            border-bottom:1px solid #EDE8FF;
-          }
-          .spretro-mobile-nav-item{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            gap:5px;
-            padding:10px 4px;
-            border-radius:14px;
-            cursor:pointer;
-            transition:0.2s ease;
-            font-size:11px;
-            font-weight:800;
-            color:#555;
-            border:1.5px solid transparent;
-            letter-spacing:0.01em;
-          }
-          .spretro-mobile-nav-item:hover{
-            background:linear-gradient(135deg,#EDE4FF,#E5D8FF);
-            color:#6A2CFF;
-            border-color:#C4B0FF;
-          }
-          .spretro-mobile-nav-item.active{
-            background:linear-gradient(135deg,#EDE4FF,#E5D8FF);
-            color:#6A2CFF;
-            border-color:#C4B0FF;
-            box-shadow:0 4px 14px rgba(106,44,255,0.15);
-          }
-          .spretro-mobile-nav-icon{
-            width:40px;
-            height:40px;
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-          }
-          .spretro-services{
-            height:40px;
-            padding:0 14px;
-            justify-content:flex-start;
-            gap:20px;
-            overflow-x:auto;
-          }
-          .spretro-services::-webkit-scrollbar{
-            display:none;
-          }
-          .spretro-service-item{
-            font-size:11px;
-            flex-shrink:0;
-          }
-          .spretro-ticker-item{
-            padding:0 20px;
-            font-size:10px;
-          }
-          .spretro-mini-panel{
-            display:none;
-          }
-          .spretro-wishlist-panel{
-            display:block !important;
-            position:fixed;
-            top:64px;
-            right:10px;
-            left:auto;
-            width:min(280px, calc(100vw - 20px)) !important;
-          }
-          .spretro-mega-panel{
-            position:fixed;
-            top:56px;
-            right:10px;
-            left:auto;
-            width:min(310px, calc(100vw - 20px));
-            max-height:calc(100vh - 72px);
-            overflow-y:auto;
-            border-radius:18px;
-            scrollbar-width:none;
-          }
-          .spretro-mega-panel::-webkit-scrollbar{
-            display:none;
-          }
-          .spretro-mega-top{
-            padding:13px 15px 11px;
-          }
-          .spretro-mega-title{
-            font-size:15px;
-          }
-          .spretro-mega-sub{
-            font-size:10px;
-          }
-          .spretro-mega-close{
-            width:26px;
-            height:26px;
-          }
-          .spretro-mega-body{
-            padding:12px 12px 16px;
-          }
-          .spretro-mega-section-title{
-            font-size:9px;
-            margin-bottom:7px;
-          }
-
-          /* Quick shop + Help pills — compact */
-          .spretro-mega-pills{
-            gap:5px;
-            margin-bottom:14px;
-          }
-          .spretro-mega-pill{
-            padding:5px 11px;
-            font-size:11px;
-          }
-
-          /* Categories — stacked list, left aligned */
-          .spretro-mega-grid{
-            grid-template-columns:1fr;
-            gap:1px;
-            margin-bottom:14px;
-          }
-          .spretro-mega-cat{
-            flex-direction:row;
-            justify-content:flex-start;
-            gap:12px;
-            padding:8px 9px;
-            border-radius:11px;
-          }
-          .spretro-mega-cat-icon{
-            width:32px;
-            height:32px;
-            border-radius:9px;
-          }
-          .spretro-mega-cat-label{
-            font-size:13px;
-            text-align:left;
-          }
-
-          /* My Account — single column list */
-          .spretro-mega-acc-grid{
-            grid-template-columns:1fr;
-            gap:1px;
-          }
-          .spretro-mega-acc-item{
-            padding:8px 9px;
-          }
-          .spretro-mega-acc-icon{
-            width:30px;
-            height:30px;
-          }
-          .spretro-mega-divider{
-            margin-bottom:13px;
-          }
-        }
-
-        /* ── MOBILE — hide Sign In icon + Menu text ── */
-        @media (max-width:767px){
-          .spretro-sign-in-btn svg{ display:none; }
-          .spretro-menu-text{ display:none; }
-        }
-
-        /* ── SMALL MOBILE (max 479px) ── */
-        @media (max-width:479px){
-          .spretro-logo-main{
-            font-size:20px;
-          }
-        }
-
-      `}</style>
-
-      <nav className="spretro-navbar">
+      <nav className="w-full bg-white sticky top-0 z-[999] shadow-[0_4px_24px_rgba(106,44,255,0.08),0_1px_0_rgba(0,0,0,0.04)]">
 
         {/* TICKER */}
 
-        <div className="spretro-ticker">
-          <div className="spretro-ticker-track">
-
+        <div
+          className="h-[30px] overflow-hidden flex items-center bg-[length:200%_100%] animate-[tickerBg_8s_linear_infinite]"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, #5A14EF 0%, #7C3AED 40%, #9B6DFF 70%, #7C3AED 100%)",
+          }}
+        >
+          <div className="flex whitespace-nowrap animate-[ticker_25s_linear_infinite]">
             {doubled.map((item, i) => (
-              <div key={i} className="spretro-ticker-item">
+              <div key={i} className="flex items-center gap-3 px-10 text-white text-[11px] font-semibold tracking-[1px] whitespace-nowrap">
                 <span>{item}</span>
-                <span className="spretro-dot" />
+                <span className="w-1 h-1 rounded-full bg-white shrink-0" />
               </div>
             ))}
-
           </div>
         </div>
 
         {/* MAIN NAVBAR */}
 
-        <div className="spretro-mainbar">
+        <div className="relative h-16 min-h-16 px-8 flex items-center justify-between border-b border-[#F2E8FF] bg-white max-[1023px]:h-auto max-[1023px]:px-4 max-[1023px]:flex-wrap max-[1023px]:items-start max-[1023px]:gap-2.5 max-[767px]:min-h-[50px] max-[767px]:py-2 max-[767px]:px-3.5 max-[767px]:items-center after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-[linear-gradient(90deg,transparent,#6A2CFF33,#9B6DFF55,#6A2CFF33,transparent)]">
 
           {/* LEFT */}
 
-          <div className="spretro-left">
+          <div className="flex items-center gap-6 min-w-0 flex-1 max-[1023px]:flex-wrap max-[1023px]:items-start max-[1023px]:justify-start max-[1023px]:gap-4 max-[1023px]:w-full">
 
             {/* LOGO */}
 
-            <div className="spretro-logo" onClick={() => navigate("/")}>
-
-              <div className="spretro-logo-main">
-                SPRETRO<span className="spretro-logo-dot">.</span>
+            <div
+              className="flex flex-col cursor-pointer min-w-0 max-w-[220px] max-[1023px]:max-w-[160px] max-[767px]:max-w-[140px]"
+              onClick={() => navigate("/")}
+            >
+              <div className="text-[30px] font-extrabold tracking-[-1.2px] text-[#111] leading-none whitespace-nowrap overflow-hidden text-ellipsis max-[1023px]:text-[26px] max-[767px]:text-[22px] max-[767px]:tracking-[-1px] max-[479px]:text-[20px]">
+                SPRETRO
+                <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,#3D0ECC_0%,#6A2CFF_45%,#9B6DFF_100%)]">.</span>
               </div>
-
-              <div className="spretro-logo-sub">
+              <div className="text-[10px] font-bold tracking-[3px] text-[#9B6DFF] mt-0.5 uppercase opacity-70 max-[767px]:hidden">
                 Fashion Commerce
               </div>
-
             </div>
 
             {/* LINKS */}
 
-            <div className="spretro-links">
+            <div className="flex items-center gap-[22px] min-w-0 max-[1023px]:w-full max-[1023px]:gap-3.5 max-[1023px]:overflow-x-auto max-[1023px]:pb-0.5 max-[1023px]:mt-1 max-[1023px]:[scrollbar-width:none] max-[1023px]:[&::-webkit-scrollbar]:hidden max-[767px]:hidden">
+              {navLinks.map((link) => {
+                const subs = NAV_SUBCATS[link.path];
+                const topTo = subs ? groupPath(link.path.replace(/^\//, "")) : link.path;
+                const isOpen = activeNav === link.label;
+                return (
+                  <div
+                    key={link.label}
+                    className="relative flex items-center gap-[3px] max-[1023px]:shrink-0"
+                    onMouseEnter={() => subs && openNav(link.label)}
+                    onMouseLeave={() => subs && closeNav()}
+                  >
+                    <a
+                      href={topTo}
+                      className={`relative text-sm font-semibold tracking-[0.01em] py-1.5 transition-colors duration-200 whitespace-nowrap no-underline
+                        after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:rounded-sm after:bg-[linear-gradient(90deg,#6A2CFF,#9B6DFF)] after:transition-[width] after:duration-200
+                        hover:text-[#3D0ECC] hover:after:w-full
+                        ${activeLink === link.label ? "text-[#3D0ECC] after:w-full" : "text-[#4F4F5C] after:w-0"}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(topTo);
+                        setActiveNav(null);
+                      }}
+                    >
+                      {link.label}
+                    </a>
 
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.path}
-                  className={`spretro-link ${
-                    activeLink === link.label ? "active" : ""
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(link.path);
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
+                    {subs && (
+                      <ChevronDown
+                        size={13}
+                        strokeWidth={2.5}
+                        className={`shrink-0 transition-transform duration-200 ${
+                          isOpen ? "rotate-180 text-[#6A2CFF]" : "text-[#9B8FB5]"
+                        }`}
+                      />
+                    )}
 
+                    {subs && isOpen && (
+                      <div
+                        className="absolute top-[calc(100%+12px)] left-0 min-w-[208px] bg-white rounded-2xl shadow-[0_24px_64px_rgba(15,23,42,0.13),0_4px_16px_rgba(106,44,255,0.08)] border border-[#ECE7FF] p-2 z-[1000] [animation:dropIn_0.18s_ease] before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
+                        onMouseEnter={keepNav}
+                        onMouseLeave={closeNav}
+                      >
+                        {subs.map((sc) => (
+                          <button
+                            key={sc.label}
+                            className="block w-full text-left border-none bg-transparent rounded-[10px] px-3 py-[9px] text-[13px] font-semibold text-[#3A356B] cursor-pointer transition-colors duration-150 hover:bg-[#F5F0FF] hover:text-[#6A2CFF]"
+                            onClick={() => {
+                              navigate(sc.to);
+                              setActiveNav(null);
+                            }}
+                          >
+                            {sc.label === "All" ? `All ${link.label}` : sc.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
           </div>
 
+          {/* SEARCH */}
+
+          <div className="w-[420px] max-w-full h-11 ml-auto mr-5 bg-[#F5F5F7] rounded-full flex items-center gap-3 px-4 text-[#777] border-[1.5px] border-transparent transition-all duration-200 cursor-text hover:bg-white hover:border-[#6A2CFF] hover:shadow-[0_0_0_4px_rgba(106,44,255,0.08)] focus-within:bg-white focus-within:border-[#6A2CFF] focus-within:shadow-[0_0_0_4px_rgba(106,44,255,0.08)] max-[1023px]:w-full max-[1023px]:flex-[1_1_100%] max-[1023px]:min-w-0 max-[1023px]:m-0 max-[767px]:order-3 max-[767px]:h-10">
+            <Search
+              size={17}
+              strokeWidth={2}
+              className="cursor-pointer transition-colors duration-200 text-[#111]"
+              onClick={handleSearch}
+            />
+            <input
+              className="bg-transparent border-none outline-none flex-1 min-w-0 font-sans text-sm font-medium text-[#2A2A2A] placeholder:text-[#888]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder="Search sneakers, kurtas, watches..."
+            />
+          </div>
+
           {/* RIGHT */}
 
-          <div className="spretro-right">
-
-            {/* SEARCH */}
-
-            <div className="spretro-search">
-
-              <Search
-                size={17}
-                strokeWidth={2}
-                className="spretro-search-icon"
-                onClick={handleSearch}
-              />
-
-              <input
-                className="spretro-search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                placeholder="Search sneakers, kurtas, watches..."
-              />
-
-            </div>
+          <div className="flex items-center gap-3 min-w-0 max-[1023px]:w-full max-[1023px]:justify-end max-[1023px]:flex-[1_1_100%] max-[767px]:w-auto max-[767px]:flex-[0_0_auto] max-[767px]:gap-1">
 
             {/* WISHLIST */}
 
             <div
-              className="spretro-panel-wrap"
+              className="relative"
               onMouseEnter={() => openPanel("wishlist")}
               onMouseLeave={closePanel}
             >
               <button
-                className="spretro-icon-btn"
+                className="relative w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:w-9 max-[767px]:h-9 max-[767px]:rounded-[10px]"
                 onClick={() => setActivePanel((p) => (p === "wishlist" ? null : "wishlist"))}
-                style={{ position: "relative" }}
               >
                 <Heart size={19} strokeWidth={1.9} className={wishlistItems.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
                 {wishlistItems.length > 0 && (
-                  <span style={{
-                    position: "absolute", top: -4, right: -4,
-                    width: 16, height: 16, borderRadius: "50%",
-                    background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)",
-                    fontSize: 9, fontWeight: 800, color: "white",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[9px] font-extrabold text-white flex items-center justify-center bg-[linear-gradient(135deg,#FF6B9D,#FF4D7E)]">
                     {wishlistItems.length > 99 ? "99+" : wishlistItems.length}
                   </span>
                 )}
@@ -1324,55 +279,51 @@ export default function Navbar() {
 
               {activePanel === "wishlist" && (
                 <div
-                  className="spretro-mini-panel spretro-wishlist-panel"
-                  style={{ width: 260 }}
+                  className="absolute top-[calc(100%+12px)] right-0 w-[260px] bg-white rounded-[20px] shadow-[0_16px_56px_rgba(0,0,0,0.14),0_4px_16px_rgba(106,44,255,0.1)] border border-[#F0EAFF] overflow-hidden z-[1000] [animation:panelIn_0.18s_ease] max-[767px]:!block max-[767px]:fixed max-[767px]:top-[100px] max-[767px]:right-2.5 max-[767px]:left-auto max-[767px]:!w-[min(280px,calc(100vw-20px))]"
                   onMouseEnter={keepPanel}
                   onMouseLeave={closePanel}
                 >
-                  <div className="spretro-panel-header">
-                    <div
-                      className="spretro-panel-header-icon"
-                      style={{ background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" }}
-                    >
+                  <div className="px-[18px] pt-3.5 pb-3 flex items-center gap-2.5">
+                    <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0 bg-[linear-gradient(135deg,#FF6B9D,#FF4D7E)]">
                       <Heart size={16} strokeWidth={2} color="white" />
                     </div>
                     <div>
-                      <div className="spretro-panel-header-title">Wishlist</div>
-                      <div className="spretro-panel-header-sub">
+                      <div className="text-sm font-extrabold text-[#111] leading-[1.1]">Wishlist</div>
+                      <div className="text-[11px] text-[#888] font-medium mt-px">
                         {wishlistItems.length} saved {wishlistItems.length === 1 ? "item" : "items"}
                       </div>
                     </div>
                   </div>
-                  <div className="spretro-panel-divider" />
+                  <div className="h-px bg-[#F3F3F6] mx-[18px]" />
                   {wishlistItems.length === 0 ? (
-                    <div className="spretro-panel-empty">
-                      <div className="spretro-panel-empty-icon">
+                    <div className="flex flex-col items-center px-[18px] pt-5 pb-4 gap-2">
+                      <div className="w-12 h-12 rounded-2xl bg-[#F5F0FF] flex items-center justify-center text-[#6A2CFF]">
                         <Heart size={22} strokeWidth={1.8} />
                       </div>
-                      <div className="spretro-panel-empty-text">Nothing saved yet</div>
-                      <div className="spretro-panel-empty-sub">
+                      <div className="text-[13px] font-bold text-[#111]">Nothing saved yet</div>
+                      <div className="text-[11px] text-[#aaa] font-medium text-center leading-[1.4]">
                         Tap the heart on any product<br />to save it here
                       </div>
                     </div>
                   ) : (
-                    <div style={{ maxHeight: 220, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, padding: "4px 0" }}>
+                    <div className="max-h-[220px] overflow-y-auto flex flex-col gap-2 py-1">
                       {wishlistItems.slice(0, 5).map((item) => (
                         <div
                           key={item.id}
-                          style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 4px", cursor: "pointer", borderRadius: 10 }}
+                          className="flex items-center gap-2.5 px-1 py-1.5 cursor-pointer rounded-[10px] hover:bg-gray-50"
                           onClick={() => { navigate(`/product/${item.id}`); setActivePanel(null); }}
                         >
-                          <div style={{ width: 42, height: 42, borderRadius: 8, overflow: "hidden", background: "#F5F3FF", flexShrink: 0 }}>
-                            <img src={item.image} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", padding: 3 }} />
+                          <div className="w-[42px] h-[42px] rounded-lg overflow-hidden bg-[#F5F3FF] shrink-0">
+                            <img src={item.image} alt="" className="w-full h-full object-contain p-[3px]" />
                           </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 10, fontWeight: 800, color: "#6A2CFF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.brand}</div>
-                            <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A1E", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</div>
-                            <div style={{ fontSize: 11, fontWeight: 800, color: "#333", marginTop: 1 }}>₹{Number(item.price).toLocaleString("en-IN")}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[10px] font-extrabold text-[#6A2CFF] uppercase tracking-[0.05em]">{item.brand}</div>
+                            <div className="text-xs font-bold text-[#0F0A1E] whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</div>
+                            <div className="text-[11px] font-extrabold text-[#333] mt-px">₹{Number(item.price).toLocaleString("en-IN")}</div>
                           </div>
                           <button
                             onClick={(e) => { e.stopPropagation(); removeFromWishlist(item.id); }}
-                            style={{ width: 24, height: 24, borderRadius: "50%", border: "none", background: "#FFF0F5", color: "#E83E6C", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, fontSize: 14, fontWeight: 700 }}
+                            className="w-6 h-6 rounded-full border-none bg-[#FFF0F5] text-[#E83E6C] flex items-center justify-center cursor-pointer shrink-0 text-sm font-bold"
                             title="Remove"
                           >
                             ×
@@ -1380,16 +331,19 @@ export default function Navbar() {
                         </div>
                       ))}
                       {wishlistItems.length > 5 && (
-                        <div style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: "#999", paddingTop: 4 }}>
+                        <div className="text-center text-[11px] font-bold text-[#999] pt-1">
                           +{wishlistItems.length - 5} more items
                         </div>
                       )}
                     </div>
                   )}
                   <button
-                    className="spretro-panel-cta"
+                    className={`block w-[calc(100%-36px)] mx-[18px] mb-3.5 mt-0 py-2.5 rounded-xl text-xs font-bold text-center border-none cursor-pointer text-white transition-colors duration-200 ${
+                      wishlistItems.length > 0
+                        ? "bg-[linear-gradient(135deg,#FF6B9D,#FF4D7E)]"
+                        : "bg-[#6A2CFF] hover:bg-[#5A1EEF]"
+                    }`}
                     onClick={() => { navigate("/women"); setActivePanel(null); }}
-                    style={wishlistItems.length > 0 ? { background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" } : {}}
                   >
                     {wishlistItems.length > 0 ? "Continue Shopping" : "Browse & Save"}
                   </button>
@@ -1400,87 +354,95 @@ export default function Navbar() {
             {/* PROFILE */}
 
             <div
-              className="spretro-panel-wrap"
+              className="relative"
               onMouseEnter={() => isAuthenticated && openPanel("user")}
               onMouseLeave={closePanel}
             >
+              {isAuthenticated ? (
                 <button
-                className="spretro-icon-btn"
-                onClick={() => navigate(isAuthenticated ? "/account" : "/login")}
-                title={isAuthenticated ? "My Account" : "Sign In"}
-              >
-                <User size={19} strokeWidth={1.9} />
-              </button>
+                  className="relative w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:w-9 max-[767px]:h-9 max-[767px]:rounded-[10px]"
+                  onClick={() => navigate("/account")}
+                  title="My Account"
+                >
+                  <User size={19} strokeWidth={1.9} />
+                </button>
+              ) : (
+                <button
+                  className="flex items-center gap-1.5 h-[42px] px-4 border-none rounded-xl bg-[#6A2CFF] text-white text-[13px] font-bold cursor-pointer transition-all duration-200 hover:bg-[#5A1EEF] hover:-translate-y-px max-[767px]:h-9 max-[767px]:px-3 max-[767px]:rounded-[10px]"
+                  onClick={() => navigate("/login")}
+                >
+                  <User size={17} strokeWidth={2} />
+                  <span className="max-[767px]:hidden">Sign In</span>
+                </button>
+              )}
 
               {isAuthenticated && activePanel === "user" && (
                 <div
-                  className="spretro-mini-panel"
-                  style={{ width: 260 }}
+                  className="absolute top-[calc(100%+12px)] right-0 w-[260px] bg-white rounded-[20px] shadow-[0_16px_56px_rgba(0,0,0,0.14),0_4px_16px_rgba(106,44,255,0.1)] border border-[#F0EAFF] overflow-hidden z-[1000] [animation:panelIn_0.18s_ease]"
                   onMouseEnter={keepPanel}
                   onMouseLeave={closePanel}
                 >
-                    <div
-                      className="spretro-panel-header"
-                      style={{ background: "linear-gradient(135deg,#1a1a2e,#16213e)", paddingBottom: 14 }}
-                    >
-                      <div
-                        className="spretro-panel-header-icon"
-                        style={{ background: "rgba(106,44,255,0.4)" }}
-                      >
-                        <User size={16} strokeWidth={2} color="white" />
-                      </div>
-                      <div>
-                        <div className="spretro-panel-header-title" style={{ color: "white" }}>
-                          My Account
-                        </div>
-                        <div className="spretro-panel-header-sub" style={{ color: "rgba(255,255,255,0.5)" }}>
-                          {user?.full_name ? `Hi, ${user.full_name}` : "Welcome back"}
-                        </div>
-                      </div>
+                  <div
+                    className="px-[18px] pt-3.5 pb-3.5 flex items-center gap-2.5 cursor-pointer bg-[linear-gradient(135deg,#1a1a2e,#16213e)]"
+                    onClick={() => { navigate("/account"); setActivePanel(null); }}
+                  >
+                    <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0 bg-[rgba(106,44,255,0.4)]">
+                      <User size={16} strokeWidth={2} color="white" />
                     </div>
-                    <div className="spretro-panel-body">
-                      {[
-                        { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage" },
-                        { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items" },
-                        { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers" },
-                        { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences" },
-                        { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact" },
-                      ].map((item) => (
-                        <button key={item.label} className="spretro-panel-link">
-                          <span className="spretro-panel-link-icon">{item.icon}</span>
-                          <span>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: "#222" }}>{item.label}</div>
-                            <div style={{ fontSize: 11, color: "#aaa", fontWeight: 500, marginTop: 1 }}>{item.sub}</div>
-                          </span>
-                        </button>
-                      ))}
-                      <button
-                        className="spretro-panel-link"
-                        onClick={() => { logout(); setActivePanel(null); navigate("/"); }}
-                        style={{ color: "#E83E6C" }}
-                      >
-                        <span className="spretro-panel-link-icon" style={{ color: "#E83E6C" }}>
-                          <User size={15} strokeWidth={2} />
-                        </span>
-                        <span>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#E83E6C" }}>Sign Out</div>
-                        </span>
-                      </button>
+                    <div>
+                      <div className="text-sm font-extrabold text-white leading-[1.1]">
+                        My Account
+                      </div>
+                      <div className="text-[11px] text-white/50 font-medium mt-px">
+                        {user?.full_name ? `Hi, ${user.full_name}` : "Welcome back"}
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
-            
+                  <div className="py-3 px-2">
+                    {[
+                      { icon: <Package size={15} strokeWidth={2} />, label: "My Orders", sub: "Track & manage", path: "/account" },
+                      { icon: <Heart size={15} strokeWidth={2} />, label: "Wishlist", sub: "Saved items", path: null },
+                      { icon: <Star size={15} strokeWidth={2} />, label: "Rewards", sub: "Points & offers", path: "/account" },
+                      { icon: <Settings size={15} strokeWidth={2} />, label: "Settings", sub: "Account preferences", path: "/account" },
+                      { icon: <HelpCircle size={15} strokeWidth={2} />, label: "Help & Support", sub: "FAQs & contact", path: "/account" },
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        className="group flex items-center gap-2.5 px-3 py-[9px] rounded-xl cursor-pointer transition-colors duration-150 text-[#333] text-[13px] font-semibold border-none bg-transparent w-full text-left hover:bg-[#F5F0FF] hover:text-[#6A2CFF]"
+                        onClick={() => { if (item.path) { navigate(item.path); setActivePanel(null); } }}
+                      >
+                        <span className="w-[30px] h-[30px] rounded-[9px] bg-[#F5F5F7] flex items-center justify-center shrink-0 transition-colors duration-150 text-[#555] group-hover:bg-[#EDE4FF] group-hover:text-[#6A2CFF]">{item.icon}</span>
+                        <span>
+                          <div className="text-[13px] font-bold text-[#222]">{item.label}</div>
+                          <div className="text-[11px] text-[#aaa] font-medium mt-px">{item.sub}</div>
+                        </span>
+                      </button>
+                    ))}
+                    <button
+                      className="group flex items-center gap-2.5 px-3 py-[9px] rounded-xl cursor-pointer transition-colors duration-150 text-[13px] font-semibold border-none bg-transparent w-full text-left text-[#E83E6C] hover:bg-[#F5F0FF]"
+                      onClick={() => { logout(); setActivePanel(null); navigate("/"); }}
+                    >
+                      <span className="w-[30px] h-[30px] rounded-[9px] bg-[#FFF0F5] flex items-center justify-center shrink-0 text-[#E83E6C]">
+                        <User size={15} strokeWidth={2} />
+                      </span>
+                      <span>
+                        <div className="text-[13px] font-bold text-[#E83E6C]">Sign Out</div>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* MENU */}
 
             <div
-              className="spretro-panel-wrap"
+              className="relative"
               onMouseEnter={openMenu}
               onMouseLeave={closeMenu}
             >
               <button
-                className="spretro-menu-btn"
+                className="w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:h-[38px] max-[767px]:px-3 max-[767px]:text-xs max-[767px]:rounded-[10px] max-[767px]:gap-[5px] max-[767px]:w-auto"
                 onClick={() => setMenuOpen((open) => !open)}
                 aria-expanded={menuOpen}
                 aria-label="Open menu"
@@ -1490,17 +452,19 @@ export default function Navbar() {
 
               {menuOpen && (
                 <div
-                  className="spretro-menu-dropdown"
+                  className="absolute top-[calc(100%+10px)] right-0 w-80 bg-white rounded-[18px] shadow-[0_24px_64px_rgba(15,23,42,0.12)] border border-[#ECE7FF] overflow-hidden z-[1000] [animation:dropIn_0.18s_ease]"
                   onMouseEnter={keepMenu}
                   onMouseLeave={closeMenu}
                 >
-                  <div className="spretro-menu-dropdown-section">
-                    <div className="spretro-menu-dropdown-title">Shop by category</div>
-                    <div className="spretro-menu-dropdown-grid">
+                  <div className="p-4">
+                    <div className="text-xs font-extrabold tracking-[0.18em] uppercase text-[#8F89A3] mb-3">
+                      Shop by category
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5">
                       {menuItems.map((item) => (
                         <button
                           key={item.label}
-                          className="spretro-menu-dropdown-link"
+                          className="w-full text-left border-none bg-[#F8F4FF] rounded-xl px-3.5 py-3 text-sm font-semibold text-[#3A356B] cursor-pointer transition-colors duration-200 hover:bg-[#ECE4FF] hover:text-[#3D0ECC]"
                           onClick={() => {
                             navigate(item.path);
                             setMenuOpen(false);
@@ -1518,49 +482,51 @@ export default function Navbar() {
             {/* CART */}
 
             <div
-              className="spretro-panel-wrap"
+              className="relative"
               onMouseEnter={() => openPanel("cart")}
               onMouseLeave={closePanel}
             >
-              <button className="spretro-icon-btn" onClick={() => navigate("/cart")}>
+              <button
+                className="relative w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:w-9 max-[767px]:h-9 max-[767px]:rounded-[10px]"
+                onClick={() => navigate("/cart")}
+              >
                 <ShoppingBag size={19} strokeWidth={1.9} />
-                {totalQty > 0
-                  ? <span className="spretro-cart-dot" style={{ width: 16, height: 16, fontSize: 9, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>{totalQty > 99 ? "99+" : totalQty}</span>
-                  : <span className="spretro-cart-dot" />
-                }
+                {totalQty > 0 ? (
+                  <span className="absolute top-[9px] right-[9px] w-4 h-4 rounded-full text-[9px] font-extrabold text-white flex items-center justify-center bg-[linear-gradient(135deg,#EC4899,#F97316)]">
+                    {totalQty > 99 ? "99+" : totalQty}
+                  </span>
+                ) : (
+                  <span className="absolute top-[9px] right-[9px] w-2 h-2 rounded-full bg-[linear-gradient(135deg,#EC4899,#F97316)] animate-[pulse_2s_infinite]" />
+                )}
               </button>
 
               {activePanel === "cart" && (
                 <div
-                  className="spretro-mini-panel"
-                  style={{ width: 260 }}
+                  className="absolute top-[calc(100%+12px)] right-0 w-[260px] bg-white rounded-[20px] shadow-[0_16px_56px_rgba(0,0,0,0.14),0_4px_16px_rgba(106,44,255,0.1)] border border-[#F0EAFF] overflow-hidden z-[1000] [animation:panelIn_0.18s_ease] max-[767px]:hidden"
                   onMouseEnter={keepPanel}
                   onMouseLeave={closePanel}
                 >
-                  <div className="spretro-panel-header">
-                    <div
-                      className="spretro-panel-header-icon"
-                      style={{ background: "linear-gradient(135deg,#6A2CFF,#9B6DFF)" }}
-                    >
+                  <div className="px-[18px] pt-3.5 pb-3 flex items-center gap-2.5">
+                    <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0 bg-[linear-gradient(135deg,#6A2CFF,#9B6DFF)]">
                       <ShoppingBag size={16} strokeWidth={2} color="white" />
                     </div>
                     <div>
-                      <div className="spretro-panel-header-title">My Cart</div>
-                      <div className="spretro-panel-header-sub">0 items · ₹0</div>
+                      <div className="text-sm font-extrabold text-[#111] leading-[1.1]">My Cart</div>
+                      <div className="text-[11px] text-[#888] font-medium mt-px">0 items · ₹0</div>
                     </div>
                   </div>
-                  <div className="spretro-panel-divider" />
-                  <div className="spretro-panel-empty">
-                    <div className="spretro-panel-empty-icon">
+                  <div className="h-px bg-[#F3F3F6] mx-[18px]" />
+                  <div className="flex flex-col items-center px-[18px] pt-5 pb-4 gap-2">
+                    <div className="w-12 h-12 rounded-2xl bg-[#F5F0FF] flex items-center justify-center text-[#6A2CFF]">
                       <ShoppingBag size={22} strokeWidth={1.8} />
                     </div>
-                    <div className="spretro-panel-empty-text">Your cart is empty</div>
-                    <div className="spretro-panel-empty-sub">
+                    <div className="text-[13px] font-bold text-[#111]">Your cart is empty</div>
+                    <div className="text-[11px] text-[#aaa] font-medium text-center leading-[1.4]">
                       Add products to your cart<br />and they'll show up here
                     </div>
                   </div>
                   <button
-                    className="spretro-panel-cta"
+                    className="block w-[calc(100%-36px)] mx-[18px] mb-3.5 mt-0 py-2.5 rounded-xl bg-[#6A2CFF] text-white text-xs font-bold text-center border-none cursor-pointer transition-colors duration-200 hover:bg-[#5A1EEF]"
                     onClick={() => { navigate("/cart"); setActivePanel(null); }}
                   >
                     View Cart
@@ -1574,23 +540,27 @@ export default function Navbar() {
         </div>
 
         {/* MOBILE NAV TILES — phone only */}
-        <div className="spretro-mobile-nav">
+        <div className="hidden max-[767px]:grid grid-cols-4 gap-2 px-3 py-2.5 bg-[linear-gradient(180deg,#FAFAFF_0%,#FFFFFF_100%)] border-b border-[#EDE8FF]">
           {[
-            { label: "Women", path: "/women", bg: "#FFF0F5", color: "#EC4899",
+            { label: "Women", path: "/women", tileClass: "bg-[#FFF0F5] text-[#EC4899]",
               icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M9 20h6M12 16v4M8 12c-2.5 1-4 3-4 5h16c0-2-1.5-4-4-5"/></svg> },
-            { label: "Men",   path: "/men",   bg: "#EFF6FF", color: "#3B82F6",
+            { label: "Men", path: "/men", tileClass: "bg-[#EFF6FF] text-[#3B82F6]",
               icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 14c-5 0-8 2.5-8 4v1h16v-1c0-1.5-3-4-8-4z"/></svg> },
-            { label: "Kids",  path: "/kids",  bg: "#FFFBEB", color: "#F59E0B",
+            { label: "Kids", path: "/kids", tileClass: "bg-[#FFFBEB] text-[#F59E0B]",
               icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="3"/><path d="M9 22V12l-2-3h10l-2 3v10"/><path d="M9 17h6"/></svg> },
-            { label: "New In", path: "/new-in", bg: "#F3EEFF", color: "#6A2CFF",
+            { label: "New In", path: "/new-in", tileClass: "bg-[#F3EEFF] text-[#6A2CFF]",
               icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
           ].map((item) => (
             <div
               key={item.label}
-              className={`spretro-mobile-nav-item ${activeLink === item.label ? "active" : ""}`}
+              className={`flex flex-col items-center justify-center gap-[5px] py-2.5 px-1 rounded-2xl cursor-pointer transition-all duration-200 text-[11px] font-extrabold tracking-[0.01em] border-[1.5px] border-transparent hover:bg-[linear-gradient(135deg,#EDE4FF,#E5D8FF)] hover:text-[#6A2CFF] hover:border-[#C4B0FF] ${
+                activeLink === item.label
+                  ? "bg-[linear-gradient(135deg,#EDE4FF,#E5D8FF)] text-[#6A2CFF] border-[#C4B0FF] shadow-[0_4px_14px_rgba(106,44,255,0.15)]"
+                  : "text-[#555]"
+              }`}
               onClick={() => navigate(item.path)}
             >
-              <div className="spretro-mobile-nav-icon" style={{ background: item.bg, color: item.color }}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.tileClass}`}>
                 {item.icon}
               </div>
               {item.label}

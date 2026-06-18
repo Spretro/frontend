@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -8,9 +8,6 @@ import SearchNavbar from "./components/layout/SearchNavbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Home from "./pages/Home";
-import Women from "./pages/Women";
-import Men from "./pages/Men";
-import Kids from "./pages/Kids";
 import NewIn from "./pages/NewIn";
 import Brands from "./pages/Brands";
 import Sale from "./pages/Sale";
@@ -29,11 +26,12 @@ import ProductPage from "./pages/ProductPage/ProductPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
 import AddressPage from "./pages/AddressPage/AddressPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
+import AccountPage from "./pages/Account";
 
 function Layout() {
   const location = useLocation();
   const isSearch =
-    ["/search", "/cart"].includes(location.pathname) ||
+    ["/search", "/cart", "/account"].includes(location.pathname) ||
     location.pathname === "/product" ||
     location.pathname.startsWith("/product/");
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
@@ -53,9 +51,9 @@ function Layout() {
       {!hideChrome && (isSearch ? <SearchNavbar /> : <HomeNavbar />)}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/women" element={<Women />} />
-        <Route path="/men" element={<Men />} />
-        <Route path="/kids" element={<Kids />} />
+        <Route path="/women" element={<Navigate to="/search?group=women" replace />} />
+        <Route path="/men" element={<Navigate to="/search?group=men" replace />} />
+        <Route path="/kids" element={<Navigate to="/search?group=kids" replace />} />
         <Route path="/new-in" element={<NewIn />} />
         <Route path="/brands" element={<Brands />} />
         <Route path="/sale" element={<Sale />} />
@@ -76,6 +74,7 @@ function Layout() {
         <Route path="/checkout/address" element={<AddressPage />} />
         <Route path="/checkout/address/:addressId" element={<AddressPage />} />
         <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
       {!hideChrome && <Footer />}
       <ScrollToTop />
