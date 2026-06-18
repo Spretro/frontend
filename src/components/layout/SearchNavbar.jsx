@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { useAuth } from "../../context/AuthContext";
 import {
   Search, X, Heart, ShoppingBag, User,
@@ -54,6 +55,7 @@ export default function SearchNavbar() {
   const navigate   = useNavigate();
   const location   = useLocation();
   const { totalQty } = useCart();
+  const { wishlistItems, removeFromWishlist } = useWishlist();
   const { user, isAuthenticated: isLoggedIn, logout } = useAuth();
   const [searchParams] = useSearchParams();
   const currentQuery   = searchParams.get("q") || "";
@@ -119,21 +121,20 @@ export default function SearchNavbar() {
 
         /* ── Logo ── */
         .snav-logo {
-          font-size: 28px;
-          font-weight: 900;
-          letter-spacing: -1.5px;
+          font-size: 30px;
+          font-weight: 800;
+          letter-spacing: -1.2px;
           cursor: pointer;
           white-space: nowrap;
           flex-shrink: 0;
           margin-right: 36px;
           text-decoration: none;
-          background: linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 45%, #9B6DFF 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #111;
         }
         .snav-logo-dot {
-          background: linear-gradient(135deg, #EC4899, #F97316);
+          display: inline-block;
+          color: transparent;
+          background: linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 45%, #9B6DFF 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -369,6 +370,74 @@ export default function SearchNavbar() {
         .snav-panel-row:hover .snav-panel-ico { background: #EDE4FF; color: #6A2CFF; }
         .snav-panel-sep { height: 1px; background: #F3F3F6; margin: 3px 8px; }
 
+        /* ── Wishlist / Cart mini panels ── */
+        .snav-panel-wrap { position: relative; }
+        .snav-mini-panel {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 260px;
+          background: white;
+          border-radius: 18px;
+          box-shadow: 0 12px 48px rgba(0,0,0,0.13), 0 4px 16px rgba(106,44,255,0.1);
+          border: 1px solid #F0EAFF;
+          overflow: hidden;
+          z-index: 1001;
+          animation: snavDrop 0.16s ease;
+        }
+        .snav-mini-hdr {
+          display: flex; align-items: center; gap: 10px;
+          padding: 13px 14px; border-bottom: 1px solid #F3F3F6;
+        }
+        .snav-mini-hdr-icon {
+          width: 32px; height: 32px; border-radius: 9px;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .snav-mini-title { font-size: 13px; font-weight: 800; color: #111; line-height: 1.1; }
+        .snav-mini-sub { font-size: 11px; color: #888; font-weight: 500; margin-top: 1px; }
+        .snav-mini-empty {
+          display: flex; flex-direction: column; align-items: center; gap: 6px;
+          padding: 20px 16px 8px; text-align: center;
+        }
+        .snav-mini-empty-icon {
+          width: 46px; height: 46px; border-radius: 14px; background: #F5F0FF;
+          display: flex; align-items: center; justify-content: center; color: #6A2CFF;
+        }
+        .snav-mini-empty-text { font-size: 13px; font-weight: 700; color: #111; }
+        .snav-mini-empty-sub { font-size: 11px; color: #aaa; font-weight: 500; line-height: 1.4; }
+        .snav-mini-list {
+          max-height: 220px; overflow-y: auto;
+          display: flex; flex-direction: column; gap: 6px; padding: 6px;
+        }
+        .snav-mini-row {
+          display: flex; align-items: center; gap: 10px;
+          padding: 6px; border-radius: 10px; cursor: pointer;
+        }
+        .snav-mini-row:hover { background: #F5F0FF; }
+        .snav-mini-thumb {
+          width: 40px; height: 40px; border-radius: 8px; overflow: hidden;
+          background: #F5F3FF; flex-shrink: 0;
+        }
+        .snav-mini-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+        .snav-mini-name {
+          font-size: 12px; font-weight: 700; color: #111;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .snav-mini-price { font-size: 11px; font-weight: 800; color: #333; margin-top: 1px; }
+        .snav-mini-remove {
+          width: 22px; height: 22px; border-radius: 50%; border: none;
+          background: #FFF0F5; color: #E83E6C; cursor: pointer; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 13px; font-weight: 700;
+        }
+        .snav-mini-cta {
+          display: block; width: calc(100% - 28px); margin: 12px 14px 14px;
+          padding: 10px; border-radius: 12px; background: #6A2CFF; color: white;
+          font-size: 12px; font-weight: 700; text-align: center; border: none;
+          cursor: pointer; transition: 0.2s ease;
+        }
+        .snav-mini-cta:hover { background: #5A1EEF; }
+
         /* ── Responsive ── */
         @media (max-width: 1023px) {
           .snav-bar { padding: 0 20px; }
@@ -569,19 +638,106 @@ export default function SearchNavbar() {
             )}
 
             {/* Wishlist */}
-            <button className="snav-icon-btn">
-              <Heart size={20} strokeWidth={1.8} />
-              <span className="snav-icon-label">Wishlist</span>
-            </button>
+            <div
+              className="snav-panel-wrap"
+              onMouseEnter={() => openPanel("wishlist")}
+              onMouseLeave={closePanel}
+            >
+              <button className="snav-icon-btn" onClick={() => navigate("/women")}>
+                <Heart size={20} strokeWidth={1.8} className={wishlistItems.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
+                {wishlistItems.length > 0 && (
+                  <span className="snav-badge">{wishlistItems.length > 99 ? "99+" : wishlistItems.length}</span>
+                )}
+                <span className="snav-icon-label">Wishlist</span>
+              </button>
+
+              {activePanel === "wishlist" && (
+                <div className="snav-mini-panel" onMouseEnter={keepPanel} onMouseLeave={closePanel}>
+                  <div className="snav-mini-hdr">
+                    <div className="snav-mini-hdr-icon" style={{ background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" }}>
+                      <Heart size={15} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="snav-mini-title">Wishlist</div>
+                      <div className="snav-mini-sub">{wishlistItems.length} saved {wishlistItems.length === 1 ? "item" : "items"}</div>
+                    </div>
+                  </div>
+                  {wishlistItems.length === 0 ? (
+                    <div className="snav-mini-empty">
+                      <div className="snav-mini-empty-icon"><Heart size={20} strokeWidth={1.8} /></div>
+                      <div className="snav-mini-empty-text">Nothing saved yet</div>
+                      <div className="snav-mini-empty-sub">Tap the heart on any product to save it here</div>
+                    </div>
+                  ) : (
+                    <div className="snav-mini-list">
+                      {wishlistItems.slice(0, 5).map((item) => (
+                        <div key={item.id} className="snav-mini-row" onClick={() => { navigate(`/product/${item.id}`); setActivePanel(null); }}>
+                          <div className="snav-mini-thumb"><img src={item.image} alt="" /></div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div className="snav-mini-name">{item.name}</div>
+                            <div className="snav-mini-price">₹{Number(item.price).toLocaleString("en-IN")}</div>
+                          </div>
+                          <button
+                            className="snav-mini-remove"
+                            onClick={(e) => { e.stopPropagation(); removeFromWishlist(item.id); }}
+                            title="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <button className="snav-mini-cta" onClick={() => { navigate("/women"); setActivePanel(null); }}>
+                    {wishlistItems.length > 0 ? "Continue Shopping" : "Browse & Save"}
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Cart / Bag */}
-            <button className="snav-icon-btn" onClick={() => navigate("/cart")}>
-              <ShoppingBag size={20} strokeWidth={1.8} />
-              {totalQty > 0 && (
-                <span className="snav-badge">{totalQty > 99 ? "99+" : totalQty}</span>
+            <div
+              className="snav-panel-wrap"
+              onMouseEnter={() => openPanel("cart")}
+              onMouseLeave={closePanel}
+            >
+              <button className="snav-icon-btn" onClick={() => navigate("/cart")}>
+                <ShoppingBag size={20} strokeWidth={1.8} />
+                {totalQty > 0 && (
+                  <span className="snav-badge">{totalQty > 99 ? "99+" : totalQty}</span>
+                )}
+                <span className="snav-icon-label">Bag</span>
+              </button>
+
+              {activePanel === "cart" && (
+                <div className="snav-mini-panel" onMouseEnter={keepPanel} onMouseLeave={closePanel}>
+                  <div className="snav-mini-hdr">
+                    <div className="snav-mini-hdr-icon" style={{ background: "linear-gradient(135deg,#6A2CFF,#9B6DFF)" }}>
+                      <ShoppingBag size={15} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="snav-mini-title">My Cart</div>
+                      <div className="snav-mini-sub">{totalQty} {totalQty === 1 ? "item" : "items"}</div>
+                    </div>
+                  </div>
+                  {totalQty === 0 ? (
+                    <div className="snav-mini-empty">
+                      <div className="snav-mini-empty-icon"><ShoppingBag size={20} strokeWidth={1.8} /></div>
+                      <div className="snav-mini-empty-text">Your cart is empty</div>
+                      <div className="snav-mini-empty-sub">Add products and they'll show up here</div>
+                    </div>
+                  ) : (
+                    <div className="snav-mini-empty">
+                      <div className="snav-mini-empty-text">{totalQty} {totalQty === 1 ? "item" : "items"} in your bag</div>
+                      <div className="snav-mini-empty-sub">Review and checkout when you're ready</div>
+                    </div>
+                  )}
+                  <button className="snav-mini-cta" onClick={() => { navigate("/cart"); setActivePanel(null); }}>
+                    View Cart
+                  </button>
+                </div>
               )}
-              <span className="snav-icon-label">Bag</span>
-            </button>
+            </div>
 
           </div>
         </div>
