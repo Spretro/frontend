@@ -51,6 +51,14 @@ function saveRecent(q) {
   localStorage.setItem(RECENT_KEY, JSON.stringify([q, ...prev]));
 }
 
+const PANEL_CARD =
+  "absolute right-0 top-[calc(100%+8px)] bg-white border border-[#F0EAFF] overflow-hidden z-[1001] rounded-[18px] shadow-[0_12px_48px_rgba(0,0,0,0.13),0_4px_16px_rgba(106,44,255,0.1)] animate-[snavDrop_0.16s_ease]";
+const ICON_BTN =
+  "relative flex flex-col items-center justify-center gap-[3px] w-[58px] h-[52px] border-none bg-transparent cursor-pointer rounded-[10px] text-[#444] transition-all duration-150 hover:bg-[#F5F5F7] hover:text-[#6A2CFF] max-[767px]:w-10 max-[767px]:h-10";
+const ICON_LABEL = "text-[10px] font-bold text-inherit tracking-[0.02em] whitespace-nowrap max-[767px]:hidden";
+const BADGE =
+  "absolute top-[6px] right-[10px] min-w-[16px] h-4 px-[3px] rounded-lg bg-[linear-gradient(135deg,#EC4899,#F97316)] text-[9px] font-extrabold text-white flex items-center justify-center";
+
 export default function SearchNavbar() {
   const navigate   = useNavigate();
   const location   = useLocation();
@@ -95,653 +103,311 @@ export default function SearchNavbar() {
   const showDropdown = focused && (recent.length > 0 || TRENDING.length > 0);
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    <nav className="sticky top-0 z-[999] bg-white font-inter shadow-[0_1px_0_#EEEEEE,0_2px_12px_rgba(0,0,0,0.05)]">
+      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center px-8 max-[1023px]:px-5 max-[767px]:h-[58px] max-[767px]:gap-2 max-[767px]:px-3.5">
 
-        .snav {
-          position: sticky;
-          top: 0;
-          z-index: 999;
-          background: white;
-          box-shadow: 0 1px 0 #EEEEEE, 0 2px 12px rgba(0,0,0,0.05);
-          font-family: 'Inter', sans-serif;
-        }
+        {/* Logo */}
+        <a
+          href="/"
+          className="mr-9 shrink-0 cursor-pointer whitespace-nowrap text-[30px] font-extrabold tracking-[-1.2px] text-[#111] no-underline max-[1023px]:mr-6 max-[1023px]:text-[24px] max-[767px]:mr-0 max-[767px]:text-[22px]"
+          onClick={(e) => { e.preventDefault(); navigate("/"); }}
+        >
+          SPRETRO<span className="inline-block bg-[linear-gradient(135deg,#3D0ECC_0%,#6A2CFF_45%,#9B6DFF_100%)] bg-clip-text text-transparent">.</span>
+        </a>
 
-        /* ── Main bar ── */
-        .snav-bar {
-          height: 72px;
-          display: flex;
-          align-items: center;
-          gap: 0;
-          padding: 0 32px;
-          max-width: 1440px;
-          margin: 0 auto;
-        }
-
-        /* ── Logo ── */
-        .snav-logo {
-          font-size: 30px;
-          font-weight: 800;
-          letter-spacing: -1.2px;
-          cursor: pointer;
-          white-space: nowrap;
-          flex-shrink: 0;
-          margin-right: 36px;
-          text-decoration: none;
-          color: #111;
-        }
-        .snav-logo-dot {
-          display: inline-block;
-          color: transparent;
-          background: linear-gradient(135deg, #3D0ECC 0%, #6A2CFF 45%, #9B6DFF 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        /* ── Nav links ── */
-        .snav-links {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          flex-shrink: 0;
-        }
-        .snav-link {
-          padding: 6px 14px;
-          font-size: 13px;
-          font-weight: 700;
-          color: #444;
-          cursor: pointer;
-          white-space: nowrap;
-          text-decoration: none;
-          border-radius: 8px;
-          transition: 0.15s ease;
-          letter-spacing: 0.01em;
-          position: relative;
-        }
-        .snav-link:hover { color: #6A2CFF; background: #F5F0FF; }
-        .snav-link.active { color: #6A2CFF; }
-        .snav-link.hot { color: #E83E6C; }
-        .snav-link.hot:hover { background: #FFF0F5; color: #E83E6C; }
-
-        /* nav dropdown (AJIO-style) */
-        .snav-nav-item { position: relative; display: flex; align-items: center; }
-        .snav-link-btn {
-          display: flex; align-items: center; gap: 3px;
-          background: none; border: none; font-family: inherit;
-        }
-        .snav-caret { color: #aaa; transition: transform 0.2s ease, color 0.2s ease; flex-shrink: 0; }
-        .snav-nav-item:hover .snav-caret { color: #6A2CFF; }
-        .snav-nav-item.open .snav-caret { transform: rotate(180deg); color: #6A2CFF; }
-        .snav-nav-dropdown {
-          position: absolute;
-          top: calc(100% + 10px);
-          left: 0;
-          min-width: 200px;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 16px 48px rgba(15,23,42,0.13), 0 4px 16px rgba(106,44,255,0.08);
-          border: 1px solid #ECE7FF;
-          padding: 7px;
-          z-index: 1001;
-          animation: snavDrop 0.16s ease;
-        }
-        .snav-nav-dropdown::before {
-          content: ''; position: absolute; top: -10px; left: 0; right: 0; height: 10px;
-        }
-        .snav-nav-dropdown-item {
-          display: block; width: 100%; text-align: left; border: none;
-          background: transparent; border-radius: 9px; padding: 8px 12px;
-          font-size: 13px; font-weight: 600; color: #3A356B; cursor: pointer;
-          transition: 0.14s ease;
-        }
-        .snav-nav-dropdown-item:hover { background: #F5F0FF; color: #6A2CFF; }
-
-        /* ── Spacer ── */
-        .snav-spacer { flex: 1; }
-
-        /* ── Search ── */
-        .snav-search-wrap {
-          width: 340px;
-          flex-shrink: 0;
-          position: relative;
-          margin: 0 20px;
-        }
-        .snav-search-box {
-          width: 100%;
-          height: 44px;
-          background: #F5F5F7;
-          border: 1.5px solid transparent;
-          border-radius: 100px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 0 14px;
-          transition: all 0.2s ease;
-          cursor: text;
-        }
-        .snav-search-box.active {
-          background: white;
-          border-color: #6A2CFF;
-          box-shadow: 0 0 0 4px rgba(106,44,255,0.08);
-        }
-        .snav-input {
-          flex: 1;
-          border: none;
-          outline: none;
-          background: transparent;
-          font-size: 13px;
-          font-weight: 400;
-          color: #111;
-          font-family: 'Inter', sans-serif;
-          min-width: 0;
-        }
-        .snav-input::placeholder { color: #999; }
-
-        /* search dropdown */
-        .snav-dropdown {
-          position: absolute;
-          top: calc(100% + 8px);
-          left: 0;
-          right: 0;
-          background: white;
-          border-radius: 18px;
-          box-shadow: 0 8px 40px rgba(0,0,0,0.13);
-          border: 1px solid #EEEEEE;
-          z-index: 1001;
-          overflow: hidden;
-          animation: snavDrop 0.15s ease;
-        }
-        @keyframes snavDrop { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-        .snav-drop-section { padding: 14px 18px; }
-        .snav-drop-section + .snav-drop-section { border-top: 1px solid #F5F5F7; }
-        .snav-drop-title {
-          font-size: 10px; font-weight: 800; text-transform: uppercase;
-          letter-spacing: 0.12em; color: #999; margin-bottom: 9px;
-          display: flex; align-items: center; justify-content: space-between;
-        }
-        .snav-drop-item {
-          display: flex; align-items: center; gap: 10px;
-          padding: 7px 8px; border-radius: 9px; cursor: pointer;
-          font-size: 13px; font-weight: 500; color: #333; transition: 0.14s;
-        }
-        .snav-drop-item:hover { background: #F3EEFF; color: #6A2CFF; }
-        .snav-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-        .snav-pill {
-          padding: 5px 13px; background: #F5F5F7; border-radius: 20px;
-          font-size: 12px; font-weight: 600; color: #555; cursor: pointer; transition: 0.14s;
-        }
-        .snav-pill:hover { background: #F3EEFF; color: #6A2CFF; }
-
-        /* ── Right icons ── */
-        .snav-icons {
-          display: flex;
-          align-items: center;
-          gap: 0;
-          flex-shrink: 0;
-        }
-        .snav-icon-btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 3px;
-          width: 58px;
-          height: 52px;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          border-radius: 10px;
-          transition: 0.15s ease;
-          position: relative;
-          color: #444;
-        }
-        .snav-icon-btn:hover { background: #F5F5F7; color: #6A2CFF; }
-        .snav-icon-label {
-          font-size: 10px;
-          font-weight: 700;
-          color: inherit;
-          letter-spacing: 0.02em;
-          white-space: nowrap;
-        }
-        .snav-badge {
-          position: absolute;
-          top: 6px;
-          right: 10px;
-          min-width: 16px;
-          height: 16px;
-          border-radius: 8px;
-          background: linear-gradient(135deg, #EC4899, #F97316);
-          font-size: 9px;
-          font-weight: 800;
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 3px;
-        }
-
-        /* ── User panel ── */
-        .snav-user-wrap { position: relative; }
-        .snav-user-panel {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          width: 240px;
-          background: white;
-          border-radius: 18px;
-          box-shadow: 0 12px 48px rgba(0,0,0,0.13), 0 4px 16px rgba(106,44,255,0.1);
-          border: 1px solid #F0EAFF;
-          overflow: hidden;
-          z-index: 1001;
-          animation: snavDrop 0.16s ease;
-        }
-        .snav-panel-hdr {
-          padding: 13px 14px 11px;
-          background: linear-gradient(135deg,#1a1a2e,#16213e);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .snav-panel-avatar {
-          width: 30px; height: 30px; border-radius: 8px;
-          background: rgba(106,44,255,0.4);
-          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .snav-panel-name { font-size: 13px; font-weight: 800; color: white; line-height: 1.2; }
-        .snav-panel-sub  { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; margin-top: 1px; }
-        .snav-panel-body { padding: 6px 5px 8px; }
-        .snav-panel-row {
-          display: flex; align-items: center; gap: 9px;
-          padding: 8px 9px; border-radius: 10px;
-          cursor: pointer; font-size: 12px; font-weight: 600;
-          color: #333; background: transparent; border: none;
-          width: 100%; text-align: left; transition: 0.13s ease;
-        }
-        .snav-panel-row:hover { background: #F5F0FF; color: #6A2CFF; }
-        .snav-panel-ico {
-          width: 26px; height: 26px; border-radius: 7px;
-          background: #F5F5F7;
-          display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0; color: #555; transition: 0.13s ease;
-        }
-        .snav-panel-row:hover .snav-panel-ico { background: #EDE4FF; color: #6A2CFF; }
-        .snav-panel-sep { height: 1px; background: #F3F3F6; margin: 3px 8px; }
-
-        /* ── Wishlist / Cart mini panels ── */
-        .snav-panel-wrap { position: relative; }
-        .snav-mini-panel {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          width: 260px;
-          background: white;
-          border-radius: 18px;
-          box-shadow: 0 12px 48px rgba(0,0,0,0.13), 0 4px 16px rgba(106,44,255,0.1);
-          border: 1px solid #F0EAFF;
-          overflow: hidden;
-          z-index: 1001;
-          animation: snavDrop 0.16s ease;
-        }
-        .snav-mini-hdr {
-          display: flex; align-items: center; gap: 10px;
-          padding: 13px 14px; border-bottom: 1px solid #F3F3F6;
-        }
-        .snav-mini-hdr-icon {
-          width: 32px; height: 32px; border-radius: 9px;
-          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .snav-mini-title { font-size: 13px; font-weight: 800; color: #111; line-height: 1.1; }
-        .snav-mini-sub { font-size: 11px; color: #888; font-weight: 500; margin-top: 1px; }
-        .snav-mini-empty {
-          display: flex; flex-direction: column; align-items: center; gap: 6px;
-          padding: 20px 16px 8px; text-align: center;
-        }
-        .snav-mini-empty-icon {
-          width: 46px; height: 46px; border-radius: 14px; background: #F5F0FF;
-          display: flex; align-items: center; justify-content: center; color: #6A2CFF;
-        }
-        .snav-mini-empty-text { font-size: 13px; font-weight: 700; color: #111; }
-        .snav-mini-empty-sub { font-size: 11px; color: #aaa; font-weight: 500; line-height: 1.4; }
-        .snav-mini-list {
-          max-height: 220px; overflow-y: auto;
-          display: flex; flex-direction: column; gap: 6px; padding: 6px;
-        }
-        .snav-mini-row {
-          display: flex; align-items: center; gap: 10px;
-          padding: 6px; border-radius: 10px; cursor: pointer;
-        }
-        .snav-mini-row:hover { background: #F5F0FF; }
-        .snav-mini-thumb {
-          width: 40px; height: 40px; border-radius: 8px; overflow: hidden;
-          background: #F5F3FF; flex-shrink: 0;
-        }
-        .snav-mini-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-        .snav-mini-name {
-          font-size: 12px; font-weight: 700; color: #111;
-          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .snav-mini-price { font-size: 11px; font-weight: 800; color: #333; margin-top: 1px; }
-        .snav-mini-remove {
-          width: 22px; height: 22px; border-radius: 50%; border: none;
-          background: #FFF0F5; color: #E83E6C; cursor: pointer; flex-shrink: 0;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 13px; font-weight: 700;
-        }
-        .snav-mini-cta {
-          display: block; width: calc(100% - 28px); margin: 12px 14px 14px;
-          padding: 10px; border-radius: 12px; background: #6A2CFF; color: white;
-          font-size: 12px; font-weight: 700; text-align: center; border: none;
-          cursor: pointer; transition: 0.2s ease;
-        }
-        .snav-mini-cta:hover { background: #5A1EEF; }
-
-        /* ── Responsive ── */
-        @media (max-width: 1023px) {
-          .snav-bar { padding: 0 20px; }
-          .snav-search-wrap { width: 260px; margin: 0 12px; }
-          .snav-link { padding: 5px 10px; font-size: 12px; }
-          .snav-logo { font-size: 24px; margin-right: 24px; }
-        }
-        @media (max-width: 767px) {
-          .snav-bar { padding: 0 14px; height: 58px; gap: 8px; }
-          .snav-logo { font-size: 22px; margin-right: 0; }
-          .snav-links { display: none; }
-          .snav-search-wrap { width: auto; flex: 1; margin: 0 8px; }
-          .snav-icon-label { display: none; }
-          .snav-icon-btn { width: 40px; height: 40px; }
-          .snav-spacer { display: none; }
-        }
-      `}</style>
-
-      <nav className="snav">
-        <div className="snav-bar">
-
-          {/* Logo */}
-          <a
-            href="/"
-            className="snav-logo"
-            onClick={(e) => { e.preventDefault(); navigate("/"); }}
-          >
-            SPRETRO<span className="snav-logo-dot">.</span>
-          </a>
-
-          {/* Nav links */}
-          <div className="snav-links">
-            {NAV_LINKS.map((l) => {
-              const subs = NAV_SUBCATS[l.path];
-              const topTo = subs ? groupPath(l.path.replace(/^\//, "")) : l.path;
-              const isActive = location.pathname === l.path
-                || (subs && navGroupParam === l.path.replace(/^\//, ""));
-              return (
-                <div
-                  key={l.path}
-                  className={`snav-nav-item${activeNav === l.label ? " open" : ""}`}
-                  onMouseEnter={() => subs && openNav(l.label)}
-                  onMouseLeave={() => subs && closeNav()}
-                >
-                  <a
-                    href={topTo}
-                    className={`snav-link${l.hot ? " hot" : ""}${isActive ? " active" : ""}`}
-                    onClick={(e) => { e.preventDefault(); navigate(topTo); setActiveNav(null); }}
-                  >
-                    {l.label}
-                  </a>
-                  {subs && <ChevronDown size={12} strokeWidth={2.5} className="snav-caret" />}
-
-                  {subs && activeNav === l.label && (
-                    <div className="snav-nav-dropdown" onMouseEnter={keepNav} onMouseLeave={closeNav}>
-                      {subs.map((sc) => (
-                        <button
-                          key={sc.label}
-                          className="snav-nav-dropdown-item"
-                          onClick={() => { navigate(sc.to); setActiveNav(null); }}
-                        >
-                          {sc.label === "All" ? `All ${l.label}` : sc.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="snav-spacer" />
-
-          {/* Search */}
-          <div
-            className="snav-search-wrap"
-            onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }}
-          >
-            <div className={`snav-search-box${focused ? " active" : ""}`}>
-              <Search size={16} strokeWidth={2} style={{ color: focused ? "#6A2CFF" : "#aaa", flexShrink: 0 }} />
-              <input
-                ref={inputRef}
-                className="snav-input"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onKeyDown={(e) => e.key === "Enter" && doSearch()}
-                placeholder="Search for products, brands and more"
-                autoComplete="off"
-              />
-              {query && (
-                <button
-                  onClick={() => { setQuery(""); inputRef.current?.focus(); }}
-                  style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", color:"#999", flexShrink:0, padding:0 }}
-                >
-                  <X size={15} strokeWidth={2.5} />
-                </button>
-              )}
-            </div>
-
-            {showDropdown && (
-              <div className="snav-dropdown">
-                {recent.length > 0 && (
-                  <div className="snav-drop-section">
-                    <div className="snav-drop-title">
-                      <span>Recent</span>
-                      <button onClick={clearRecent} style={{ background:"none", border:"none", cursor:"pointer", color:"#6A2CFF", fontSize:11, fontWeight:700 }}>Clear</button>
-                    </div>
-                    {recent.map((r) => (
-                      <div key={r} className="snav-drop-item" onClick={() => { setQuery(r); doSearch(r); }}>
-                        <Clock size={13} strokeWidth={2} style={{ color:"#bbb", flexShrink:0 }} />
-                        <span style={{ flex:1 }}>{r}</span>
-                        <ArrowRight size={13} strokeWidth={2} style={{ color:"#ddd" }} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="snav-drop-section">
-                  <div className="snav-drop-title">
-                    <span><TrendingUp size={10} style={{ display:"inline", marginRight:4 }} />Trending</span>
-                  </div>
-                  <div className="snav-pills">
-                    {TRENDING.map((t) => (
-                      <div key={t} className="snav-pill" onClick={() => { setQuery(t); doSearch(t); }}>🔥 {t}</div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right icons */}
-          <div className="snav-icons">
-
-            {/* Profile / Account */}
-            {!isLoggedIn ? (
-              <button className="snav-icon-btn" onClick={() => navigate("/login")}>
-                <User size={20} strokeWidth={1.8} />
-                <span className="snav-icon-label">Profile</span>
-              </button>
-            ) : (
+        {/* Nav links */}
+        <div className="flex shrink-0 items-center gap-1 max-[767px]:hidden">
+          {NAV_LINKS.map((l) => {
+            const subs = NAV_SUBCATS[l.path];
+            const topTo = subs ? groupPath(l.path.replace(/^\//, "")) : l.path;
+            const isActive = location.pathname === l.path
+              || (subs && navGroupParam === l.path.replace(/^\//, ""));
+            const isOpen = activeNav === l.label;
+            return (
               <div
-                className="snav-user-wrap"
-                onMouseEnter={() => openPanel("user")}
-                onMouseLeave={closePanel}
+                key={l.path}
+                className="group relative flex items-center"
+                onMouseEnter={() => subs && openNav(l.label)}
+                onMouseLeave={() => subs && closeNav()}
               >
-                <button
-                  className="snav-icon-btn"
-                  onClick={() => { navigate("/account"); setActivePanel(null); }}
+                <a
+                  href={topTo}
+                  className={`relative cursor-pointer whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-bold tracking-[0.01em] no-underline transition-all duration-150 ${
+                    l.hot
+                      ? "text-[#E83E6C] hover:bg-[#FFF0F5]"
+                      : `hover:bg-[#F5F0FF] hover:text-[#6A2CFF] ${isActive ? "text-[#6A2CFF]" : "text-[#444]"}`
+                  }`}
+                  onClick={(e) => { e.preventDefault(); navigate(topTo); setActiveNav(null); }}
                 >
-                  <User size={20} strokeWidth={1.8} />
-                  <span className="snav-icon-label">Profile</span>
-                </button>
+                  {l.label}
+                </a>
+                {subs && (
+                  <ChevronDown
+                    size={12}
+                    strokeWidth={2.5}
+                    className={`shrink-0 transition-all duration-200 group-hover:text-[#6A2CFF] ${isOpen ? "rotate-180 text-[#6A2CFF]" : "text-[#aaa]"}`}
+                  />
+                )}
 
-                {activePanel === "user" && (
-                  <div className="snav-user-panel" onMouseEnter={keepPanel} onMouseLeave={closePanel}>
-                    <div className="snav-panel-hdr" onClick={() => { navigate("/account"); setActivePanel(null); }}>
-                      <div className="snav-panel-avatar">
-                        <User size={14} strokeWidth={2} color="white" />
-                      </div>
-                      <div>
-                        <div className="snav-panel-name">{user?.full_name || "My Account"}</div>
-                        <div className="snav-panel-sub">{user?.email || user?.phone || "View your account"}</div>
-                      </div>
-                    </div>
-                    <div className="snav-panel-body">
-                      {[
-                        { icon: <Package    size={13} strokeWidth={2} />, label: "My Orders",      path: "/account" },
-                        { icon: <Heart      size={13} strokeWidth={2} />, label: "Wishlist",       path: null },
-                        { icon: <Star       size={13} strokeWidth={2} />, label: "Rewards",        path: "/account" },
-                        { icon: <Settings   size={13} strokeWidth={2} />, label: "Settings",       path: "/account" },
-                        { icon: <HelpCircle size={13} strokeWidth={2} />, label: "Help & Support", path: "/account" },
-                      ].map((item) => (
-                        <button
-                          key={item.label}
-                          className="snav-panel-row"
-                          onClick={() => { if (item.path) { navigate(item.path); setActivePanel(null); } }}
-                        >
-                          <span className="snav-panel-ico">{item.icon}</span>
-                          {item.label}
-                        </button>
-                      ))}
-                      <div className="snav-panel-sep" />
+                {subs && isOpen && (
+                  <div
+                    className="absolute left-0 top-[calc(100%+10px)] z-[1001] min-w-[200px] rounded-2xl border border-[#ECE7FF] bg-white p-[7px] shadow-[0_16px_48px_rgba(15,23,42,0.13),0_4px_16px_rgba(106,44,255,0.08)] animate-[snavDrop_0.16s_ease] before:absolute before:-top-[10px] before:left-0 before:right-0 before:h-[10px] before:content-['']"
+                    onMouseEnter={keepNav}
+                    onMouseLeave={closeNav}
+                  >
+                    {subs.map((sc) => (
                       <button
-                        className="snav-panel-row"
-                        style={{ color:"#E83E6C" }}
-                        onClick={() => { logout(); setActivePanel(null); navigate("/"); }}
+                        key={sc.label}
+                        className="block w-full cursor-pointer rounded-[9px] border-none bg-transparent px-3 py-2 text-left text-[13px] font-semibold text-[#3A356B] transition-all duration-150 hover:bg-[#F5F0FF] hover:text-[#6A2CFF]"
+                        onClick={() => { navigate(sc.to); setActiveNav(null); }}
                       >
-                        <span className="snav-panel-ico" style={{ background:"#FFF0F5", color:"#E83E6C" }}>
-                          <User size={13} strokeWidth={2} />
-                        </span>
-                        Sign Out
+                        {sc.label === "All" ? `All ${l.label}` : sc.label}
                       </button>
-                    </div>
+                    ))}
                   </div>
                 )}
               </div>
-            )}
-
-            {/* Wishlist */}
-            <div
-              className="snav-panel-wrap"
-              onMouseEnter={() => openPanel("wishlist")}
-              onMouseLeave={closePanel}
-            >
-              <button className="snav-icon-btn" onClick={() => navigate("/women")}>
-                <Heart size={20} strokeWidth={1.8} className={wishlistItems.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
-                {wishlistItems.length > 0 && (
-                  <span className="snav-badge">{wishlistItems.length > 99 ? "99+" : wishlistItems.length}</span>
-                )}
-                <span className="snav-icon-label">Wishlist</span>
-              </button>
-
-              {activePanel === "wishlist" && (
-                <div className="snav-mini-panel" onMouseEnter={keepPanel} onMouseLeave={closePanel}>
-                  <div className="snav-mini-hdr">
-                    <div className="snav-mini-hdr-icon" style={{ background: "linear-gradient(135deg,#FF6B9D,#FF4D7E)" }}>
-                      <Heart size={15} strokeWidth={2} color="white" />
-                    </div>
-                    <div>
-                      <div className="snav-mini-title">Wishlist</div>
-                      <div className="snav-mini-sub">{wishlistItems.length} saved {wishlistItems.length === 1 ? "item" : "items"}</div>
-                    </div>
-                  </div>
-                  {wishlistItems.length === 0 ? (
-                    <div className="snav-mini-empty">
-                      <div className="snav-mini-empty-icon"><Heart size={20} strokeWidth={1.8} /></div>
-                      <div className="snav-mini-empty-text">Nothing saved yet</div>
-                      <div className="snav-mini-empty-sub">Tap the heart on any product to save it here</div>
-                    </div>
-                  ) : (
-                    <div className="snav-mini-list">
-                      {wishlistItems.slice(0, 5).map((item) => (
-                        <div key={item.id} className="snav-mini-row" onClick={() => { navigate(`/product/${item.id}`); setActivePanel(null); }}>
-                          <div className="snav-mini-thumb"><img src={item.image} alt="" /></div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div className="snav-mini-name">{item.name}</div>
-                            <div className="snav-mini-price">₹{Number(item.price).toLocaleString("en-IN")}</div>
-                          </div>
-                          <button
-                            className="snav-mini-remove"
-                            onClick={(e) => { e.stopPropagation(); removeFromWishlist(item.id); }}
-                            title="Remove"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <button className="snav-mini-cta" onClick={() => { navigate("/women"); setActivePanel(null); }}>
-                    {wishlistItems.length > 0 ? "Continue Shopping" : "Browse & Save"}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Cart / Bag */}
-            <div
-              className="snav-panel-wrap"
-              onMouseEnter={() => openPanel("cart")}
-              onMouseLeave={closePanel}
-            >
-              <button className="snav-icon-btn" onClick={() => navigate("/cart")}>
-                <ShoppingBag size={20} strokeWidth={1.8} />
-                {totalQty > 0 && (
-                  <span className="snav-badge">{totalQty > 99 ? "99+" : totalQty}</span>
-                )}
-                <span className="snav-icon-label">Bag</span>
-              </button>
-
-              {activePanel === "cart" && (
-                <div className="snav-mini-panel" onMouseEnter={keepPanel} onMouseLeave={closePanel}>
-                  <div className="snav-mini-hdr">
-                    <div className="snav-mini-hdr-icon" style={{ background: "linear-gradient(135deg,#6A2CFF,#9B6DFF)" }}>
-                      <ShoppingBag size={15} strokeWidth={2} color="white" />
-                    </div>
-                    <div>
-                      <div className="snav-mini-title">My Cart</div>
-                      <div className="snav-mini-sub">{totalQty} {totalQty === 1 ? "item" : "items"}</div>
-                    </div>
-                  </div>
-                  {totalQty === 0 ? (
-                    <div className="snav-mini-empty">
-                      <div className="snav-mini-empty-icon"><ShoppingBag size={20} strokeWidth={1.8} /></div>
-                      <div className="snav-mini-empty-text">Your cart is empty</div>
-                      <div className="snav-mini-empty-sub">Add products and they'll show up here</div>
-                    </div>
-                  ) : (
-                    <div className="snav-mini-empty">
-                      <div className="snav-mini-empty-text">{totalQty} {totalQty === 1 ? "item" : "items"} in your bag</div>
-                      <div className="snav-mini-empty-sub">Review and checkout when you're ready</div>
-                    </div>
-                  )}
-                  <button className="snav-mini-cta" onClick={() => { navigate("/cart"); setActivePanel(null); }}>
-                    View Cart
-                  </button>
-                </div>
-              )}
-            </div>
-
-          </div>
+            );
+          })}
         </div>
-      </nav>
-    </>
+
+        <div className="flex-1 max-[767px]:hidden" />
+
+        {/* Search */}
+        <div
+          className="relative mx-5 w-[340px] shrink-0 max-[1023px]:mx-3 max-[1023px]:w-[260px] max-[767px]:mx-2 max-[767px]:w-auto max-[767px]:flex-1"
+          onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }}
+        >
+          <div
+            className={`flex h-11 w-full cursor-text items-center gap-2.5 rounded-full border-[1.5px] px-3.5 transition-all duration-200 ${
+              focused
+                ? "border-[#6A2CFF] bg-white shadow-[0_0_0_4px_rgba(106,44,255,0.08)]"
+                : "border-transparent bg-[#F5F5F7]"
+            }`}
+          >
+            <Search size={16} strokeWidth={2} className={`shrink-0 ${focused ? "text-[#6A2CFF]" : "text-[#aaa]"}`} />
+            <input
+              ref={inputRef}
+              className="min-w-0 flex-1 border-none bg-transparent text-[13px] font-normal text-[#111] outline-none placeholder:text-[#999]"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setFocused(true)}
+              onKeyDown={(e) => e.key === "Enter" && doSearch()}
+              placeholder="Search for products, brands and more"
+              autoComplete="off"
+            />
+            {query && (
+              <button
+                onClick={() => { setQuery(""); inputRef.current?.focus(); }}
+                className="flex shrink-0 cursor-pointer items-center border-none bg-transparent p-0 text-[#999] hover:text-[#666]"
+              >
+                <X size={15} strokeWidth={2.5} />
+              </button>
+            )}
+          </div>
+
+          {showDropdown && (
+            <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[1001] overflow-hidden rounded-[18px] border border-[#EEEEEE] bg-white shadow-[0_8px_40px_rgba(0,0,0,0.13)] animate-[snavDrop_0.15s_ease]">
+              {recent.length > 0 && (
+                <div className="px-[18px] py-[14px]">
+                  <div className="mb-[9px] flex items-center justify-between text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#999]">
+                    <span>Recent</span>
+                    <button onClick={clearRecent} className="cursor-pointer border-none bg-transparent text-[11px] font-bold text-[#6A2CFF]">Clear</button>
+                  </div>
+                  {recent.map((r) => (
+                    <div key={r} className="flex cursor-pointer items-center gap-2.5 rounded-[9px] px-2 py-[7px] text-[13px] font-medium text-[#333] transition-all duration-150 hover:bg-[#F3EEFF] hover:text-[#6A2CFF]" onClick={() => { setQuery(r); doSearch(r); }}>
+                      <Clock size={13} strokeWidth={2} className="shrink-0 text-[#bbb]" />
+                      <span className="flex-1">{r}</span>
+                      <ArrowRight size={13} strokeWidth={2} className="text-[#ddd]" />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className={`px-[18px] py-[14px] ${recent.length > 0 ? "border-t border-[#F5F5F7]" : ""}`}>
+                <div className="mb-[9px] flex items-center justify-between text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#999]">
+                  <span><TrendingUp size={10} className="mr-1 inline" />Trending</span>
+                </div>
+                <div className="flex flex-wrap gap-[7px]">
+                  {TRENDING.map((t) => (
+                    <div key={t} className="cursor-pointer rounded-[20px] bg-[#F5F5F7] px-[13px] py-[5px] text-[12px] font-semibold text-[#555] transition-all duration-150 hover:bg-[#F3EEFF] hover:text-[#6A2CFF]" onClick={() => { setQuery(t); doSearch(t); }}>🔥 {t}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right icons */}
+        <div className="flex shrink-0 items-center">
+
+          {/* Profile / Account */}
+          {!isLoggedIn ? (
+            <button className={ICON_BTN} onClick={() => navigate("/login")}>
+              <User size={20} strokeWidth={1.8} />
+              <span className={ICON_LABEL}>Profile</span>
+            </button>
+          ) : (
+            <div
+              className="relative"
+              onMouseEnter={() => openPanel("user")}
+              onMouseLeave={closePanel}
+            >
+              <button
+                className={ICON_BTN}
+                onClick={() => { navigate("/account"); setActivePanel(null); }}
+              >
+                <User size={20} strokeWidth={1.8} />
+                <span className={ICON_LABEL}>Profile</span>
+              </button>
+
+              {activePanel === "user" && (
+                <div className={`${PANEL_CARD} w-60`} onMouseEnter={keepPanel} onMouseLeave={closePanel}>
+                  <div className="flex cursor-pointer items-center gap-2.5 bg-[linear-gradient(135deg,#1a1a2e,#16213e)] px-[14px] pb-[11px] pt-[13px]" onClick={() => { navigate("/account"); setActivePanel(null); }}>
+                    <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-[rgba(106,44,255,0.4)]">
+                      <User size={14} strokeWidth={2} color="white" />
+                    </div>
+                    <div>
+                      <div className="text-[13px] font-extrabold leading-[1.2] text-white">{user?.full_name || "My Account"}</div>
+                      <div className="mt-px text-[11px] font-medium text-[rgba(255,255,255,0.5)]">{user?.email || user?.phone || "View your account"}</div>
+                    </div>
+                  </div>
+                  <div className="px-[5px] pb-2 pt-1.5">
+                    {[
+                      { icon: <Package    size={13} strokeWidth={2} />, label: "My Orders",      path: "/account" },
+                      { icon: <Heart      size={13} strokeWidth={2} />, label: "Wishlist",       path: null },
+                      { icon: <Star       size={13} strokeWidth={2} />, label: "Rewards",        path: "/account" },
+                      { icon: <Settings   size={13} strokeWidth={2} />, label: "Settings",       path: "/account" },
+                      { icon: <HelpCircle size={13} strokeWidth={2} />, label: "Help & Support", path: "/account" },
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        className="group/row flex w-full cursor-pointer items-center gap-[9px] rounded-[10px] border-none bg-transparent px-[9px] py-2 text-left text-[12px] font-semibold text-[#333] transition-all duration-150 hover:bg-[#F5F0FF] hover:text-[#6A2CFF]"
+                        onClick={() => { if (item.path) { navigate(item.path); setActivePanel(null); } }}
+                      >
+                        <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#F5F5F7] text-[#555] transition-all duration-150 group-hover/row:bg-[#EDE4FF] group-hover/row:text-[#6A2CFF]">{item.icon}</span>
+                        {item.label}
+                      </button>
+                    ))}
+                    <div className="mx-2 my-[3px] h-px bg-[#F3F3F6]" />
+                    <button
+                      className="flex w-full cursor-pointer items-center gap-[9px] rounded-[10px] border-none bg-transparent px-[9px] py-2 text-left text-[12px] font-semibold text-[#E83E6C] transition-all duration-150 hover:bg-[#FFF0F5]"
+                      onClick={() => { logout(); setActivePanel(null); navigate("/"); }}
+                    >
+                      <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] bg-[#FFF0F5] text-[#E83E6C]">
+                        <User size={13} strokeWidth={2} />
+                      </span>
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Wishlist */}
+          <div
+            className="relative"
+            onMouseEnter={() => openPanel("wishlist")}
+            onMouseLeave={closePanel}
+          >
+            <button className={ICON_BTN} onClick={() => navigate("/women")}>
+              <Heart size={20} strokeWidth={1.8} className={wishlistItems.length > 0 ? "fill-rose-500 text-rose-500" : ""} />
+              {wishlistItems.length > 0 && (
+                <span className={BADGE}>{wishlistItems.length > 99 ? "99+" : wishlistItems.length}</span>
+              )}
+              <span className={ICON_LABEL}>Wishlist</span>
+            </button>
+
+            {activePanel === "wishlist" && (
+              <div className={`${PANEL_CARD} w-[260px]`} onMouseEnter={keepPanel} onMouseLeave={closePanel}>
+                <div className="flex items-center gap-2.5 border-b border-[#F3F3F6] px-[14px] py-[13px]">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-[linear-gradient(135deg,#FF6B9D,#FF4D7E)]">
+                    <Heart size={15} strokeWidth={2} color="white" />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-extrabold leading-[1.1] text-[#111]">Wishlist</div>
+                    <div className="mt-px text-[11px] font-medium text-[#888]">{wishlistItems.length} saved {wishlistItems.length === 1 ? "item" : "items"}</div>
+                  </div>
+                </div>
+                {wishlistItems.length === 0 ? (
+                  <div className="flex flex-col items-center gap-1.5 px-4 pb-2 pt-5 text-center">
+                    <div className="flex h-[46px] w-[46px] items-center justify-center rounded-[14px] bg-[#F5F0FF] text-[#6A2CFF]"><Heart size={20} strokeWidth={1.8} /></div>
+                    <div className="text-[13px] font-bold text-[#111]">Nothing saved yet</div>
+                    <div className="text-[11px] font-medium leading-[1.4] text-[#aaa]">Tap the heart on any product to save it here</div>
+                  </div>
+                ) : (
+                  <div className="flex max-h-[220px] flex-col gap-1.5 overflow-y-auto p-1.5">
+                    {wishlistItems.slice(0, 5).map((item) => (
+                      <div key={item.id} className="flex cursor-pointer items-center gap-2.5 rounded-[10px] p-1.5 hover:bg-[#F5F0FF]" onClick={() => { navigate(`/product/${item.id}`); setActivePanel(null); }}>
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[#F5F3FF]"><img src={item.image} alt="" className="h-full w-full object-contain p-[3px]" /></div>
+                        <div className="min-w-0 flex-1">
+                          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[12px] font-bold text-[#111]">{item.name}</div>
+                          <div className="mt-px text-[11px] font-extrabold text-[#333]">₹{Number(item.price).toLocaleString("en-IN")}</div>
+                        </div>
+                        <button
+                          className="flex h-[22px] w-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-[#FFF0F5] text-[13px] font-bold text-[#E83E6C]"
+                          onClick={(e) => { e.stopPropagation(); removeFromWishlist(item.id); }}
+                          title="Remove"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button className="mx-[14px] mb-3.5 mt-3 block w-[calc(100%-28px)] cursor-pointer rounded-xl border-none bg-[#6A2CFF] p-2.5 text-center text-[12px] font-bold text-white transition-all duration-200 hover:bg-[#5A1EEF]" onClick={() => { navigate("/women"); setActivePanel(null); }}>
+                  {wishlistItems.length > 0 ? "Continue Shopping" : "Browse & Save"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Cart / Bag */}
+          <div
+            className="relative"
+            onMouseEnter={() => openPanel("cart")}
+            onMouseLeave={closePanel}
+          >
+            <button className={ICON_BTN} onClick={() => navigate("/cart")}>
+              <ShoppingBag size={20} strokeWidth={1.8} />
+              {totalQty > 0 && (
+                <span className={BADGE}>{totalQty > 99 ? "99+" : totalQty}</span>
+              )}
+              <span className={ICON_LABEL}>Bag</span>
+            </button>
+
+            {activePanel === "cart" && (
+              <div className={`${PANEL_CARD} w-[260px]`} onMouseEnter={keepPanel} onMouseLeave={closePanel}>
+                <div className="flex items-center gap-2.5 border-b border-[#F3F3F6] px-[14px] py-[13px]">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-[linear-gradient(135deg,#6A2CFF,#9B6DFF)]">
+                    <ShoppingBag size={15} strokeWidth={2} color="white" />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-extrabold leading-[1.1] text-[#111]">My Cart</div>
+                    <div className="mt-px text-[11px] font-medium text-[#888]">{totalQty} {totalQty === 1 ? "item" : "items"}</div>
+                  </div>
+                </div>
+                {totalQty === 0 ? (
+                  <div className="flex flex-col items-center gap-1.5 px-4 pb-2 pt-5 text-center">
+                    <div className="flex h-[46px] w-[46px] items-center justify-center rounded-[14px] bg-[#F5F0FF] text-[#6A2CFF]"><ShoppingBag size={20} strokeWidth={1.8} /></div>
+                    <div className="text-[13px] font-bold text-[#111]">Your cart is empty</div>
+                    <div className="text-[11px] font-medium leading-[1.4] text-[#aaa]">Add products and they'll show up here</div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-1.5 px-4 pb-2 pt-5 text-center">
+                    <div className="text-[13px] font-bold text-[#111]">{totalQty} {totalQty === 1 ? "item" : "items"} in your bag</div>
+                    <div className="text-[11px] font-medium leading-[1.4] text-[#aaa]">Review and checkout when you're ready</div>
+                  </div>
+                )}
+                <button className="mx-[14px] mb-3.5 mt-3 block w-[calc(100%-28px)] cursor-pointer rounded-xl border-none bg-[#6A2CFF] p-2.5 text-center text-[12px] font-bold text-white transition-all duration-200 hover:bg-[#5A1EEF]" onClick={() => { navigate("/cart"); setActivePanel(null); }}>
+                  View Cart
+                </button>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </nav>
   );
 }
