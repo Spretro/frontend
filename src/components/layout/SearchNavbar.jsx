@@ -242,9 +242,12 @@ export default function SearchNavbar() {
 
           {/* Profile / Account */}
           {!isLoggedIn ? (
-            <button className={ICON_BTN} onClick={() => navigate("/login")}>
-              <User size={20} strokeWidth={1.8} />
-              <span className={ICON_LABEL}>Profile</span>
+            <button
+              className="mx-1 flex h-9 items-center gap-1.5 rounded-full border-none bg-[#6A2CFF] px-4 text-[13px] font-bold text-white transition-all duration-150 hover:bg-[#5A1EEF] max-[767px]:px-3"
+              onClick={() => navigate("/login")}
+            >
+              <User size={16} strokeWidth={2} />
+              Sign In
             </button>
           ) : (
             <div

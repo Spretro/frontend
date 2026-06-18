@@ -358,13 +358,23 @@ export default function Navbar() {
               onMouseEnter={() => isAuthenticated && openPanel("user")}
               onMouseLeave={closePanel}
             >
-              <button
-                className="relative w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:w-9 max-[767px]:h-9 max-[767px]:rounded-[10px]"
-                onClick={() => navigate(isAuthenticated ? "/account" : "/login")}
-                title={isAuthenticated ? "My Account" : "Sign In"}
-              >
-                <User size={19} strokeWidth={1.9} />
-              </button>
+              {isAuthenticated ? (
+                <button
+                  className="relative w-[42px] h-[42px] border-none rounded-xl bg-[#FAF5FF] flex items-center justify-center cursor-pointer text-[#111] transition-all duration-200 hover:bg-[#F3EEFF] hover:-translate-y-px max-[767px]:w-9 max-[767px]:h-9 max-[767px]:rounded-[10px]"
+                  onClick={() => navigate("/account")}
+                  title="My Account"
+                >
+                  <User size={19} strokeWidth={1.9} />
+                </button>
+              ) : (
+                <button
+                  className="flex items-center gap-1.5 h-[42px] px-4 border-none rounded-xl bg-[#6A2CFF] text-white text-[13px] font-bold cursor-pointer transition-all duration-200 hover:bg-[#5A1EEF] hover:-translate-y-px max-[767px]:h-9 max-[767px]:px-3 max-[767px]:rounded-[10px]"
+                  onClick={() => navigate("/login")}
+                >
+                  <User size={17} strokeWidth={2} />
+                  <span className="max-[767px]:hidden">Sign In</span>
+                </button>
+              )}
 
               {isAuthenticated && activePanel === "user" && (
                 <div
