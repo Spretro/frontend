@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
   BadgePercent,
@@ -45,7 +47,10 @@ export default function ProductInfo({
   onClearError = () => { },
   onReviewClick = () => { },
 }) {
+  const navigate = useNavigate();
+  const [isAdded, setIsAdded] = useState(false);
   const { isWishlisted, toggleWishlist } = useWishlist();
+
   const wishlisted = isWishlisted(product.id);
 
   const discount = calculateDiscount(product.price, product.originalPrice);
@@ -314,14 +319,26 @@ export default function ProductInfo({
         </button>
         <button
           type="button"
-          onClick={onAddToCart}
-          disabled={addToCartDisabled}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gray-950 px-4 text-sm font-black text-white transition-all duration-200 hover:scale-[1.02] hover:bg-[#6A2CFF] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
+          onClick={() => {
+            if (isAdded) {
+              navigate("/cart");
+            } else {
+              onAddToCart();
+              setIsAdded(true);
+            }
+          }}
+          disabled={!isAdded && addToCartDisabled}
+          className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            isAdded
+              ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/10"
+              : "bg-gray-950 hover:bg-[#6A2CFF] text-white focus:ring-[#6A2CFF]"
+          }`}
         >
           <ShoppingBag size={16} />
-          {cartLoading ? "Adding..." : "Add to Cart"}
+          {isAdded ? "Go to Cart" : cartLoading ? "Adding..." : "Add to Cart"}
         </button>
       </div>
+
 
       <button
         type="button"
