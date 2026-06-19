@@ -38,6 +38,7 @@ function ProductPageContent() {
 
   useEffect(() => {
     if (!loading) {
+      window.localStorage.removeItem("buy_now_item");
       const html = document.documentElement;
       const originalScrollBehavior = html.style.scrollBehavior;
       html.style.scrollBehavior = "auto";
@@ -81,8 +82,10 @@ function ProductPageContent() {
     const line = buildLine();
     if (!line || !validateCartAddition()) return;
     addLine(line);
+    window.localStorage.setItem("buy_now_item", JSON.stringify(line));
     navigate("/checkout");
   };
+
 
   if (loading) {
     return <FullPageSkeleton />;

@@ -22,15 +22,33 @@ function readStoredJson(key, fallback) {
 
 export function useCheckout() {
   const { cartItems: liveCartItems } = useCart();
-  const cartItems = useMemo(
-    () =>
-      liveCartItems.map((item) => ({
-        ...item,
-        quantity: item.qty,
-        originalPrice: item.originalPrice ?? item.price,
-      })),
-    [liveCartItems]
-  );
+  
+  const buyNowItem = useMemo(() => {
+    try {
+      const stored = window.localStorage.getItem("buy_now_item");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const cartItems = useMemo(() => {
+    if (buyNowItem) {
+      return [
+        {
+          ...buyNowItem,
+          quantity: buyNowItem.qty,
+          originalPrice: buyNowItem.originalPrice ?? buyNowItem.price,
+        },
+      ];
+    }
+    return liveCartItems.map((item) => ({
+      ...item,
+      quantity: item.qty,
+      originalPrice: item.originalPrice ?? item.price,
+    }));
+  }, [liveCartItems, buyNowItem]);
+
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [couponCode, setCouponCode] = useState("");
