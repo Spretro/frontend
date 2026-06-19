@@ -35,15 +35,15 @@ export default function ProductInfo({
   quantity = 1,
   error = null,
   cartLoading = false,
-  onSizeChange = () => {},
-  onColorChange = () => {},
-  onQuantityChange = () => {},
-  onIncrementQuantity = () => {},
-  onDecrementQuantity = () => {},
-  onAddToCart = () => {},
-  onBuyNow = () => {},
-  onClearError = () => {},
-  onReviewClick = () => {},
+  onSizeChange = () => { },
+  onColorChange = () => { },
+  onQuantityChange = () => { },
+  onIncrementQuantity = () => { },
+  onDecrementQuantity = () => { },
+  onAddToCart = () => { },
+  onBuyNow = () => { },
+  onClearError = () => { },
+  onReviewClick = () => { },
 }) {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const wishlisted = isWishlisted(product.id);
@@ -138,11 +138,10 @@ export default function ProductInfo({
                 key={size}
                 type="button"
                 onClick={() => onSizeChange(size)}
-                className={`min-h-11 min-w-12 rounded-2xl border px-3 text-sm font-black transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 ${
-                  selectedSize === size
+                className={`min-h-11 min-w-12 rounded-2xl border px-3 text-sm font-black transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 ${selectedSize === size
                     ? "border-[#6A2CFF] bg-[#6A2CFF] text-white shadow-md"
                     : "border-gray-200 bg-white text-gray-800 hover:border-[#6A2CFF] hover:text-[#6A2CFF]"
-                }`}
+                  }`}
                 role="radio"
                 aria-checked={selectedSize === size}
               >
@@ -175,11 +174,10 @@ export default function ProductInfo({
                   key={variant.id}
                   type="button"
                   onClick={() => onColorChange(variant.id)}
-                  className={`group/color relative size-16 overflow-hidden rounded-2xl border bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 sm:size-[4.5rem] ${
-                    isSelected
+                  className={`group/color relative size-16 overflow-hidden rounded-2xl border bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 sm:size-[4.5rem] ${isSelected
                       ? "border-[#6A2CFF] shadow-[0_0_0_3px_rgba(106,44,255,0.16)]"
                       : "border-gray-200 hover:-translate-y-0.5 hover:border-[#6A2CFF] hover:shadow-md"
-                  }`}
+                    }`}
                   title={variant.name}
                   role="radio"
                   aria-label={`Select ${variant.name}`}
@@ -328,11 +326,10 @@ export default function ProductInfo({
       <button
         type="button"
         onClick={() => toggleWishlist(product)}
-        className={`inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-2xl border-2 px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          wishlisted
+        className={`inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-2xl border-2 px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${wishlisted
             ? "border-rose-500 bg-rose-50 text-rose-500 hover:bg-rose-100 focus:ring-rose-500"
             : "border-gray-200 bg-white text-gray-600 hover:border-rose-400 hover:text-rose-500 hover:bg-rose-50 focus:ring-rose-400"
-        }`}
+          }`}
         aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
         <Heart size={16} className={wishlisted ? "fill-rose-500" : ""} />

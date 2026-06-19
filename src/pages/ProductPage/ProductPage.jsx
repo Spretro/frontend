@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import { FullPageSkeleton } from "../../components/LoadingSkeletons";
@@ -19,13 +19,6 @@ function ProductPageContent() {
   const currentProductId = productId || "1307441";
   const reviewsRef = useRef(null);
 
-  const scrollToReviews = () => {
-    reviewsRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
   const {
     product,
     loading,
@@ -42,6 +35,24 @@ function ProductPageContent() {
     validateCartAddition,
     clearError,
   } = useProduct(currentProductId);
+
+  useEffect(() => {
+    if (!loading) {
+      const html = document.documentElement;
+      const originalScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo(0, 0);
+      html.style.scrollBehavior = originalScrollBehavior;
+    }
+  }, [currentProductId, loading]);
+
+  const scrollToReviews = () => {
+    reviewsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
 
   const buildLine = () => {
     if (!product) return null;

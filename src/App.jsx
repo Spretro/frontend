@@ -45,7 +45,11 @@ function Layout() {
 
   // Reset scroll to top whenever the route changes.
   useEffect(() => {
+    const html = document.documentElement;
+    const originalScrollBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
     window.scrollTo(0, 0);
+    html.style.scrollBehavior = originalScrollBehavior;
   }, [location.pathname]);
 
   return (
