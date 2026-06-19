@@ -24,7 +24,10 @@ import Signup from "./pages/Signup";
 import Cart from "./pages/Cart";
 import ProductPage from "./pages/ProductPage/ProductPage";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage";
-import AddressPage from "./pages/AddressPage/AddressPage";
+import AddressPage, {
+  NewAddressPage,
+  EditAddressPage,
+} from "./pages/AddressPage/AddressPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import AccountPage from "./pages/Account";
 
@@ -43,7 +46,11 @@ function Layout() {
 
   // Reset scroll to top whenever the route changes.
   useEffect(() => {
+    const html = document.documentElement;
+    const originalScrollBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
     window.scrollTo(0, 0);
+    html.style.scrollBehavior = originalScrollBehavior;
   }, [location.pathname]);
 
   return (
@@ -72,7 +79,8 @@ function Layout() {
         <Route path="/product/:productId" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/address" element={<AddressPage />} />
-        <Route path="/checkout/address/:addressId" element={<AddressPage />} />
+        <Route path="/checkout/address/new" element={<NewAddressPage />} />
+        <Route path="/checkout/address/:addressId/edit" element={<EditAddressPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/account" element={<AccountPage />} />
       </Routes>

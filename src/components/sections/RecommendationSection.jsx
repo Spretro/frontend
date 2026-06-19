@@ -7,9 +7,37 @@ import {
   IMAGE_PLACEHOLDER,
 } from "../../lib/productUtils";
 import { mockRecommendations } from "../../data/mockProduct";
+import { useCart } from "../../context/CartContext";
+
+function resolveCardPrice(product) {
+  // New backend schema: sale_price / mrp in paise
+  if (typeof product.sale_price === "number") {
+    return {
+      price: product.sale_price / 100,
+      originalPrice: typeof product.mrp === "number" ? product.mrp / 100 : product.sale_price / 100,
+    };
+  }
+  // Old slim-card shape: price / originalPrice already in rupees
+  return {
+    price: product.price ?? 0,
+    originalPrice: product.originalPrice ?? 0,
+  };
+}
+
+function resolveCardImage(product) {
+  // New backend schema: images[] is [{url, alt_text, ...}]
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    const first = product.images[0];
+    return typeof first === "string" ? first : first.url;
+  }
+  // Old slim-card shape: single `image` string
+  return product.image || IMAGE_PLACEHOLDER;
+}
 
 function ProductCard({ product, onNavigate, onImageError, onAddToCart }) {
-  const discount = calculateDiscount(product.price, product.originalPrice);
+  const { price, originalPrice } = resolveCardPrice(product);
+  const image = resolveCardImage(product);
+  const discount = calculateDiscount(price, originalPrice);
 
   return (
     <article
@@ -24,7 +52,7 @@ function ProductCard({ product, onNavigate, onImageError, onAddToCart }) {
       >
         <div className="relative aspect-[3/4] overflow-hidden bg-gray-50">
           <img
-            src={product.image || IMAGE_PLACEHOLDER}
+            src={image}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -60,11 +88,11 @@ function ProductCard({ product, onNavigate, onImageError, onAddToCart }) {
           <div className="mt-auto pt-3">
             <div className="flex flex-wrap items-baseline gap-1.5">
               <span className="text-base font-black text-gray-950">
-                {formatCurrency(product.price)}
+                {formatCurrency(price)}
               </span>
-              {product.originalPrice && (
+              {originalPrice > price && (
                 <span className="text-xs font-medium text-gray-400 line-through">
-                  {formatCurrency(product.originalPrice)}
+                  {formatCurrency(originalPrice)}
                 </span>
               )}
             </div>
@@ -88,6 +116,7 @@ function ProductCard({ product, onNavigate, onImageError, onAddToCart }) {
 
 export default function RecommendationSection({ productBrand = "" }) {
   const navigate = useNavigate();
+  const { addLine } = useCart();
   const [columnCount, setColumnCount] = useState(5);
 
   const handleImageError = (event) => {
@@ -95,10 +124,18 @@ export default function RecommendationSection({ productBrand = "" }) {
   };
 
   const handleRecommendationAddToCart = (product) => {
-    // MOCK DATA START
-    //   // TODO(BACKEND): Replace with POST /cart/items for recommendation cards.
-    console.info("Mock recommendation add to cart", product.id);
-    // MOCK DATA END
+    const { price } = resolveCardPrice(product);
+    const image = resolveCardImage(product);
+    addLine({
+      id: product.id,
+      name: product.name,
+      brand: product.brand || "SPRETRO",
+      price,
+      image,
+      size: "Default",
+      color: "Default",
+      qty: 1,
+    });
   };
 
   useEffect(() => {

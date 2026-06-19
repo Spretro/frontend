@@ -81,16 +81,16 @@ export default function ProductReviews({
   return (
     <section
       aria-labelledby="reviews-heading"
-      className="rounded-3xl border border-[#EEE8FF] bg-white p-4 md:p-6 "
+      className="rounded-3xl border border-[#EEE8FF] bg-white p-3 sm:p-4 md:p-6"
       style={{ boxShadow: "0 2px 16px rgba(106,44,255,0.06)" }}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-amber-400 text-sm font-black text-gray-950">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-amber-400 text-sm font-black text-gray-950">
             {rating}★
           </div>
           <div>
-            <h2 id="reviews-heading" className="text-xl font-black text-gray-950">
+            <h2 id="reviews-heading" className="text-xl font-black text-gray-950 leading-tight">
               Customer Reviews
             </h2>
             <p className="text-xs font-bold text-gray-400">
@@ -101,7 +101,7 @@ export default function ProductReviews({
         <button
           type="button"
           onClick={toggleWriteForm}
-          className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-xs font-black text-gray-700 transition-colors hover:border-[#6A2CFF] hover:text-[#6A2CFF] focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-xs font-black text-gray-700 transition-colors hover:border-[#6A2CFF] hover:text-[#6A2CFF] focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 w-full sm:w-auto"
           aria-expanded={writeOpen}
         >
           <MessageCircle size={15} />
@@ -114,11 +114,11 @@ export default function ProductReviews({
           {reviews.slice(0, PRODUCT_LIMITS.reviewsPreviewCount).map((review) => (
             <article
               key={review.id}
-              className="rounded-2xl border border-gray-100 bg-[#F9F8FF] p-4"
+              className="rounded-2xl border border-gray-100 bg-[#F9F8FF] p-3 sm:p-4"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F3EEFF] text-xs font-black text-[#6A2CFF]">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F3EEFF] text-xs font-black text-[#6A2CFF] mt-0.5">
                     {getInitials(review.author)}
                   </div>
                   <div className="min-w-0">
@@ -130,7 +130,9 @@ export default function ProductReviews({
                     </p>
                   </div>
                 </div>
-                <StarRating rating={review.rating} />
+                <div className="pl-12 sm:pl-0 shrink-0">
+                  <StarRating rating={review.rating} />
+                </div>
               </div>
               <p className="mt-3 text-sm font-medium leading-relaxed text-gray-600">
                 {review.comment}
@@ -150,7 +152,7 @@ export default function ProductReviews({
 
       {writeOpen && (
         <form
-          className="mt-5 space-y-4 rounded-2xl border border-[#EEE8FF] p-4"
+          className="mt-5 space-y-4 rounded-2xl border border-[#EEE8FF] p-3 sm:p-4"
           onSubmit={handleSubmitReview}
           noValidate
         >

@@ -1,15 +1,14 @@
 import {
   AlertCircle,
   ArrowLeft,
+  ArrowRight,
   BadgeCheck,
-  CreditCard,
   Loader2,
   LockKeyhole,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CartProductList from "../../components/checkout/CartProductList";
 import CouponOffers from "../../components/checkout/CouponOffers";
-import DeliveryAddressCard from "../../components/checkout/DeliveryAddressCard";
 import PriceDetails from "../../components/checkout/PriceDetails";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import { useCheckout } from "../../hooks/useCheckout";
@@ -19,9 +18,6 @@ function CheckoutPageContent() {
   const navigate = useNavigate();
   const {
     cartItems,
-    addresses,
-    selectedAddress,
-    selectedAddressId,
     availableOffers,
     couponCode,
     couponMessage,
@@ -30,20 +26,12 @@ function CheckoutPageContent() {
     actionLoading,
     error,
     setCouponCode,
-    setSelectedAddressId,
     applyCoupon,
-    continueToPayment,
   } = useCheckout();
 
-  const goToAddressPage = () => navigate("/checkout/address");
-  const editAddress = (addressId) => navigate(`/checkout/address/${addressId}`);
-
-  const handleContinueToPayment = async () => {
-    const orderSummary = await continueToPayment();
-
-    if (orderSummary) {
-      navigate("/payment");
-    }
+  const handleContinueToAddress = () => {
+    if (!cartItems.length) return;
+    navigate("/checkout/address");
   };
 
   if (loading) {
@@ -52,16 +40,14 @@ function CheckoutPageContent() {
 
   return (
     <main className="min-h-screen w-full bg-white pb-28 lg:pb-8">
-      <CheckoutTopBar onContinueShopping={() => navigate("/product")} />
+      <CheckoutTopBar step="bag" onContinueShopping={() => navigate("/product")} />
 
       <div className="mx-auto max-w-6xl px-3 py-5 sm:px-4 md:py-8">
         <header className="mb-5 lg:hidden">
           <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#6A2CFF]">
             Secure checkout
           </p>
-          <h1 className="mt-1 text-2xl font-black text-gray-950">
-            Checkout Summary
-          </h1>
+          <h1 className="mt-1 text-2xl font-black text-gray-950">Your Bag</h1>
         </header>
 
         {error && (
@@ -76,14 +62,6 @@ function CheckoutPageContent() {
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_430px] xl:grid-cols-[minmax(0,1fr)_460px]">
           <div className="space-y-4">
-            <DeliveryAddressCard
-              address={selectedAddress}
-              addresses={addresses}
-              selectedAddressId={selectedAddressId}
-              onSelectAddress={setSelectedAddressId}
-              onAddAddress={goToAddressPage}
-              onEditAddress={editAddress}
-            />
             <CartProductList items={cartItems} />
             <WishlistPrompt />
           </div>
@@ -96,50 +74,73 @@ function CheckoutPageContent() {
               onCouponChange={setCouponCode}
               onApplyCoupon={applyCoupon}
             />
-            <SupportPanel />
             <PriceDetails totals={totals} />
-            <PaymentPanel
-              amount={totals.finalAmount}
+            <ContinuePanel
               disabled={actionLoading || !cartItems.length}
               loading={actionLoading}
-              onContinue={handleContinueToPayment}
+              onContinue={handleContinueToAddress}
             />
           </aside>
         </div>
       </div>
 
-      <MobilePaymentBar
+      <MobileContinueBar
         amount={totals.finalAmount}
         disabled={actionLoading || !cartItems.length}
         loading={actionLoading}
-        onContinue={handleContinueToPayment}
+        onContinue={handleContinueToAddress}
       />
     </main>
   );
 }
 
-function CheckoutTopBar({ onContinueShopping }) {
+// ─── Shared top bar exported so AddressPage can reuse it ─────────────────────
+export function CheckoutTopBar({ step = "bag", onBack }) {
+  const navigate = useNavigate();
+  const steps = [
+    { key: "bag", label: "Bag" },
+    { key: "address", label: "Address" },
+    { key: "payment", label: "Payment" },
+  ];
+  const currentIndex = steps.findIndex((s) => s.key === step);
+
+  const handleBack = onBack ?? (() => navigate("/product"));
+
   return (
     <header className="border-b border-gray-100 bg-white">
       <div className="mx-auto flex min-h-20 max-w-6xl items-center justify-between gap-4 px-3 sm:px-4">
         <button
           type="button"
-          onClick={onContinueShopping}
+          onClick={handleBack}
           className="inline-flex items-center gap-2 text-sm font-black text-gray-950 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
-          aria-label="Continue shopping"
+          aria-label="Go back"
         >
           <ArrowLeft size={16} />
           <span className="hidden sm:inline">SPRETRO</span>
         </button>
 
-        <nav className="hidden items-center gap-3 text-[11px] font-black uppercase tracking-[0.32em] sm:flex">
-          <span className="text-[#6A2CFF] underline decoration-2 underline-offset-8">
-            Bag
-          </span>
-          <span className="h-px w-10 border-t border-dashed border-gray-300" />
-          <span className="text-gray-500">Address</span>
-          <span className="h-px w-10 border-t border-dashed border-gray-300" />
-          <span className="text-gray-500">Payment</span>
+        <nav
+          className="hidden items-center gap-3 text-[11px] font-black uppercase tracking-[0.32em] sm:flex"
+          aria-label="Checkout steps"
+        >
+          {steps.map((s, i) => (
+            <span key={s.key} className="flex items-center gap-3">
+              <span
+                className={
+                  i < currentIndex
+                    ? "text-emerald-600"
+                    : i === currentIndex
+                    ? "text-[#6A2CFF] underline decoration-2 underline-offset-8"
+                    : "text-gray-400"
+                }
+              >
+                {s.label}
+              </span>
+              {i < steps.length - 1 && (
+                <span className="h-px w-10 border-t border-dashed border-gray-300" />
+              )}
+            </span>
+          ))}
         </nav>
 
         <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] text-gray-600">
@@ -151,19 +152,17 @@ function CheckoutTopBar({ onContinueShopping }) {
   );
 }
 
-function PaymentPanel({ amount, disabled, loading, onContinue }) {
+function ContinuePanel({ disabled, loading, onContinue }) {
   return (
-    <section
-      className="hidden rounded-2xl border border-[#E8E4F4] bg-white p-4 lg:block"
-    >
+    <section className="hidden rounded-2xl border border-[#E8E4F4] bg-white p-4 lg:block">
       <div className="mb-4 flex items-center gap-3 rounded-xl bg-[#F9F8FF] p-3">
         <span className="flex size-10 items-center justify-center rounded-xl bg-white text-[#6A2CFF]">
           <LockKeyhole size={18} />
         </span>
         <div>
-          <p className="text-sm font-black text-gray-950">Payment next</p>
+          <p className="text-sm font-black text-gray-950">Next: Select address</p>
           <p className="text-xs font-medium text-gray-400">
-            Razorpay will open after confirmation.
+            Choose where to deliver your order.
           </p>
         </div>
       </div>
@@ -173,8 +172,8 @@ function PaymentPanel({ amount, disabled, loading, onContinue }) {
         disabled={disabled}
         className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#6A2CFF] px-4 text-sm font-black uppercase tracking-wide text-white transition-all hover:bg-gray-950 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
       >
-        {loading ? <Loader2 size={16} className="animate-spin" /> : <CreditCard size={16} />}
-        {loading ? "Preparing..." : `Place Order ${formatCurrency(amount)}`}
+        {loading ? <Loader2 size={16} className="animate-spin" /> : <ArrowRight size={16} />}
+        {loading ? "Please wait..." : "Continue to Address"}
       </button>
     </section>
   );
@@ -192,63 +191,30 @@ function WishlistPrompt() {
   );
 }
 
-function SupportPanel() {
+function MobileContinueBar({ amount, disabled, loading, onContinue }) {
   return (
-    <section className="rounded-2xl border border-[#E8E4F4] bg-white p-4">
-      <p className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-500">
-        Support Social Work
-      </p>
-      <label className="mt-4 flex items-start gap-3">
-        <input type="checkbox" className="mt-1 size-4 accent-[#6A2CFF]" />
-        <span>
-          <span className="block text-sm font-black text-gray-950">
-            Donate and make a difference
-          </span>
-          <span className="mt-1 block text-xs font-medium leading-relaxed text-gray-500">
-            Choose a small contribution at checkout.
-          </span>
-        </span>
-      </label>
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        {[10, 20, 50, 100].map((amount) => (
-          <button
-            key={amount}
-            type="button"
-            className="min-h-9 rounded-full border border-gray-200 text-xs font-black text-gray-700 transition-colors hover:border-[#6A2CFF] hover:text-[#6A2CFF] focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
-          >
-            ₹{amount}
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function MobilePaymentBar({ amount, disabled, loading, onContinue }) {
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#EEE8FF] bg-white/95 px-3 py-3 shadow-[0_-10px_30px_rgba(17,24,39,0.08)] backdrop-blur lg:hidden">
-      <div className="mx-auto flex max-w-[90rem] items-center gap-3">
+    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-[#EEE8FF] bg-white/95 px-5 py-4 shadow-[0_-10px_30px_rgba(17,24,39,0.08)] backdrop-blur lg:hidden">
+      <div className="mx-auto flex max-w-[90rem] items-center gap-4">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
             Payable
           </p>
-          <p className="text-lg font-black text-gray-950">
-            {formatCurrency(amount)}
-          </p>
+          <p className="text-lg font-black text-gray-950">{formatCurrency(amount)}</p>
         </div>
         <button
           type="button"
           onClick={onContinue}
           disabled={disabled}
-          className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#6A2CFF] px-4 text-sm font-black text-white transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
+          className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#6A2CFF] px-10 text-sm font-black text-white transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
         >
-          {loading ? <Loader2 size={16} className="animate-spin" /> : <CreditCard size={16} />}
-          Continue To Payment
+          {loading ? <Loader2 size={16} className="animate-spin" /> : <ArrowRight size={16} />}
+          Continue to Address
         </button>
       </div>
     </div>
   );
 }
+
 
 function CheckoutLoading() {
   return (

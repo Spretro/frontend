@@ -2,78 +2,162 @@
 // TODO(BACKEND): Replace with GET /products/:id.
 export const mockProduct = {
   id: "1307441",
+
+  brand_id: "brand_bewakoof",
+  category_id: "cat_mens_tshirts",
+
   name: "Premium Cotton T-Shirt",
-  brand: "Bewakoof",
-  shortDescription: "Experience all-day comfort with this premium cotton t-shirt, crafted for effortless everyday style.",
+  slug: "premium-cotton-tshirt",
+
+  short_description:
+    "Experience all-day comfort with this premium cotton t-shirt.",
+
   description:
-    "Experience all-day comfort with this premium cotton t-shirt, crafted for effortless everyday style. Made from high-quality, breathable fabric with a soft hand feel, it keeps you comfortable whether you're out and about or relaxing at home. The versatile design makes it perfect for layering or wearing on its own, offering a relaxed fit and timeless appeal that complements any wardrobe. \n \n \n Upgrade your casual wardrobe with this ultra-comfortable cotton t-shirt. Designed with soft, breathable fabric and a premium finish, it delivers maximum comfort and everyday versatility. Easy to style, easy to layer, and built for daily wear, this tee is your go-to choice for a laid-back yet stylish look. \n \n \n Crafted from high-quality cotton, this t-shirt offers a soft touch and breathable feel, making it ideal for all-day wear. Whether you're running errands or hanging out with friends, its relaxed fit and classic design ensure you stay comfortable and stylish. Perfect for pairing with jeans or shorts, this tee is a must-have staple for any casual wardrobe. ",
-  price: 1499,
-  originalPrice: 2399,
-  rating: 4.5,
-  reviewCount: 248,
-  productCode: "1307441",
+    "Experience all-day comfort with this premium cotton t-shirt...",
+
+
   origin: "Made in India",
+
   manufacturer:
     "Bewakoof Brands Pvt Ltd, Sairaj logistic hub A5, BMC pipeline road, Opposite all saints high school, Amane, Bhiwandi, Thane, Maharashtra 421302",
-  images: [
-    "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/w/b/g/xl-651229-bewakoof-original-imahbcgnkhrgge4q.jpeg",
-    "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/g/2/7/xl-651229-bewakoof-original-imahbcgnaqgufy2y.jpeg",
-    "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/p/k/n/xl-651229-bewakoof-original-imahbcgnmzmhxpzm.jpeg",
-    "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/9/9/9/xl-651229-bewakoof-original-imahbcgnuctvpun8.jpeg",
-    "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/m/3/b/xl-651229-bewakoof-original-imahbcgnjrwhvg6e.jpeg",
+
+  logistics_partner: "Sairaj Logistics Hub",
+
+  mrp: 239900,
+  sale_price: 149900,
+  discount_percentage: 37.5,
+
+  rating: 4.5,
+  review_count: 248,
+
+  tags: [
+    "tshirt",
+    "cotton",
+    "casual",
+    "mens-fashion",
   ],
-  sizes: ["S", "M", "L", "XL", "XXL", "2XL", "3XL"],
-  colorVariants: [
+
+  specifications: {
+    material: "Premium Cotton",
+    fit: "Regular Fit",
+    neck: "Crew Neck",
+    sleeve: "Half Sleeve",
+    care: "Machine wash at 30°C",
+    occasion: "Casual",
+    country_of_origin: "India",
+  },
+
+  variants: [
     {
-      id: "olive-green",
-      name: "Olive Green",
+      sku: "TSHIRT-OLIVE-S",
+      color: "Olive Green",
+      size: "S",
+
+      mrp: 239900,
+      sale_price: 149900,
+
+      quantity: 25,
+
       image:
         "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/m/j/m-652355-bewakoof-original-imahdfs5w3endzng.jpeg",
     },
+
     {
-      id: "deep-teal",
-      name: "Deep Teal",
+      sku: "TSHIRT-OLIVE-M",
+      color: "Olive Green",
+      size: "M",
+
+      mrp: 239900,
+      sale_price: 149900,
+
+      quantity: 30,
+
+      image:
+        "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/m/j/m-652355-bewakoof-original-imahdfs5w3endzng.jpeg",
+    },
+
+    {
+      sku: "TSHIRT-TEAL-M",
+      color: "Deep Teal",
+      size: "M",
+
+      mrp: 239900,
+      sale_price: 149900,
+
+      quantity: 40,
+
       image:
         "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/t/h/2/xl-659614-bewakoof-original-imahdfs5ugecy5ng.jpeg",
     },
+
     {
-      id: "charcoal-black",
-      name: "Charcoal Black",
+      sku: "TSHIRT-BLACK-M",
+      color: "Charcoal Black",
+      size: "M",
+
+      mrp: 239900,
+      sale_price: 149900,
+
+      quantity: 18,
+
       image:
         "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/r/u/t/l-645974-bewakoof-original-imah5h4rz366kwx3.jpeg",
     },
   ],
-  offers: [
+
+  images: [
     {
-      title: "Cashback",
-      body: "Up to ₹9 cashback with select wallets",
-      count: "1 offer",
+      url: "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/w/b/g/xl-651229-bewakoof-original-imahbcgnkhrgge4q.jpeg",
+      alt_text: "Front View",
+      position_order: 0,
     },
+
     {
-      title: "Bank Offer",
-      body: "Up to ₹25 off with select cards",
-      count: "29 offers",
+      url: "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/g/2/7/xl-651229-bewakoof-original-imahbcgnaqgufy2y.jpeg",
+      alt_text: "Back View",
+      position_order: 1,
     },
+
     {
-      title: "Partner Offers",
-      body: "Buy 2 or more items and get 3% off",
-      count: "2 offers",
+      url: "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/p/k/n/xl-651229-bewakoof-original-imahbcgnmzmhxpzm.jpeg",
+      alt_text: "Fabric Detail",
+      position_order: 2,
     },
-  ],
-  specifications: [
-    { label: "Material", value: "Premium cotton" },
-    { label: "Fit", value: "Regular fit" },
-    { label: "Neck", value: "Crew neck" },
-    { label: "Sleeve", value: "Half sleeve" },
-    { label: "Care", value: "Machine wash at 30°C" },
-    { label: "Wash separately", value: "Yes" },
-    { label: "Occasion", value: "Casual" },
-    { label: "Country of origin", value: "India" },
+
+    {
+      url: "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/9/9/9/xl-651229-bewakoof-original-imahbcgnuctvpun8.jpeg",
+      alt_text: "Side View",
+      position_order: 3,
+    },
+
+    {
+      url: "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/m/3/b/xl-651229-bewakoof-original-imahbcgnjrwhvg6e.jpeg",
+      alt_text: "Lifestyle View",
+      position_order: 4,
+    },
   ],
 };
-// MOCK DATA END
 
-// MOCK DATA START
+
+// Shared dummy data
+export const mockOffers = [
+  {
+    title: "Cashback",
+    body: "Up to ₹9 cashback with select wallets",
+    count: "1 offer",
+  },
+  {
+    title: "Bank Offer",
+    body: "Up to ₹25 off with select cards",
+    count: "29 offers",
+  },
+  {
+    title: "Partner Offers",
+    body: "Buy 2 or more items and get 3% off",
+    count: "2 offers",
+  },
+];
+
 // TODO(BACKEND): Replace with GET /products/:id/reviews.
 export const mockReviews = [
   {
@@ -112,17 +196,100 @@ export const mockRecommendations = {
   sameBrandProducts: [
     {
       id: "bewakoof-oversized-graphic-tee",
-      brand: "Bewakoof",
+
+      brand_id: "brand_bewakoof",
+      category_id: "cat_mens_tshirts",
+
       name: "Oversized Graphic Cotton T-Shirt",
-      price: 799,
-      originalPrice: 1499,
+
+      slug: "oversized-graphic-cotton-tshirt",
+
+      short_description:
+        "Premium oversized cotton t-shirt with graphic print.",
+
+      description:
+        "Designed for everyday comfort, this oversized graphic cotton t-shirt features soft breathable fabric, premium stitching and a relaxed silhouette suitable for daily wear.",
+
+      origin: "Made in India",
+
+      manufacturer:
+        "Bewakoof Brands Pvt Ltd, Sairaj logistic hub A5, BMC pipeline road, Opposite all saints high school, Amane, Bhiwandi, Thane, Maharashtra 421302",
+
+      logistics_partner:
+        "Sairaj Logistics Hub",
+
+      mrp: 149900,
+      sale_price: 79900,
+
+      discount_percentage: 46.7,
+
       rating: 4.5,
-      reviewCount: 1832,
-      image:
-        "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/c/q/b/xl-637169-bewakoof-original-imahb8zhuhnuzure.jpeg",
+      review_count: 1832,
+
+      specifications: {
+        material: "100% Cotton",
+        fit: "Oversized Fit",
+        neck: "Crew Neck",
+        sleeve: "Half Sleeve",
+        care: "Machine Wash",
+        occasion: "Casual"
+      },
+
+      tags: [
+        "tshirt",
+        "oversized",
+        "graphic",
+        "streetwear"
+      ],
+
+      variants: [
+        {
+          sku: "BWK-GRPH-OLIVE-M",
+          color: "Olive Green",
+          size: "M",
+
+          mrp: 149900,
+          sale_price: 79900,
+
+          quantity: 25,
+
+          image:
+            "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/m/j/m-652355-bewakoof-original-imahdfs5w3endzng.jpeg",
+        },
+
+        {
+          sku: "BWK-GRPH-BLACK-M",
+          color: "Charcoal Black",
+          size: "M",
+
+          mrp: 149900,
+          sale_price: 79900,
+
+          quantity: 18,
+
+          image:
+            "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/r/u/t/l-645974-bewakoof-original-imah5h4rz366kwx3.jpeg",
+        },
+      ],
+
+      images: [
+        {
+          url:
+            "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/c/q/b/xl-637169-bewakoof-original-imahb8zhuhnuzure.jpeg",
+          alt_text: "Front View",
+          position_order: 0,
+        },
+
+        {
+          url:
+            "https://rukminim2.flixcart.com/image/1920/1920/xif0q/t-shirt/d/m/j/m-652355-bewakoof-original-imahdfs5w3endzng.jpeg",
+          alt_text: "Back View",
+          position_order: 1,
+        }
+      ]
     },
     {
-      id: "bewakoof-everyday-crew-tee",
+      id: "123454321",
       brand: "Bewakoof",
       name: "Everyday Crew Neck T-Shirt",
       price: 699,
@@ -277,7 +444,7 @@ export const mockRecommendations = {
       image:
         "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/o/v/f/l-hlot000082-highlander-original-imah4w9xx7rcbzp3.jpeg",
     },
-     {
+    {
       id: "bewakoof-relaxed-fit-tee",
       brand: "Bewakoof",
       name: "Relaxed Fit Typography T-Shirt",
@@ -345,7 +512,7 @@ export const mockRecommendations = {
       image:
         "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/i/e/r/xxl-ost001-ytwodesigns-original-imahjuy2ycytv6hd.jpeg",
     },
-         {
+    {
       id: "bewakoof-relaxed-fit-tee",
       brand: "Bewakoof",
       name: "Relaxed Fit Typography T-Shirt",
@@ -413,7 +580,7 @@ export const mockRecommendations = {
       image:
         "https://rukminim2.flixcart.com/image/612/612/xif0q/t-shirt/l/8/a/xl-hmts000114-highlander-original-imahm2fpzatdbzhe.jpeg",
     },
-        {
+    {
       id: "similar-yazole-polo",
       brand: "Yazole",
       name: "Navy Blue Casual Polo T-Shirt",
@@ -426,4 +593,17 @@ export const mockRecommendations = {
     },
   ],
 };
+// MOCK DATA END
+
+// MOCK DATA START
+// Flat lookup map: all recommendation products keyed by id.
+// TODO(BACKEND): Remove once the real product API covers all IDs.
+export const allMockRecommendedProducts = Object.fromEntries(
+  [
+    ...mockRecommendations.sameBrandProducts,
+    ...mockRecommendations.similarProducts,
+    ...mockRecommendations.customersAlsoLike,
+    ...mockRecommendations.recommendedBySpretro,
+  ].map((p) => [p.id, p])
+);
 // MOCK DATA END

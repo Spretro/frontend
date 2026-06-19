@@ -1,4 +1,5 @@
 import { AlertCircle } from "lucide-react";
+import { useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import { FullPageSkeleton } from "../../components/LoadingSkeletons";
@@ -16,6 +17,7 @@ function ProductPageContent() {
   const navigate = useNavigate();
   const { addLine } = useCart();
   const currentProductId = productId || "1307441";
+  const reviewsRef = useRef(null);
 
   const {
     product,
@@ -34,10 +36,30 @@ function ProductPageContent() {
     clearError,
   } = useProduct(currentProductId);
 
+  useEffect(() => {
+    if (!loading) {
+      window.localStorage.removeItem("buy_now_item");
+      const html = document.documentElement;
+      const originalScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo(0, 0);
+      html.style.scrollBehavior = originalScrollBehavior;
+    }
+  }, [currentProductId, loading]);
+
+  const scrollToReviews = () => {
+    reviewsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+
   const buildLine = () => {
     if (!product) return null;
     const colorName =
-      (product.colorVariants || []).find((c) => c.id === selectedColor)?.name || "Default";
+      (product.colorVariants || []).find((c) => c.id === selectedColor)?.name ||
+      "Default";
     return {
       id: product.id,
       name: product.name,
@@ -60,8 +82,10 @@ function ProductPageContent() {
     const line = buildLine();
     if (!line || !validateCartAddition()) return;
     addLine(line);
+    window.localStorage.setItem("buy_now_item", JSON.stringify(line));
     navigate("/checkout");
   };
+
 
   if (loading) {
     return <FullPageSkeleton />;
@@ -116,6 +140,7 @@ function ProductPageContent() {
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
             onClearError={clearError}
+            onReviewClick={scrollToReviews}
           />
         </section>
 
@@ -124,11 +149,13 @@ function ProductPageContent() {
             specifications={product?.specifications || []}
             description={product?.description || "No description available"}
           />
-          <ProductReviews
-            rating={product?.rating || 0}
-            reviewCount={product?.reviewCount || 0}
-            reviews={mockReviews}
-          />
+          <div ref={reviewsRef}>
+            <ProductReviews
+              rating={product?.rating || 0}
+              reviewCount={product?.reviewCount || 0}
+              reviews={mockReviews}
+            />
+          </div>
           <RecommendationSection productBrand={product?.brand} />
         </div>
       </div>

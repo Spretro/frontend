@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
   BadgePercent,
@@ -35,16 +37,20 @@ export default function ProductInfo({
   quantity = 1,
   error = null,
   cartLoading = false,
-  onSizeChange = () => {},
-  onColorChange = () => {},
-  onQuantityChange = () => {},
-  onIncrementQuantity = () => {},
-  onDecrementQuantity = () => {},
-  onAddToCart = () => {},
-  onBuyNow = () => {},
-  onClearError = () => {},
+  onSizeChange = () => { },
+  onColorChange = () => { },
+  onQuantityChange = () => { },
+  onIncrementQuantity = () => { },
+  onDecrementQuantity = () => { },
+  onAddToCart = () => { },
+  onBuyNow = () => { },
+  onClearError = () => { },
+  onReviewClick = () => { },
 }) {
+  const navigate = useNavigate();
+  const [isAdded, setIsAdded] = useState(false);
   const { isWishlisted, toggleWishlist } = useWishlist();
+
   const wishlisted = isWishlisted(product.id);
 
   const discount = calculateDiscount(product.price, product.originalPrice);
@@ -53,10 +59,15 @@ export default function ProductInfo({
   const sizes = product.sizes || [];
   const hasSizes = sizes.length > 0;
   const addToCartDisabled =
-    cartLoading || (hasSizes && !selectedSize) || (hasColorVariants && !selectedColor);
+    cartLoading ||
+    (hasSizes && !selectedSize) ||
+    (hasColorVariants && !selectedColor);
 
   return (
-    <section aria-label="Product purchase details" className="min-w-0 space-y-6">
+    <section
+      aria-label="Product purchase details"
+      className="min-w-0 space-y-6"
+    >
       <header className="space-y-2 border-b border-gray-100 pb-5">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6A2CFF]">
           {product.brand || "SPRETRO"}
@@ -74,7 +85,13 @@ export default function ProductInfo({
           <span className="rounded-full bg-amber-400 px-2.5 py-1 text-gray-950">
             {product.rating || "0"} ★
           </span>
-          <span>{product.reviewCount || 0} reviews</span>
+          <button
+            type="button"
+            onClick={onReviewClick}
+            className="font-bold text-[#6A2CFF] hover:underline"
+          >
+            {product.reviewCount} Reviews
+          </button>
         </div>
       </header>
 
@@ -94,45 +111,50 @@ export default function ProductInfo({
             </span>
           )}
         </div>
-        <p className="text-xs font-medium text-gray-400">Inclusive of all taxes</p>
+        <p className="text-xs font-medium text-gray-400">
+          Inclusive of all taxes
+        </p>
       </section>
 
       {hasSizes && (
-      <section aria-labelledby="size-heading" className="space-y-3 py-1">
-        <div className="flex items-center justify-between gap-3">
-          <h2
-            id="size-heading"
-            className="flex items-center gap-2 text-sm font-black text-gray-950"
-          >
-            <Ruler size={16} className="text-[#6A2CFF]" />
-            Select Size
-          </h2>
-          <button
-            type="button"
-            className="rounded-full px-2 py-1 text-xs font-bold text-[#6A2CFF] transition-colors hover:bg-[#F3EEFF] focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
-          >
-            Size guide
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2 py-2" role="radiogroup" aria-labelledby="size-heading">
-          {sizes.map((size) => (
-            <button
-              key={size}
-              type="button"
-              onClick={() => onSizeChange(size)}
-              className={`min-h-11 min-w-12 rounded-2xl border px-3 text-sm font-black transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 ${
-                selectedSize === size
-                  ? "border-[#6A2CFF] bg-[#6A2CFF] text-white shadow-md"
-                  : "border-gray-200 bg-white text-gray-800 hover:border-[#6A2CFF] hover:text-[#6A2CFF]"
-              }`}
-              role="radio"
-              aria-checked={selectedSize === size}
+        <section aria-labelledby="size-heading" className="space-y-3 py-1">
+          <div className="flex items-center justify-between gap-3">
+            <h2
+              id="size-heading"
+              className="flex items-center gap-2 text-sm font-black text-gray-950"
             >
-              {size}
+              <Ruler size={16} className="text-[#6A2CFF]" />
+              Select Size
+            </h2>
+            <button
+              type="button"
+              className="rounded-full px-2 py-1 text-xs font-bold text-[#6A2CFF] transition-colors hover:bg-[#F3EEFF] focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
+            >
+              Size guide
             </button>
-          ))}
-        </div>
-      </section>
+          </div>
+          <div
+            className="flex flex-wrap gap-2 py-2"
+            role="radiogroup"
+            aria-labelledby="size-heading"
+          >
+            {sizes.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => onSizeChange(size)}
+                className={`min-h-11 min-w-12 rounded-2xl border px-3 text-sm font-black transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 ${selectedSize === size
+                    ? "border-[#6A2CFF] bg-[#6A2CFF] text-white shadow-md"
+                    : "border-gray-200 bg-white text-gray-800 hover:border-[#6A2CFF] hover:text-[#6A2CFF]"
+                  }`}
+                role="radio"
+                aria-checked={selectedSize === size}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </section>
       )}
 
       {hasColorVariants && (
@@ -157,11 +179,10 @@ export default function ProductInfo({
                   key={variant.id}
                   type="button"
                   onClick={() => onColorChange(variant.id)}
-                  className={`group/color relative size-16 overflow-hidden rounded-2xl border bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 sm:size-[4.5rem] ${
-                    isSelected
+                  className={`group/color relative size-16 overflow-hidden rounded-2xl border bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2 sm:size-[4.5rem] ${isSelected
                       ? "border-[#6A2CFF] shadow-[0_0_0_3px_rgba(106,44,255,0.16)]"
                       : "border-gray-200 hover:-translate-y-0.5 hover:border-[#6A2CFF] hover:shadow-md"
-                  }`}
+                    }`}
                   title={variant.name}
                   role="radio"
                   aria-label={`Select ${variant.name}`}
@@ -213,7 +234,9 @@ export default function ProductInfo({
               key={offer.title}
               className="rounded-2xl border border-[#EEE8FF] bg-[#F9F8FF] p-3"
             >
-              <h3 className="text-xs font-black text-gray-950">{offer.title}</h3>
+              <h3 className="text-xs font-black text-gray-950">
+                {offer.title}
+              </h3>
               <p className="mt-1 text-xs font-medium leading-relaxed text-gray-500">
                 {offer.body}
               </p>
@@ -296,23 +319,34 @@ export default function ProductInfo({
         </button>
         <button
           type="button"
-          onClick={onAddToCart}
-          disabled={addToCartDisabled}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gray-950 px-4 text-sm font-black text-white transition-all duration-200 hover:scale-[1.02] hover:bg-[#6A2CFF] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#6A2CFF] focus:ring-offset-2"
+          onClick={() => {
+            if (isAdded) {
+              navigate("/cart");
+            } else {
+              onAddToCart();
+              setIsAdded(true);
+            }
+          }}
+          disabled={!isAdded && addToCartDisabled}
+          className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            isAdded
+              ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/10"
+              : "bg-gray-950 hover:bg-[#6A2CFF] text-white focus:ring-[#6A2CFF]"
+          }`}
         >
           <ShoppingBag size={16} />
-          {cartLoading ? "Adding..." : "Add to Cart"}
+          {isAdded ? "Go to Cart" : cartLoading ? "Adding..." : "Add to Cart"}
         </button>
       </div>
+
 
       <button
         type="button"
         onClick={() => toggleWishlist(product)}
-        className={`inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-2xl border-2 px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          wishlisted
+        className={`inline-flex w-full min-h-12 items-center justify-center gap-2 rounded-2xl border-2 px-4 text-sm font-black transition-all duration-200 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 ${wishlisted
             ? "border-rose-500 bg-rose-50 text-rose-500 hover:bg-rose-100 focus:ring-rose-500"
             : "border-gray-200 bg-white text-gray-600 hover:border-rose-400 hover:text-rose-500 hover:bg-rose-50 focus:ring-rose-400"
-        }`}
+          }`}
         aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
         <Heart size={16} className={wishlisted ? "fill-rose-500" : ""} />
@@ -320,7 +354,7 @@ export default function ProductInfo({
       </button>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {trustItems.map(({ icon: Icon, title}) => (
+        {trustItems.map(({ icon: Icon, title }) => (
           <div
             key={title}
             className="flex items-center gap-3 rounded-2xl border border-[#EDE9FE] bg-[#F7F5FF] p-3"
@@ -335,7 +369,10 @@ export default function ProductInfo({
         ))}
       </div>
 
-      <section className="rounded-2xl border border-[#EEE8FF] p-4" aria-label="Product details">
+      <section
+        className="rounded-2xl border border-[#EEE8FF] p-4"
+        aria-label="Product details"
+      >
         <dl className="grid gap-4 sm:grid-cols-2">
           <div>
             <dt className="text-[10px] font-black uppercase tracking-widest text-gray-400">
