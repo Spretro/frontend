@@ -10,6 +10,9 @@ import CheckItem from "../../components/sections/search/CheckItem";
 import DualRangeSlider from "../../components/sections/search/DualRangeSlider";
 import SkeletonCard from "../../components/sections/search/SkeletonCard";
 import { toINR } from "../../utils/currency";
+import { LISTING_CONFIGS } from "../../data/listingConfigs";
+
+const PRODUCT_SELECT = "id,title,price,discountPercentage,thumbnail,brand,rating,category";
 
 /* ── constants ─────────────────────────────────────────────── */
 const MAX_INR = 50000;
@@ -66,19 +69,26 @@ const DISCOUNT_OPTIONS = [
   { label: "50% and above", min: 50 },
 ];
 
-/* ── route-level wrapper (key = query → fresh remount per search) */
+/* ── route-level wrapper (key = query/group/cats → fresh remount) */
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
-  return <SearchInner key={query} query={query} />;
+  const group = searchParams.get("group") || "";
+  const cats = searchParams.get("cats") || "";
+  return <SearchInner key={`${query}|${group}|${cats}`} query={query} group={group} initialCats={cats} />;
 }
 
 /* ── actual page with all state ─────────────────────────────── */
-function SearchInner({ query }) {
+function SearchInner({ query, group, initialCats }) {
+  // Category mode: navbar links/dropdowns land here with ?group=women(&cats=womens-dresses)
+  // so the page browses a whole department with the chosen sub-category pre-filtered.
+  const groupConfig = group ? LISTING_CONFIGS[group] : null;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState("relevance");
-  const [selectedCats, setSelectedCats] = useState([]);
+  const [selectedCats, setSelectedCats] = useState(
+    initialCats ? initialCats.split(",").filter(Boolean) : []
+  );
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [priceMin, setPriceMin] = useState(0);
   const [priceMax, setPriceMax] = useState(MAX_INR);
@@ -90,16 +100,38 @@ function SearchInner({ query }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(24);
 
-  /* fetch — component remounts on query change so no sync setState needed */
+  /* fetch — component remounts on query/group/cats change so no sync setState needed */
   useEffect(() => {
+    // Category mode: fetch every category in the department, then de-dupe.
+    if (groupConfig) {
+      Promise.all(
+        groupConfig.categories.map((cat) =>
+          fetch(`https://dummyjson.com/products/category/${cat}?limit=500&select=${PRODUCT_SELECT}`)
+            .then((r) => r.json())
+            .then((d) => d.products || [])
+        )
+      )
+        .then((results) => {
+          let all = results.flat();
+          if (groupConfig.filterFn) all = all.filter(groupConfig.filterFn);
+          const seen = new Set();
+          all = all.filter((p) => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
+          setProducts(all);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+      return;
+    }
+
+    // Keyword mode (or all products when there is no query).
     const url = query
-      ? `https://dummyjson.com/products/search?q=${encodeURIComponent(query)}&limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`
-      : `https://dummyjson.com/products?limit=500&select=id,title,price,discountPercentage,thumbnail,brand,rating,category`;
+      ? `https://dummyjson.com/products/search?q=${encodeURIComponent(query)}&limit=500&select=${PRODUCT_SELECT}`
+      : `https://dummyjson.com/products?limit=500&select=${PRODUCT_SELECT}`;
     fetch(url)
       .then((r) => r.json())
       .then((d) => { setProducts(applyGenderRelevance(d.products || [], query)); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [query]);
+  }, [query, group, groupConfig]);
 
   /* derived option lists (from full unfiltered set) */
   const allCats = useMemo(() => {
@@ -259,12 +291,22 @@ function SearchInner({ query }) {
           <nav className="flex items-center gap-1.5 text-xs text-gray-400 font-medium mb-1">
             <a href="/" className="hover:text-[#6A2CFF] transition-colors">Home</a>
             <span>/</span>
-            <span className="text-gray-600">Search</span>
-            {query && <><span>/</span><span className="text-[#6A2CFF] font-bold">"{query}"</span></>}
+            {groupConfig ? (
+              <span className="text-[#6A2CFF] font-bold">{groupConfig.title}</span>
+            ) : (
+              <>
+                <span className="text-gray-600">Search</span>
+                {query && <><span>/</span><span className="text-[#6A2CFF] font-bold">"{query}"</span></>}
+              </>
+            )}
           </nav>
           <div className="flex items-baseline gap-3">
             <h1 className="text-lg md:text-xl font-black text-gray-900">
-              {query ? <>Results for <em className="not-italic text-[#6A2CFF]">"{query}"</em></> : "All Products"}
+              {groupConfig
+                ? groupConfig.title
+                : query
+                ? <>Results for <em className="not-italic text-[#6A2CFF]">"{query}"</em></>
+                : "All Products"}
             </h1>
             {!loading && (
               <span className="text-sm text-gray-400 font-semibold">{filtered.length.toLocaleString()} items</span>
