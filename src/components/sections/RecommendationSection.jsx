@@ -7,6 +7,7 @@ import {
   IMAGE_PLACEHOLDER,
 } from "../../lib/productUtils";
 import { mockRecommendations } from "../../data/mockProduct";
+import { useCart } from "../../context/CartContext";
 
 function resolveCardPrice(product) {
   // New backend schema: sale_price / mrp in paise
@@ -115,6 +116,7 @@ function ProductCard({ product, onNavigate, onImageError, onAddToCart }) {
 
 export default function RecommendationSection({ productBrand = "" }) {
   const navigate = useNavigate();
+  const { addLine } = useCart();
   const [columnCount, setColumnCount] = useState(5);
 
   const handleImageError = (event) => {
@@ -122,10 +124,18 @@ export default function RecommendationSection({ productBrand = "" }) {
   };
 
   const handleRecommendationAddToCart = (product) => {
-    // MOCK DATA START
-    //   // TODO(BACKEND): Replace with POST /cart/items for recommendation cards.
-    console.info("Mock recommendation add to cart", product.id);
-    // MOCK DATA END
+    const { price } = resolveCardPrice(product);
+    const image = resolveCardImage(product);
+    addLine({
+      id: product.id,
+      name: product.name,
+      brand: product.brand || "SPRETRO",
+      price,
+      image,
+      size: "Default",
+      color: "Default",
+      qty: 1,
+    });
   };
 
   useEffect(() => {
